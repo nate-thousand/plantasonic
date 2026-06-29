@@ -4,6 +4,11 @@
 
 const LOG_PREFIX = '[VisualProfiler]';
 
+function envDevEnabled(): boolean {
+  if (typeof import.meta === 'undefined' || !('env' in import.meta)) return false;
+  return (import.meta.env as { DEV?: boolean }).DEV === true;
+}
+
 export interface VisualProfileSnapshot {
   applyStateCalls: number;
   controlUpdates: number;
@@ -19,7 +24,7 @@ export class VisualProfiler {
   private lastApplyMs = 0;
   private enabled: boolean;
 
-  constructor(enabled = import.meta.env.DEV) {
+  constructor(enabled = envDevEnabled()) {
     this.enabled = enabled;
   }
 

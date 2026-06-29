@@ -46,11 +46,17 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
   main.append(sidebar, stage);
   root.append(nav, main, dock);
 
-  const resizeObserver = new ResizeObserver(() => {
+  let resizeObserver: ResizeObserver | undefined;
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(() => {
+      const dims = getStageDimensions();
+      options.onResize?.(dims.width, dims.height);
+    });
+    resizeObserver.observe(stage);
+  } else {
     const dims = getStageDimensions();
     options.onResize?.(dims.width, dims.height);
-  });
-  resizeObserver.observe(stage);
+  }
 
   const onFullscreenChange = (): void => {
     const isFullscreen = document.fullscreenElement === root;
@@ -66,7 +72,7 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
     root,
     stage,
     destroy: () => {
-      resizeObserver.disconnect();
+      resizeObserver?.disconnect();
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       root.remove();
     },

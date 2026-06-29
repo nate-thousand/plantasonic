@@ -47,6 +47,10 @@ jobs:
         working-directory: plantasonic
         run: npm run tokens:verify
 
+      - name: Verify integration
+        working-directory: plantasonic
+        run: npm run verify:integration
+
       - name: Build
         working-directory: plantasonic
         run: npm run build

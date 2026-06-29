@@ -15,13 +15,18 @@ export function shouldAnimate(): boolean {
   return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+function setInstant(element: HTMLElement, opacity = 1, y = 0): void {
+  element.style.opacity = String(opacity);
+  element.style.transform = y === 0 ? '' : `translateY(${String(y)}px)`;
+}
+
 /** Animates an overlay panel open. */
 export function animateOverlayIn(
   panel: HTMLElement,
   options: MotionOptions = { animate: shouldAnimate() },
 ): void {
   if (!options.animate) {
-    gsap.set(panel, { opacity: 1, y: 0 });
+    setInstant(panel, 1, 0);
     return;
   }
   gsap.fromTo(
@@ -53,7 +58,7 @@ export function animateOverlayOut(
 /** Animates backdrop fade in. */
 export function animateBackdropIn(backdrop: HTMLElement): void {
   if (!shouldAnimate()) {
-    gsap.set(backdrop, { opacity: 1 });
+    setInstant(backdrop, 1);
     return;
   }
   gsap.fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.2 });
@@ -84,7 +89,7 @@ export function animateControlFeedback(element: HTMLElement): void {
 /** Loading overlay fade in. */
 export function animateLoadingIn(element: HTMLElement): void {
   if (!shouldAnimate()) {
-    gsap.set(element, { opacity: 1 });
+    setInstant(element, 1);
     return;
   }
   gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
