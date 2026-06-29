@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+## [0.2.1] — 2026-06-28
 
-- **Phase 6 consumer pass complete** — removed dead local shell files (`CommandPalette.ts`, `InstrumentChrome.ts`, `TopNav.ts`, `variables.scss` redirect)
-- **`shell-config.ts`** — documents routes, docks, panels, theme, persistence; instrument transport/inspector remain workspace-owned
-- **`verify:design-system`** — expanded checks for shell API, CSS imports, forbidden duplication/showcase imports
+### Fixed
+
+- **Vercel deployment** — GitHub dependencies for `ascii-visual-engine` and design system; source alias when engine dist is unavailable
 
 ## [0.2.0] — 2026-06-28
 
