@@ -2,10 +2,8 @@
  * Application bootstrap and lifecycle management.
  */
 
-import { NullSoundAdapter } from '@/audio/index.ts';
-import { NullAsciiAdapter } from '@/visuals/index.ts';
-import { Runtime, eventBus, stateStore } from '@/runtime/index.ts';
-import { createAppShell, setNavStatus } from '@/ui/index.ts';
+import { createRuntime, eventBus } from '@/runtime/index.ts';
+import { createAppShell, bindRuntimeToShell, setNavStatus } from '@/ui/index.ts';
 
 export interface PlantasonicApp {
   destroy: () => Promise<void>;
@@ -13,10 +11,7 @@ export interface PlantasonicApp {
 
 /** Initializes and mounts the Plantasonic application. */
 export async function createPlantasonicApp(container: HTMLElement): Promise<PlantasonicApp> {
-  const runtime = new Runtime({
-    soundAdapter: new NullSoundAdapter(),
-    asciiAdapter: new NullAsciiAdapter(),
-  });
+  const runtime = createRuntime();
 
   const shell = createAppShell({
     onResize: (width, height) => {
@@ -28,9 +23,7 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
 
   container.appendChild(shell.root);
 
-  const unsubscribe = stateStore.subscribe((state) => {
-    setNavStatus(formatPhase(state.transport.phase));
-  });
+  const unbindUi = bindRuntimeToShell(runtime, shell);
 
   eventBus.on('error', ({ source, error }) => {
     console.error(`[Plantasonic] ${source}:`, error);
@@ -45,13 +38,9 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
 
   return {
     destroy: async () => {
-      unsubscribe();
+      unbindUi();
       await runtime.destroy();
       shell.destroy();
     },
   };
-}
-
-function formatPhase(phase: string): string {
-  return phase.charAt(0).toUpperCase() + phase.slice(1);
 }

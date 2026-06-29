@@ -7,6 +7,9 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    include: ['tone', 'plantasia-sound-engine'],
+  },
   css: {
     preprocessorOptions: {
       scss: {

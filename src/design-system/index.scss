@@ -1,0 +1,11 @@
+/**
+ * Plantasonic design system module.
+ *
+ * Consumes tokens and Bootstrap mapping from ai-native-design-system.
+ * Source of truth remains external — this module holds product imports only.
+ *
+ * @see docs/design-system/README.md
+ */
+
+@import './tokens/index.scss';
+@import './bootstrap/index.scss';

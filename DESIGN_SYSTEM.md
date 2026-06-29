@@ -2,126 +2,117 @@
 
 ## Overview
 
-The Plantasonic design system bridges Figma design decisions to Bootstrap components through a token-based pipeline. No theme values are hardcoded in application components — all visual properties flow from design tokens.
+Plantasonic consumes the [AI Native Design System](../../ai-native-design-system/) through `src/design-system/`. Token definitions, Bootstrap mapping, and UI rules come from the external repository — Plantasonic holds product imports and app-shell wiring only.
+
+See [docs/design-system/README.md](./docs/design-system/README.md) for the full integration map.
+
+## Integration Flow
+
+```text
+AI Product Framework
+  → project process (docs/product-framework/, .cursor/rules/)
+
+AI Native Design System
+  → tokens and Bootstrap UI (src/design-system/, docs/design-system/)
+
+Plantasonic
+  → app shell, runtime, presets, integration (src/ui/, src/runtime/, src/app/)
+
+Sound Engine
+  → external npm dependency (src/audio/soundAdapter.ts — not yet installed)
+
+ASCII Visual Engine
+  → external npm dependency (src/visuals/asciiAdapter.ts — not yet installed)
+```
 
 ## Token Pipeline
 
 ```text
-Figma
-  ↓  (export variables / Code Connect)
-Design Tokens
-  ↓  (SCSS variables in src/styles/variables.scss)
-Bootstrap Theme
-  ↓  (Bootstrap SCSS variable overrides in bootstrap.scss)
-UI Components
-  ↓  (Bootstrap classes + ps-* utility classes)
-Plantasonic Application
+ai-native-design-system (source of truth)
+  ↓  foundation/colors, typography, spacing semantics
+src/design-system/tokens/
+  ↓  _colors.scss, _typography.scss, _spacing.scss, _layout.scss
+src/design-system/bootstrap/_overrides.scss
+  ↓  Bootstrap 5.0.2 variable mapping
+src/styles/bootstrap.scss
+  ↓  Bootstrap partials
+src/styles/globals.scss
+  ↓  ps-* layout classes
+UI shell (src/ui/)
 ```
 
-## Design Tokens
+## Module Structure
 
-Design tokens live in `src/styles/variables.scss`. They define the visual language:
+```text
+src/design-system/
+├── tokens/           Semantic tokens ($ds-*) + product aliases ($ps-*)
+├── bootstrap/        Bootstrap 5.0.2 overrides
+└── index.scss        Import entry for styles pipeline
+```
 
-| Category   | Examples                                                 |
-| ---------- | -------------------------------------------------------- |
-| Brand      | `$ps-brand-primary`, `$ps-brand-accent`                  |
-| Surfaces   | `$ps-surface-base`, `$ps-surface-stage`                  |
-| Text       | `$ps-text-primary`, `$ps-text-muted`                     |
-| Borders    | `$ps-border-subtle`, `$ps-border-strong`                 |
-| Layout     | `$ps-nav-height`, `$ps-dock-height`, `$ps-sidebar-width` |
-| Typography | `$ps-font-family-sans`, `$ps-font-family-mono`           |
-| Spacing    | `$ps-space-xs` through `$ps-space-xl`                    |
+Documentation mirror:
 
-Tokens use the `$ps-` prefix to distinguish Plantasonic-specific values from Bootstrap defaults.
+```text
+docs/design-system/
+├── TOKENS.md         Token catalog and source map
+├── COLORS.md         Color rules reference
+├── TYPOGRAPHY.md     Type scale reference
+├── SPACING.md        Spacing scale reference
+├── BOOTSTRAP_MAPPING.md  Component → Bootstrap classes
+├── COMPONENTS.md     Component guidance index
+└── PATTERNS.md       Pattern guidance index
+```
+
+## Token Naming
+
+| Prefix  | Usage                                                 |
+| ------- | ----------------------------------------------------- |
+| `$ds-*` | Design system semantic tokens — preferred in new code |
+| `$ps-*` | Plantasonic product aliases — app shell compatibility |
 
 ## Bootstrap Integration
 
-Bootstrap 5.0.2 consumes tokens through SCSS variable overrides:
+Bootstrap 5.0.2 consumes tokens through `src/design-system/bootstrap/_overrides.scss`:
 
 ```scss
-// variables.scss
-$ps-brand-primary: #2d6a4f;
-$primary: $ps-brand-primary;
-
-// bootstrap.scss
-@import './variables.scss';
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-// ... component imports
+// src/styles/index.scss
+@import '../design-system/index.scss';
+@import './bootstrap.scss';
+@import './globals.scss';
 ```
 
-This approach ensures:
+Rules:
 
-1. Bootstrap components inherit the Plantasonic theme automatically.
-2. Token changes propagate everywhere without editing component files.
-3. Future Figma updates require changes in one file (`variables.scss`).
+1. Never edit Bootstrap source in `node_modules/`
+2. Map semantic tokens to Bootstrap variables in `_overrides.scss` only
+3. Use Bootstrap utilities for spacing and alignment where possible
+4. Custom layout classes use `ps-` prefix in `globals.scss`
 
-## Component Conventions
+## Component and Pattern Guidance
 
-### Naming
+When building UI, read the indexed specs before implementing:
 
-- Layout classes use the `ps-` prefix (e.g., `ps-app`, `ps-stage`, `ps-dock`).
-- Bootstrap utility classes are used for spacing and alignment where possible.
-- Component-specific styles live in `globals.scss`, scoped under `ps-*` selectors.
+- [docs/design-system/COMPONENTS.md](./docs/design-system/COMPONENTS.md)
+- [docs/design-system/PATTERNS.md](./docs/design-system/PATTERNS.md)
+- [docs/design-system/BOOTSTRAP_MAPPING.md](./docs/design-system/BOOTSTRAP_MAPPING.md)
 
-### Structure
+Full specifications remain in `ai-native-design-system/components/` and `ai-native-design-system/patterns/`.
 
-```text
-src/ui/
-├── components/    Atomic UI elements (nav, stage, dock)
-├── layouts/       Page-level composition (AppShell)
-└── controls/      Interactive parameter widgets (future)
-```
+## Sync Workflow
 
-### Accessibility
+When design system tokens change:
 
-- All interactive elements include ARIA labels.
-- Sidebar visibility toggles `aria-hidden` and `aria-expanded`.
-- Color contrast follows WCAG AA against surface tokens.
-
-## Figma Update Workflow
-
-When design tokens change in Figma:
-
-1. **Export** updated variables from Figma (via Variables API or manual export).
-2. **Update** `src/styles/variables.scss` with new token values.
-3. **Verify** Bootstrap variable mappings still align (check `$primary`, `$body-bg`, etc.).
-4. **Review** the application shell in dev mode for visual regressions.
-5. **Document** significant token changes in CHANGELOG.md.
-
-### Future: Automated Sync
-
-When Figma Code Connect is configured, token exports can be scripted:
-
-```text
-Figma Variables → JSON export → SCSS generation → variables.scss
-```
-
-This automation is planned for the Design System milestone (see ROADMAP.md).
-
-## Typography
-
-| Role | Token                  | Usage                                             |
-| ---- | ---------------------- | ------------------------------------------------- |
-| Sans | `$ps-font-family-sans` | UI labels, navigation, body text                  |
-| Mono | `$ps-font-family-mono` | Status indicators, parameter values, stage labels |
-
-Font files will be added to `public/fonts/` during Design System integration.
-
-## Color Philosophy
-
-Plantasonic uses a dark, instrument-like palette:
-
-- **Deep surfaces** reduce visual distraction during performance.
-- **Muted text** keeps focus on the visual stage.
-- **Accent green** provides subtle brand identity without competing with generative output.
-
-Colors will be refined when Figma tokens are imported in Phase 2.
+1. Update the canonical file in `ai-native-design-system`
+2. Sync the corresponding file in `src/design-system/tokens/`
+3. Verify Bootstrap overrides in `src/design-system/bootstrap/_overrides.scss`
+4. Run `npm run build` and visual check
+5. Document in CHANGELOG.md
 
 ## What This Document Does Not Cover
 
-- Engine rendering aesthetics (owned by ASCII Engine)
-- Audio synthesis timbres (owned by Sound Engine)
-- Preset-specific visual themes (owned by preset world modules)
+- Engine rendering aesthetics (ASCII Visual Engine)
+- Audio synthesis timbres (Plantasia Sound Engine)
+- Preset-specific visual themes (preset world modules)
+- Engineering workflow (see `docs/product-framework/`)
 
-The design system governs the **application chrome** — navigation, controls, and layout — not generative output.
+The design system governs **application chrome** — navigation, controls, and layout.

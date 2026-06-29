@@ -4,6 +4,8 @@
 
 Plantasonic is a browser-based generative audiovisual instrument. It unifies two independent engines — sound and ASCII visuals — into a single performable experience without duplicating engine logic inside the application repository.
 
+Plantasonic is the **product app**. It references four external repositories for engines, visual language, and engineering workflow. See [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md).
+
 ## Responsibilities
 
 ### Plantasonic (this repository)
@@ -11,15 +13,25 @@ Plantasonic is a browser-based generative audiovisual instrument. It unifies two
 | Responsibility        | Location                                   |
 | --------------------- | ------------------------------------------ |
 | User experience       | `src/ui/`                                  |
-| Design system         | `src/styles/`                              |
+| App theme wiring      | `src/design-system/`, `src/styles/`        |
 | Runtime orchestration | `src/runtime/`                             |
 | State management      | `src/runtime/state.ts`                     |
 | Presets               | `src/presets/`                             |
 | Performance controls  | `src/ui/controls/`                         |
 | Input routing         | `src/midi/`, `src/keyboard/`, `src/touch/` |
-| Documentation         | Root and `docs/`                           |
+| Product documentation | Root and `docs/`                           |
 
-### External Engines (separate packages)
+### External Repositories (not in this repo)
+
+| Repository                                                                        | Role                                | How Plantasonic uses it                             |
+| --------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------- |
+| [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio synthesis library             | npm dependency → `src/audio/soundAdapter.ts`        |
+| `plantasia-ascii-engine` _(planned)_                                              | ASCII rendering library             | npm dependency → `src/visuals/asciiAdapter.ts`      |
+| [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and patterns until ASCII engine ships |
+| `ai-native-design-system`                                                         | Design tokens, components, patterns | `src/design-system/`, `docs/design-system/`         |
+| `ai-product-framework`                                                            | Engineering workflow and templates  | `docs/product-framework/`, `.cursor/rules/`         |
+
+### External Engines (npm packages)
 
 | Engine                 | Responsibility                                       |
 | ---------------------- | ---------------------------------------------------- |
@@ -29,31 +41,39 @@ Plantasonic is a browser-based generative audiovisual instrument. It unifies two
 ## Repository Boundaries
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│                    Plantasonic App                       │
-│  ┌─────────┐  ┌──────────┐  ┌─────────┐  ┌──────────┐  │
-│  │   UI    │  │ Runtime  │  │ Presets │  │  Styles  │  │
-│  └────┬────┘  └────┬─────┘  └────┬────┘  └──────────┘  │
-│       │            │              │                      │
-│       │     ┌──────┴──────┐       │                      │
-│       │     │  Adapters   │       │                      │
-│       │     ├── Sound ────┼───────┤                      │
-│       │     └── ASCII ────┼───────┘                      │
-└───────┼───────────────────┼──────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Plantasonic App                              │
+│  ┌─────────┐  ┌──────────┐  ┌─────────┐  ┌──────────────────────┐  │
+│  │   UI    │  │ Runtime  │  │ Presets │  │ Styles (token wiring)│  │
+│  └────┬────┘  └────┬─────┘  └────┬────┘  └──────────────────────┘  │
+│       │            │              │                                  │
+│       │     ┌──────┴──────┐       │                                  │
+│       │     │  Adapters   │       │                                  │
+│       │     ├── Sound ────┼───────┤                                  │
+│       │     └── ASCII ────┼───────┘                                  │
+└───────┼───────────────────┼──────────────────────────────────────────┘
         │                   │
+        │    npm deps       │    docs / token imports
         ▼                   ▼
-┌───────────────┐   ┌───────────────┐
-│ Plantasia     │   │ Plantasia     │
-│ Sound Engine  │   │ ASCII Engine  │
-└───────────────┘   └───────────────┘
+┌───────────────┐   ┌───────────────┐   ┌──────────────────┐
+│ plantasia-    │   │ plantasia-    │   │ ai-native-       │
+│ sound-engine  │   │ ascii-engine  │   │ design-system    │
+└───────────────┘   │ (or engine-   │   └──────────────────┘
+                    │  test ref)    │
+                    └───────────────┘
 ```
 
 **Rules:**
 
-1. UI never imports engine packages directly.
-2. Adapters are the only bridge between runtime and engines.
-3. Runtime is the only layer that calls both adapters.
-4. Engine logic is never copied into Plantasonic source files.
+1. Plantasonic is the product app — do not merge sibling repositories into it.
+2. UI never imports engine packages directly.
+3. Adapters are the only bridge between runtime and engines.
+4. Runtime is the only layer that calls both adapters.
+5. Engine logic is never copied into Plantasonic source files.
+6. Design tokens are defined in `ai-native-design-system` — Plantasonic imports them, it does not own them.
+7. Engineering workflow templates live in `ai-product-framework` — referenced at setup, not vendored.
+
+Full ecosystem map: [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md).
 
 ## Runtime Architecture
 
@@ -92,8 +112,9 @@ Plantasia ASCII Engine
 ```text
 main.ts
   → createPlantasonicApp()
+    → createRuntime()           // Mock adapters by default
     → createAppShell()          // Mount UI
-    → new Runtime(adapters)     // Create orchestrator
+    → bindRuntimeToShell()      // UI → runtime only
     → runtime.init({ container }) // Init adapters, emit ready
 ```
 
@@ -101,37 +122,39 @@ main.ts
 
 ```text
 User clicks Play
-  → UI dispatches action
-    → runtime.start()
-      → soundAdapter.start()
-      → asciiAdapter.start()
-      → stateStore.patch({ isPlaying: true })
-      → eventBus.emit('runtime:start')
+  → UI calls runtime.start()
+    → soundAdapter.start()
+    → asciiAdapter.start()
+    → stateStore.commit({ isPlaying: true })
+    → syncAdapters() → applyState() on both mocks
+    → eventBus.emit('runtime:start')
 ```
 
 ### Preset Loading
 
 ```text
 User selects preset
-  → runtime.loadPreset(id)
+  → runtime.setPreset(id)
     → eventBus.emit('preset:load')
     → Promise.all([
         soundAdapter.loadPreset(id),
         asciiAdapter.loadPreset(id)
       ])
-    → stateStore.patch({ activePresetId: id })
+    → stateStore.commit({ preset: id })
+    → syncAdapters()
     → eventBus.emit('preset:loaded')
 ```
 
-### Parameter Change
+### Control Change
 
 ```text
-User adjusts control
-  → runtime.setParameter(path, value)
-    → soundAdapter.setParameter(path, value)
-    → asciiAdapter.setParameter(path, value)
-    → stateStore.patch({ parameters })
-    → eventBus.emit('parameter:set')
+User adjusts control slider
+  → runtime.setControl(name, value)
+    → stateStore.commit({ controls: { [name]: value } })
+    → soundAdapter.setParameter(`controls.${name}`, value)
+    → asciiAdapter.setParameter(`controls.${name}`, value)
+    → syncAdapters()
+    → eventBus.emit('control:set')
 ```
 
 ## Future Scalability
@@ -150,7 +173,35 @@ Service worker and manifest configuration will live in `src/services/` and `publ
 
 ### Performance
 
-The `PerformanceState` in the runtime state store provides hooks for frame rate throttling, audio latency hints, and reduced-motion preferences — consumed by both adapters through `setParameter`.
+The `performance` metrics in the runtime state store provide hooks for energy and activity — consumed by both adapters through `applyState()` and `setParameter()`.
+
+## Product System Integration
+
+Phase 2 connects Plantasonic to external framework and design system repos:
+
+```text
+AI Product Framework
+  → docs/product-framework/
+  → .cursor/rules/
+  → HANDOFF.md
+
+AI Native Design System
+  → src/design-system/tokens/
+  → src/design-system/bootstrap/
+  → docs/design-system/
+
+Plantasonic (this repo)
+  → src/runtime/     integration layer
+  → src/ui/          app shell wired to runtime
+  → src/audio/soundAdapter.ts   PlantasiaSoundAdapter (live)
+  → src/visuals/mockAsciiAdapter.ts   mock (Phase 6)
+
+External engines (npm)
+  → plantasia-sound-engine@1.0.0-beta.1 (integrated)
+  → ASCII Visual Engine (Phase 6)
+```
+
+See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md).
 
 ## Module Dependency Graph
 

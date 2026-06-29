@@ -1,0 +1,21 @@
+---
+description: Vite TypeScript Bootstrap coding standards for Plantasonic
+globs: '**/*.{ts,scss,css,html}'
+alwaysApply: false
+---
+
+# Coding Standards
+
+Full reference: `docs/product-framework/CODING_STANDARDS.md`
+
+**Stack:** Vite, TypeScript (strict), Bootstrap 5.0.2 via `src/design-system/`.
+
+**Structure:** `src/app/`, `src/runtime/`, `src/audio/`, `src/visuals/`, `src/ui/`, `src/design-system/`, `src/presets/`.
+
+**UI:** Bootstrap renders design system tokens. Import from `src/design-system/` — never hardcode colors or spacing. Follow `docs/design-system/COMPONENTS.md` and `PATTERNS.md`.
+
+**TypeScript:** no `any`; explicit exported types; barrel exports via `index.ts`.
+
+**Architecture:** UI never imports engines. Runtime calls adapters only. No engine logic in app source.
+
+**Done means:** `npm run lint` and `npm run build` pass.

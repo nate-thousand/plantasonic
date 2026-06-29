@@ -1,67 +1,69 @@
 /**
- * Shared application state store.
- * Provides immutable read access and subscription-based updates.
- * Implementation will coordinate with adapters in future phases.
+ * Shared application state store for the runtime.
  */
 
-import type { AppState, AppStatePatch, StateSubscriber, Unsubscribe } from './types.ts';
-
-const createInitialState = (): AppState => ({
-  transport: {
-    phase: 'idle',
-    isPlaying: false,
-    activePresetId: null,
-  },
-  viewport: {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    devicePixelRatio: window.devicePixelRatio,
-    isFullscreen: false,
-  },
-  performance: {
-    targetFrameRate: 60,
-    audioLatencyHint: 'interactive',
-    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  },
-  parameters: {},
-});
+import {
+  createInitialRuntimeState,
+  type RuntimeState,
+  type RuntimeStatePatch,
+  type RuntimeSubscriber,
+  type Unsubscribe,
+} from './types.ts';
 
 /** In-memory state container with subscriber notification. */
 export class StateStore {
-  private state: AppState = createInitialState();
-  private readonly subscribers = new Set<StateSubscriber>();
+  private state: RuntimeState = createInitialRuntimeState();
+  private readonly subscribers = new Set<RuntimeSubscriber>();
 
-  /** Returns a frozen snapshot of the current state. */
-  getState(): Readonly<AppState> {
+  /** Returns a deep-frozen snapshot of the current state. */
+  getState(): Readonly<RuntimeState> {
+    return structuredClone(this.state);
+  }
+
+  /** Returns mutable internal state reference (runtime use only). */
+  getMutableState(): RuntimeState {
     return this.state;
   }
 
-  /** Applies a partial patch and notifies subscribers. */
-  patch(update: AppStatePatch): void {
-    this.state = {
-      transport: { ...this.state.transport, ...update.transport },
-      viewport: { ...this.state.viewport, ...update.viewport },
-      performance: { ...this.state.performance, ...update.performance },
-      parameters: { ...this.state.parameters, ...update.parameters },
-    };
-    this.notify(update);
+  /** Applies a partial patch without notifying subscribers. */
+  applyPatch(patch: RuntimeStatePatch): void {
+    if (patch.isPlaying !== undefined) this.state.isPlaying = patch.isPlaying;
+    if (patch.preset !== undefined) this.state.preset = patch.preset;
+    if (patch.activeNotes !== undefined) this.state.activeNotes = [...patch.activeNotes];
+    if (patch.tempo !== undefined) this.state.tempo = patch.tempo;
+    if (patch.controls !== undefined) {
+      this.state.controls = { ...this.state.controls, ...patch.controls };
+    }
+    if (patch.performance !== undefined) {
+      this.state.performance = { ...this.state.performance, ...patch.performance };
+    }
+  }
+
+  /** Applies a patch and notifies all subscribers. */
+  commit(patch: RuntimeStatePatch): void {
+    this.applyPatch(patch);
+    this.notify();
   }
 
   /** Registers a subscriber; returns an unsubscribe function. */
-  subscribe(subscriber: StateSubscriber): Unsubscribe {
+  subscribe(subscriber: RuntimeSubscriber): Unsubscribe {
     this.subscribers.add(subscriber);
+    subscriber(this.getState());
     return () => {
       this.subscribers.delete(subscriber);
     };
   }
 
-  private notify(patch: AppStatePatch): void {
+  /** Resets state to initial values. */
+  reset(): void {
+    this.state = createInitialRuntimeState();
+    this.notify();
+  }
+
+  private notify(): void {
     const snapshot = this.getState();
     for (const subscriber of this.subscribers) {
-      subscriber(snapshot, patch);
+      subscriber(snapshot);
     }
   }
 }
-
-/** Singleton state store instance used by the runtime. */
-export const stateStore = new StateStore();

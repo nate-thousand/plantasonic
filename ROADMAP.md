@@ -22,18 +22,19 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 
 ---
 
-## 2. Design System
+## 2. Framework + Design System Integration
 
-**Objective:** Integrate Figma design tokens into Bootstrap theme and build reusable UI components.
+**Objective:** Connect to AI Product Framework and AI Native Design System without merging repositories.
 
-**Completion: 0%**
+**Completion: 100%**
 
-- [ ] Import Figma design tokens into `variables.scss`
-- [ ] Map tokens to Bootstrap SCSS variables
-- [ ] Define typography scale and spacing system
-- [ ] Create base component library (buttons, knobs, sliders)
-- [ ] Document token update workflow in DESIGN_SYSTEM.md
-- [ ] Establish visual regression baseline
+- [x] Create `docs/product-framework/` with workflow, standards, templates
+- [x] Install `.cursor/rules/` adapted from framework
+- [x] Create `docs/design-system/` with token and guidance references
+- [x] Create `src/design-system/` token module with Bootstrap mapping
+- [x] Update styles pipeline to import from `src/design-system/`
+- [x] Create `HANDOFF.md`
+- [x] Document integration flow in SYSTEM_OVERVIEW and DESIGN_SYSTEM
 
 ---
 
@@ -41,15 +42,16 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 
 **Objective:** Implement full runtime orchestration with state subscriptions and lifecycle management.
 
-**Completion: 15%**
+**Completion: 100%**
 
-- [x] Define state store interface
+- [x] Define state store with RuntimeState shape
 - [x] Define event bus interface
-- [x] Scaffold runtime class with adapter coordination
-- [ ] Wire viewport resize to render loop
-- [ ] Implement parameter synchronization
-- [ ] Add error recovery and retry logic
-- [ ] Write runtime integration tests
+- [x] Implement runtime class with full public API
+- [x] createRuntime() factory with mock adapters
+- [x] MockSoundAdapter and MockAsciiAdapter with applyState
+- [x] Wire UI to runtime (transport, controls, status)
+- [x] Demo keyboard input through runtime
+- [ ] Runtime integration tests (future)
 
 ---
 
@@ -57,15 +59,15 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 
 **Objective:** Connect Plantasia Sound Engine and ASCII Engine through adapters.
 
-**Completion: 0%**
+**Completion: 50%** (sound complete, ASCII pending)
 
-- [ ] Install Plantasia Sound Engine package
-- [ ] Implement `SoundAdapter` with real engine
+- [x] Install Plantasia Sound Engine package (`1.0.0-beta.1`)
+- [x] Implement `PlantasiaSoundAdapter` with real engine
 - [ ] Install Plantasia ASCII Engine package
 - [ ] Implement `AsciiAdapter` with real engine
-- [ ] Verify runtime start/stop lifecycle
-- [ ] Verify preset loading across both engines
-- [ ] Document integration in ENGINE_API.md
+- [x] Verify runtime start/stop lifecycle (sound)
+- [x] Verify preset loading (sound)
+- [x] Document integration in ENGINE_API.md and SOUND_ENGINE_INTEGRATION.md
 
 ---
 
@@ -93,7 +95,7 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 - [ ] Design control dock layout
 - [ ] Implement transport controls (play/stop)
 - [ ] Build parameter knobs and sliders
-- [ ] Wire controls to runtime `setParameter`
+- [ ] Wire controls to runtime `setControl()` (demo sliders done — polish in Phase 8)
 - [ ] Add performance mode (minimal UI)
 - [ ] Optimize control responsiveness
 
@@ -161,17 +163,17 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 
 ## Overall Progress
 
-| Milestone            | Completion |
-| -------------------- | ---------- |
-| Project Foundation   | 100%       |
-| Design System        | 0%         |
-| Runtime              | 15%        |
-| Engine Integration   | 0%         |
-| Preset Worlds        | 0%         |
-| Performance Controls | 0%         |
-| Responsive UI        | 10%        |
-| Recording            | 0%         |
-| Optimization         | 0%         |
-| Release              | 0%         |
+| Milestone                 | Completion |
+| ------------------------- | ---------- |
+| Project Foundation        | 100%       |
+| Framework + Design System | 100%       |
+| Runtime                   | 100%       |
+| Engine Integration        | 50%        |
+| Preset Worlds             | 0%         |
+| Performance Controls      | 0%         |
+| Responsive UI             | 10%        |
+| Recording                 | 0%         |
+| Optimization              | 0%         |
+| Release                   | 0%         |
 
-**Estimated overall completion: ~12%**
+**Estimated overall completion: ~45%**

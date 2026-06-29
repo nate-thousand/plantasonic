@@ -1,65 +1,6 @@
 /**
- * Design tokens mapped from Figma variables.
- * Bootstrap SCSS variables consume these values — do not hardcode theme values in components.
+ * Legacy variables entry point.
+ * Token definitions moved to src/design-system/ — import here for backward compatibility.
  */
 
-@use 'sass:color';
-
-// Brand
-$ps-brand-primary: #2d6a4f;
-$ps-brand-secondary: #40916c;
-$ps-brand-accent: #95d5b2;
-
-// Surfaces
-$ps-surface-base: #0d1117;
-$ps-surface-raised: #161b22;
-$ps-surface-overlay: #21262d;
-$ps-surface-stage: #010409;
-
-// Text
-$ps-text-primary: #e6edf3;
-$ps-text-secondary: #8b949e;
-$ps-text-muted: #6e7681;
-
-// Borders
-$ps-border-subtle: #30363d;
-$ps-border-strong: #484f58;
-
-// Layout
-$ps-nav-height: 3.5rem;
-$ps-dock-height: 4.5rem;
-$ps-sidebar-width: 18rem;
-
-// Typography
-$ps-font-family-sans:
-  'Inter',
-  system-ui,
-  -apple-system,
-  'Segoe UI',
-  Roboto,
-  sans-serif;
-$ps-font-family-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
-
-// Spacing scale (aligned with Bootstrap)
-$ps-space-xs: 0.25rem;
-$ps-space-sm: 0.5rem;
-$ps-space-md: 1rem;
-$ps-space-lg: 1.5rem;
-$ps-space-xl: 2rem;
-
-// Bootstrap variable overrides
-$primary: $ps-brand-primary;
-$secondary: $ps-brand-secondary;
-$body-bg: $ps-surface-base;
-$body-color: $ps-text-primary;
-$border-color: $ps-border-subtle;
-$font-family-sans-serif: $ps-font-family-sans;
-$font-family-monospace: $ps-font-family-mono;
-$link-color: $ps-brand-accent;
-$link-hover-color: color.adjust($ps-brand-accent, $lightness: 8%);
-
-// Component tokens
-$navbar-dark-color: $ps-text-secondary;
-$navbar-dark-hover-color: $ps-text-primary;
-$navbar-dark-active-color: $ps-brand-accent;
-$navbar-dark-brand-color: $ps-text-primary;
+@import '../design-system/index.scss';

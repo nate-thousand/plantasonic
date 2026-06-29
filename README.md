@@ -1,12 +1,41 @@
 # Plantasonic
 
-A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **Plantasia ASCII Engine** through a shared runtime.
+A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **ASCII Visual Engine** through a shared runtime.
 
-Plantasonic is responsible for user experience, design system, runtime orchestration, state management, presets, performance controls, and documentation. Engine logic lives in separate packages — never duplicated inside this repository.
+**Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It demonstrates how independent repositories — process framework, design system, capability engines, and a product app — compose into a shippable application without merging codebases or duplicating logic.
+
+Plantasonic is responsible for user experience, runtime orchestration, state management, presets, performance controls, and product documentation. Engine logic, design tokens, and engineering workflow templates live in **separate repositories** — never duplicated inside this repo.
+
+See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for the full stack and [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md) for the ecosystem map.
 
 ## Vision
 
 Plantasonic is an instrument, not a demo. It provides a performable, responsive interface for exploring generative sound and ASCII visuals as a unified experience. The runtime coordinates both engines while keeping their implementations isolated behind adapter boundaries.
+
+As the first product built with the repeatable system, Plantasonic validates the workflow documented in [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md) — the same process can be applied to future app concepts.
+
+## The Product System
+
+```text
+AI Product Framework        →  process, docs, Cursor rules
+AI Native Design System     →  tokens, Bootstrap theme, UI rules
+Reusable Engines            →  sound + ASCII capability modules
+Plantasonic Runtime         →  integration layer (state, events, adapters)
+Plantasonic App             →  user experience
+```
+
+**Integration status:** Phases 1–5 complete — framework, design system, functional runtime, **live sound engine**. ASCII engine still mock (Phase 6).
+
+| Layer                   | Location in Plantasonic                                   |
+| ----------------------- | --------------------------------------------------------- |
+| AI Product Framework    | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
+| AI Native Design System | `src/design-system/`, `docs/design-system/`               |
+| Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
+| ASCII Visual Engine     | `src/visuals/mockAsciiAdapter.ts` (mock — Phase 6)        |
+| Runtime                 | `src/runtime/` — functional API + adapter wiring          |
+| App                     | `src/app/`, `src/ui/`, `src/presets/`                     |
+
+See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md) for the phased build plan.
 
 ## Architecture
 
@@ -26,6 +55,21 @@ The **runtime is the only layer** permitted to communicate with both engines. UI
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full system design.
 
+## Related Repositories
+
+Plantasonic is the product app at the center of an independent repository ecosystem. It references — but does not contain — these external projects:
+
+| Repository                                                                        | Role                                | Integration                                                  |
+| --------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| [plantasonic](https://github.com/nate-thousand/plantasonic)                       | **Product app** (this repo)         | —                                                            |
+| [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio engine library                | npm dependency via `src/audio/soundAdapter.ts`               |
+| `plantasia-ascii-engine`                                                          | ASCII engine library _(planned)_    | npm dependency via `src/visuals/asciiAdapter.ts`             |
+| [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and pattern reference until ASCII engine ships |
+| `ai-native-design-system`                                                         | Design tokens, components, patterns | Token imports into `src/styles/`                             |
+| `ai-product-framework`                                                            | Engineering workflow and templates  | Docs and templates at project setup                          |
+
+Do not merge these repositories into Plantasonic. Do not copy their source code. See [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md).
+
 ## Folder Structure
 
 ```text
@@ -43,8 +87,13 @@ plantasonic/
 │   ├── recorder/      Session recording (future)
 │   ├── services/      Cross-cutting services (future)
 │   ├── utils/         Shared utilities
-│   └── styles/        Bootstrap theme and design tokens
-├── docs/              Extended documentation
+│   ├── design-system/ Design tokens (from ai-native-design-system)
+│   └── styles/        Bootstrap compilation entry
+├── docs/
+│   ├── product-framework/  AI Product Framework integration
+│   └── design-system/      AI Native Design System integration
+├── .cursor/rules/     Cursor agent rules (from framework)
+├── HANDOFF.md         Session handoff (framework template)
 ├── public/            Static assets
 └── .github/           CI and contribution templates
 ```
@@ -107,6 +156,7 @@ npm run preview
 
 ```bash
 npm run lint          # ESLint
+npm run verify:runtime # Phase 3 runtime + mock adapter checks
 npm run format:check  # Prettier check
 npm run format        # Prettier write
 ```
@@ -120,14 +170,28 @@ npm run format        # Prettier write
 
 ## Future Engine Integration
 
-Engine packages will be installed as dependencies and wired through adapter interfaces:
+Sound engine integrated in Phase 5. Remaining:
 
-- `src/audio/soundAdapter.ts` — Sound Engine contract
-- `src/visuals/asciiAdapter.ts` — ASCII Engine contract
+- `src/visuals/mockAsciiAdapter.ts` → ASCII Visual Engine (Phase 6)
 
-The runtime (`src/runtime/runtime.ts`) coordinates both adapters. See [ENGINE_API.md](./ENGINE_API.md) for interface definitions.
+The runtime API is stable — swap adapter implementations only. See [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md), [RUNTIME.md](./RUNTIME.md), and [ENGINE_API.md](./ENGINE_API.md).
 
 ## Documentation
+
+### Product System
+
+| Document                                                               | Description                         |
+| ---------------------------------------------------------------------- | ----------------------------------- |
+| [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md)                   | Stack layers and data flow          |
+| [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md)                   | Ecosystem repos and ownership       |
+| [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md)   | Reusable workflow for future apps   |
+| [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md)                 | Phased delivery plan                |
+| [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md) | Phase 5 sound engine integration    |
+| [docs/product-framework/README.md](./docs/product-framework/README.md) | AI Product Framework integration    |
+| [docs/design-system/README.md](./docs/design-system/README.md)         | AI Native Design System integration |
+| [HANDOFF.md](./HANDOFF.md)                                             | Current session handoff             |
+
+### Architecture and Development
 
 | Document                               | Description                     |
 | -------------------------------------- | ------------------------------- |

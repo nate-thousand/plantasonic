@@ -1,0 +1,23 @@
+---
+description: Cursor agent workflow — read docs first, verify builds, git discipline
+alwaysApply: true
+---
+
+# Cursor Workflow
+
+Full reference: `docs/product-framework/CURSOR_RULES.md`
+
+**Before code:** read README, ROADMAP, HANDOFF, CHANGELOG, INTEGRATION_PLAN; confirm phase scope.
+
+**During work:** one scoped increment; touch only required files; reuse existing modules.
+
+**Git:** commit/push only when explicitly asked; Conventional Commits per CONTRIBUTING.md; never force-push main.
+
+**Verify before done:**
+
+```bash
+npm run lint
+npm run build
+```
+
+**Boundaries:** no engine integration unless phase requires it; no copying external repos; tokens from `src/design-system/` only.

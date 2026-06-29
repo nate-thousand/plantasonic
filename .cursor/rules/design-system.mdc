@@ -1,0 +1,34 @@
+---
+description: AI Native Design System rules for Plantasonic UI generation
+globs: ['**/*.html', '**/*.css', '**/*.scss', '**/*.ts']
+alwaysApply: false
+---
+
+# Design System Rules
+
+Source: `ai-native-design-system/` — reference via `docs/design-system/`
+
+## Before generating UI
+
+1. Read `docs/design-system/PATTERNS.md` for the applicable pattern
+2. Read `docs/design-system/COMPONENTS.md` for component specs
+3. Use semantic tokens from `src/design-system/tokens/` — `$ds-*` names
+4. Map to Bootstrap via `docs/design-system/BOOTSTRAP_MAPPING.md`
+
+## Bootstrap 5.0.2
+
+- Override via `src/design-system/bootstrap/_overrides.scss` — never edit Bootstrap source
+- Prefer Bootstrap utilities over custom CSS
+- Custom layout classes use `ps-` prefix only in `src/styles/globals.scss`
+
+## Accessibility
+
+- WCAG 2.1 AA minimum
+- Semantic HTML, keyboard access, visible focus, ARIA labels on shell controls
+- Source: `ai-native-design-system/foundation/accessibility/ACCESSIBILITY.md`
+
+## Do not generate
+
+- Engine logic (audio, ASCII rendering)
+- Runtime orchestration changes unless requested
+- Hardcoded hex colors in component files

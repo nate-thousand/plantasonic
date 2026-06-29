@@ -1,0 +1,36 @@
+---
+description: Plantasonic project context — stack, boundaries, integration phases
+alwaysApply: true
+---
+
+# Plantasonic Project
+
+Browser-based generative audiovisual instrument — first proof of the repeatable AI-assisted product system.
+
+**Stack:** Vite, TypeScript (strict), Bootstrap 5.0.2, GSAP. Not Next.js or React.
+
+## Repository boundaries
+
+| External repo | Role | Integration |
+|---------------|------|-------------|
+| ai-product-framework | Process, templates, Cursor rules | `docs/product-framework/` |
+| ai-native-design-system | Tokens, Bootstrap, UI rules | `src/design-system/` |
+| plantasia-sound-engine | Audio engine | `src/audio/soundAdapter.ts` — **integrated** (`1.0.0-beta.1`) |
+| ASCII Visual Engine | Visual engine | `src/visuals/mockAsciiAdapter.ts` — mock until Phase 6 |
+
+**Do not:** merge repos, copy engine code, import unstable engine packages, hardcode theme values.
+
+## Key docs
+
+- `docs/INTEGRATION_PLAN.md` — current phase scope
+- `docs/REPO_BOUNDARIES.md` — ownership rules
+- `docs/product-framework/CODING_STANDARDS.md` — coding rules
+- `docs/design-system/` — token and component guidance
+
+## Architecture
+
+UI → Runtime → Adapters → External engines. Runtime is the only layer that calls both adapters.
+
+## Current phase
+
+Phase 5 complete — sound engine integrated via adapter. Do not integrate ASCII engine until Phase 6.

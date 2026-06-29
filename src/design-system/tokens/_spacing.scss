@@ -1,0 +1,24 @@
+/**
+ * Spacing tokens (4px base grid).
+ *
+ * Source: ai-native-design-system/foundation/spacing/SPACING.md
+ */
+
+$ds-space-0: 0;
+$ds-space-1: 0.25rem; // 4px — space/1
+$ds-space-2: 0.5rem; // 8px — space/2
+$ds-space-3: 1rem; // 16px — space/3
+$ds-space-4: 1.5rem; // 24px — space/4
+$ds-space-5: 2rem; // 32px — space/5
+$ds-space-6: 3rem; // 48px — space/6
+$ds-space-8: 4rem; // 64px — space/8
+
+// Bootstrap $spacer aligns with space/3
+$ds-spacer: $ds-space-3;
+
+// Plantasonic aliases (legacy — prefer $ds-space-* in new code)
+$ps-space-xs: $ds-space-1;
+$ps-space-sm: $ds-space-2;
+$ps-space-md: $ds-space-3;
+$ps-space-lg: $ds-space-4;
+$ps-space-xl: $ds-space-5;

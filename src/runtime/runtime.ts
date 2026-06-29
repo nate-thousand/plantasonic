@@ -1,27 +1,36 @@
 /**
  * Plantasonic runtime orchestrator.
- * The runtime is the only layer permitted to communicate with both engine adapters.
- * No engine logic lives here — only coordination, state, and lifecycle management.
+ * The only layer permitted to communicate with both engine adapters.
  */
 
 import type { SoundAdapter } from '@/audio/soundAdapter.ts';
 import type { AsciiAdapter } from '@/visuals/asciiAdapter.ts';
-import type { RuntimeConfig, RuntimeInitResult } from './types.ts';
+import type {
+  ControlName,
+  RuntimeConfig,
+  RuntimeInitResult,
+  RuntimeState,
+  RuntimeStatePatch,
+  Unsubscribe,
+} from './types.ts';
+import type { RuntimeSubscriber } from './types.ts';
+import { StateStore } from './state.ts';
 import { eventBus } from './events.ts';
-import { stateStore } from './state.ts';
 
-export interface RuntimeDependencies {
-  soundAdapter: SoundAdapter;
-  asciiAdapter: AsciiAdapter;
+/** Adapters that receive full state snapshots after each change. */
+export interface StateSyncAdapter {
+  applyState(state: Readonly<RuntimeState>): void;
 }
 
-/**
- * Central runtime coordinating UI, state, and engine adapters.
- * Scaffold only — adapter wiring will be completed during engine integration.
- */
+export interface RuntimeDependencies {
+  soundAdapter: SoundAdapter & StateSyncAdapter;
+  asciiAdapter: AsciiAdapter & StateSyncAdapter;
+}
+
 export class Runtime {
-  private readonly soundAdapter: SoundAdapter;
-  private readonly asciiAdapter: AsciiAdapter;
+  private readonly soundAdapter: SoundAdapter & StateSyncAdapter;
+  private readonly asciiAdapter: AsciiAdapter & StateSyncAdapter;
+  private readonly store = new StateStore();
   private initialized = false;
 
   constructor(deps: RuntimeDependencies) {
@@ -29,81 +38,169 @@ export class Runtime {
     this.asciiAdapter = deps.asciiAdapter;
   }
 
-  /** Initializes the runtime and transitions to ready phase. */
+  /** Initializes adapters and transitions to ready. */
   async init(config: RuntimeConfig): Promise<RuntimeInitResult> {
     if (this.initialized) {
       return { success: false, error: new Error('Runtime already initialized') };
     }
 
-    stateStore.patch({ transport: { phase: 'initializing' } });
     eventBus.emit('runtime:init', { container: config.container });
 
     try {
       await Promise.all([this.soundAdapter.init(), this.asciiAdapter.init()]);
-
-      stateStore.patch({ transport: { phase: 'ready' } });
-      eventBus.emit('runtime:ready', undefined);
       this.initialized = true;
+      eventBus.emit('runtime:ready', undefined);
 
       if (config.initialPresetId) {
-        await this.loadPreset(config.initialPresetId);
+        await this.setPreset(config.initialPresetId);
+      } else {
+        this.syncAdapters();
       }
 
       return { success: true };
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      stateStore.patch({ transport: { phase: 'error' } });
       eventBus.emit('error', { source: 'runtime:init', error: err });
       return { success: false, error: err };
     }
   }
 
-  /** Starts both engines via their adapters. */
+  /** Returns a snapshot of the current shared state. */
+  getState(): Readonly<RuntimeState> {
+    return this.store.getState();
+  }
+
+  /** Registers a state change subscriber. */
+  subscribe(callback: RuntimeSubscriber): Unsubscribe {
+    return this.store.subscribe(callback);
+  }
+
+  /** Starts both engine adapters. */
   async start(): Promise<void> {
+    this.ensureInitialized();
     await Promise.all([this.soundAdapter.start(), this.asciiAdapter.start()]);
-    stateStore.patch({ transport: { phase: 'running', isPlaying: true } });
+    this.store.commit({ isPlaying: true });
     eventBus.emit('runtime:start', undefined);
+    this.syncAdapters();
   }
 
-  /** Stops both engines via their adapters. */
+  /** Stops both engine adapters. */
   async stop(): Promise<void> {
+    this.ensureInitialized();
     await Promise.all([this.soundAdapter.stop(), this.asciiAdapter.stop()]);
-    stateStore.patch({ transport: { phase: 'stopped', isPlaying: false } });
+    this.store.commit({
+      isPlaying: false,
+      activeNotes: [],
+      performance: { lastNote: null, velocity: 0, energy: 0, activity: 0 },
+    });
     eventBus.emit('runtime:stop', undefined);
+    this.syncAdapters();
   }
 
-  /** Loads a preset into both adapters atomically. */
-  async loadPreset(presetId: string): Promise<void> {
+  /** Loads a preset into both adapters. */
+  async setPreset(presetId: string): Promise<void> {
+    this.ensureInitialized();
     eventBus.emit('preset:load', { presetId });
-    await Promise.all([
-      this.soundAdapter.loadPreset(presetId),
-      this.asciiAdapter.loadPreset(presetId),
-    ]);
-    stateStore.patch({ transport: { activePresetId: presetId } });
+    const soundResult = await this.soundAdapter.loadPreset(presetId);
+    await this.asciiAdapter.loadPreset(presetId);
+    const patch: RuntimeStatePatch = { preset: presetId };
+    if (soundResult && 'controls' in soundResult) {
+      patch.controls = soundResult.controls;
+    }
+    this.store.commit(patch);
     eventBus.emit('preset:loaded', { presetId });
+    this.syncAdapters();
   }
 
-  /** Sets a parameter on both adapters. */
-  setParameter(path: string, value: number | string | boolean): void {
-    this.soundAdapter.setParameter(path, value);
-    this.asciiAdapter.setParameter(path, value);
-    stateStore.patch({ parameters: { [path]: value } });
-    eventBus.emit('parameter:set', { path, value });
+  /** Triggers note-on through both adapters. */
+  noteOn(note: number, velocity = 0.8): void {
+    this.ensureInitialized();
+    const state = this.store.getMutableState();
+    if (!state.activeNotes.includes(note)) {
+      state.activeNotes.push(note);
+    }
+    const energy = Math.min(1, velocity);
+    const activity = Math.min(1, state.performance.activity + velocity * 0.15);
+    this.store.commit({
+      activeNotes: [...state.activeNotes],
+      performance: {
+        lastNote: note,
+        velocity,
+        energy,
+        activity,
+      },
+    });
+    this.soundAdapter.noteOn(note, velocity);
+    this.asciiAdapter.setParameter('note', note);
+    eventBus.emit('input:noteOn', { note, velocity });
+    this.syncAdapters();
+  }
+
+  /** Triggers note-off through both adapters. */
+  noteOff(note: number): void {
+    this.ensureInitialized();
+    const state = this.store.getMutableState();
+    const activeNotes = state.activeNotes.filter((n) => n !== note);
+    const activity = Math.max(0, state.performance.activity - 0.1);
+    this.store.commit({
+      activeNotes,
+      performance: {
+        ...state.performance,
+        activity,
+        lastNote: activeNotes.length > 0 ? (activeNotes.at(-1) ?? null) : null,
+      },
+    });
+    this.soundAdapter.noteOff(note);
+    eventBus.emit('input:noteOff', { note });
+    this.syncAdapters();
+  }
+
+  /** Sets a named performance control (0–1). */
+  setControl(name: ControlName, value: number): void {
+    this.ensureInitialized();
+    const clamped = Math.min(1, Math.max(0, value));
+    this.store.commit({ controls: { [name]: clamped } });
+    const path = `controls.${name}`;
+    this.soundAdapter.setParameter(path, clamped);
+    this.asciiAdapter.setParameter(path, clamped);
+    eventBus.emit('control:set', { name, value: clamped });
+    this.syncAdapters();
+  }
+
+  /** Sets transport tempo in BPM. */
+  setTempo(bpm: number): void {
+    this.ensureInitialized();
+    const tempo = Math.min(300, Math.max(20, Math.round(bpm)));
+    this.store.commit({ tempo });
+    this.soundAdapter.setParameter('tempo', tempo);
+    this.asciiAdapter.setParameter('tempo', tempo);
+    eventBus.emit('tempo:set', { tempo });
+    this.syncAdapters();
   }
 
   /** Resizes the visual output area. */
   resize(width: number, height: number): void {
     this.asciiAdapter.resize(width, height);
-    stateStore.patch({ viewport: { width, height } });
     eventBus.emit('viewport:resize', { width, height });
   }
 
   /** Tears down the runtime and releases resources. */
   async destroy(): Promise<void> {
     await Promise.all([this.soundAdapter.destroy(), this.asciiAdapter.destroy()]);
+    this.store.reset();
     eventBus.emit('runtime:destroy', undefined);
-    eventBus.clear();
     this.initialized = false;
-    stateStore.patch({ transport: { phase: 'idle', isPlaying: false, activePresetId: null } });
+  }
+
+  private syncAdapters(): void {
+    const state = this.store.getState();
+    this.soundAdapter.applyState(state);
+    this.asciiAdapter.applyState(state);
+  }
+
+  private ensureInitialized(): void {
+    if (!this.initialized) {
+      throw new Error('Runtime not initialized — call init() first');
+    }
   }
 }

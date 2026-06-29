@@ -1,6 +1,7 @@
 /**
- * Main stylesheet entry point.
+ * Application styles entry — imports design system tokens then Bootstrap.
  */
 
+@import '../design-system/index.scss';
 @import './bootstrap.scss';
 @import './globals.scss';

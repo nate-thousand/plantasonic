@@ -1,0 +1,49 @@
+/**
+ * Bootstrap 5.0.2 variable overrides.
+ *
+ * Source: ai-native-design-system/bootstrap/bootstrap-overrides.scss
+ *         ai-native-design-system/bootstrap/bootstrap-mapping.md
+ *
+ * Maps $ds-* semantic tokens to Bootstrap theme variables.
+ * Import after tokens, before Bootstrap functions/variables.
+ */
+
+@use 'sass:color';
+
+// Theme colors
+$primary: $ds-color-primary;
+$secondary: $ds-color-secondary;
+$success: $ds-color-success;
+$info: $ds-color-info;
+$warning: $ds-color-warning;
+$danger: $ds-color-error;
+
+// Surfaces and text
+$body-bg: $ds-color-surface-default;
+$body-color: $ds-color-text-primary;
+$border-color: $ds-color-border-default;
+
+// Typography
+$font-family-sans-serif: $ds-font-family-sans;
+$font-family-monospace: $ds-font-family-mono;
+$font-size-base: $ds-font-size-base;
+$line-height-base: $ds-line-height-base;
+$headings-font-weight: $ds-headings-font-weight;
+
+// Spacing
+$spacer: $ds-spacer;
+
+// Radius
+$border-radius: $ds-radius-default;
+$border-radius-sm: $ds-radius-sm;
+$border-radius-lg: $ds-radius-lg;
+
+// Links
+$link-color: $ds-color-text-link;
+$link-hover-color: color.adjust($ds-color-text-link, $lightness: 8%);
+
+// Navbar (dark instrument shell)
+$navbar-dark-color: $ds-color-text-secondary;
+$navbar-dark-hover-color: $ds-color-text-primary;
+$navbar-dark-active-color: $ds-color-accent;
+$navbar-dark-brand-color: $ds-color-text-primary;

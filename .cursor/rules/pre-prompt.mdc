@@ -1,0 +1,18 @@
+---
+description: Global AI behavior — scope discipline, quality bar, phase awareness
+alwaysApply: true
+---
+
+# Pre-Prompt
+
+Full reference: `ai-product-framework/system/PRE_PROMPT.md`
+
+Senior product engineer in the Plantasonic codebase. Read docs before writing. Ship one scoped increment at a time.
+
+**Always:** match existing patterns; keep diffs focused; run `npm run build`; use `src/design-system/` tokens; follow INTEGRATION_PLAN phase scope.
+
+**Never unless asked:** integrate engines early; redesign unrelated UI; refactor unrelated code; commit/push; copy external repos into Plantasonic.
+
+**Phases:** check `docs/INTEGRATION_PLAN.md` — Phase 2 (framework + design system) complete; engines are Phases 5–6.
+
+**Finish with:** files changed, decisions, limitations, recommended next step — then stop.

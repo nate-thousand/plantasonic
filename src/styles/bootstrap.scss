@@ -1,9 +1,9 @@
 /**
  * Bootstrap 5.0.2 configuration.
- * Imports design tokens before Bootstrap so variables propagate correctly.
+ * Design tokens imported via src/design-system/ before this file loads.
  */
 
-@import './variables.scss';
+// Tokens and Bootstrap overrides come from src/design-system/index.scss (via index.scss)
 
 // Bootstrap core
 @import 'bootstrap/scss/functions';
@@ -25,3 +25,4 @@
 @import 'bootstrap/scss/buttons';
 @import 'bootstrap/scss/offcanvas';
 @import 'bootstrap/scss/transitions';
+@import 'bootstrap/scss/forms';

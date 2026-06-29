@@ -1,38 +1,44 @@
 # Engine API Contracts
 
-Interface definitions for the Plantasia Sound Engine and Plantasia ASCII Engine. These are **contracts only** — no implementations exist in Plantasonic.
+Interface definitions for the Plantasia Sound Engine and Plantasia ASCII Engine. Adapters in `src/audio/` and `src/visuals/` implement these interfaces and wrap external engine packages.
 
-Adapters in `src/audio/` and `src/visuals/` implement these interfaces and wrap external engine packages.
+**Phase 5:** Sound engine integrated via `PlantasiaSoundAdapter`. See [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md).
 
 ---
 
 ## Sound Engine
 
-External package: **Plantasia Sound Engine** (future dependency)
+External package: **plantasia-sound-engine** `1.0.0-beta.1`
 
-### Interface
+Implementation: `src/audio/soundAdapter.ts` → `PlantasiaSoundAdapter`
+
+### Engine public API (actual)
 
 ```typescript
-interface SoundEngineContract {
-  /** Starts audio output and internal processing. */
-  start(): Promise<void>;
+import { createPlantasiaEngine, resolvePresetToSpecies } from 'plantasia-sound-engine';
 
-  /** Stops audio output and releases active voices. */
-  stop(): Promise<void>;
+const engine = createPlantasiaEngine();
 
-  /** Loads a sound preset by identifier. */
-  loadPreset(presetId: string): Promise<void>;
+await engine.initialize();       // unlock AudioContext (user gesture)
+await engine.loadPreset('plantasonic');
+await engine.start();
 
-  /** Triggers a note-on event with optional velocity (0–127). */
-  noteOn(note: number, velocity?: number): void;
+engine.noteOn('C4', 0.85);         // note string + velocity 0–1
+engine.noteOff('C4');
+engine.allNotesOff();
 
-  /** Triggers a note-off event for the given MIDI note. */
-  noteOff(note: number): void;
+engine.setControl('bloom', 0.65);  // ecological controls, 0–1
+engine.setTempo(96);
 
-  /** Sets a sound parameter by dot-notation path. */
-  setParameter(path: string, value: number | string | boolean): void;
-}
+engine.stopSpecies();
+engine.dispose();
+
+await engine.enableMidi();         // Web MIDI when available
 ```
+
+Ecological controls: `growth`, `bloom`, `roots`, `mold`, `bacteria`.
+
+Species: `seed`, `flowers`, `mold`, `bacteria`.
 
 ### Adapter Boundary
 
@@ -41,66 +47,54 @@ interface SoundAdapter {
   init(): Promise<void>;
   start(): Promise<void>;
   stop(): Promise<void>;
-  loadPreset(presetId: string): Promise<void>;
+  loadPreset(presetId: string): Promise<PresetLoadResult | undefined>;
   noteOn(note: number, velocity?: number): void;
   noteOff(note: number): void;
   setParameter(path: string, value: number | string | boolean): void;
   destroy(): Promise<void>;
 }
+
+interface PresetLoadResult {
+  controls: ControlValues;
+}
 ```
 
-Implementation: `src/audio/soundAdapter.ts`
+### Runtime → Engine parameter paths
 
-### Expected Parameter Paths (examples)
-
-| Path            | Type   | Description                     |
-| --------------- | ------ | ------------------------------- |
-| `osc.frequency` | number | Oscillator frequency in Hz      |
-| `filter.cutoff` | number | Filter cutoff frequency         |
-| `env.attack`    | number | Envelope attack time in seconds |
-| `master.volume` | number | Master output gain (0–1)        |
-
-Exact parameter schemas will be defined by the Sound Engine package.
+| Runtime path | Adapter maps to | Type |
+| ------------ | --------------- | ---- |
+| `controls.bloom` | `setControl('bloom', value)` | number 0–1 |
+| `controls.mold` | `setControl('mold', value)` | number 0–1 |
+| `controls.density` | `setControl('growth', value)` | number 0–1 |
+| `controls.chaos` | `setControl('bacteria', value)` | number 0–1 |
+| `controls.brightness` | `setControl('roots', value)` | number 0–1 |
+| `tempo` | `setTempo(bpm)` | number 20–300 |
 
 ### Lifecycle
 
 ```text
 init() → start() → [noteOn/noteOff/setParameter]* → stop() → destroy()
                 ↕
-           loadPreset() (any time after init)
+           loadPreset() (any time after init; returns default controls)
+```
+
+### Error handling
+
+Adapters catch engine errors and emit via the runtime event bus:
+
+```typescript
+eventBus.emit('error', { source: 'soundAdapter:loadPreset', error });
 ```
 
 ---
 
 ## ASCII Engine
 
-External package: **Plantasia ASCII Engine** (future dependency)
+External package: **Plantasia ASCII Engine** (future dependency — Phase 6)
+
+Implementation: `src/visuals/mockAsciiAdapter.ts` (mock until Phase 6)
 
 ### Interface
-
-```typescript
-interface AsciiEngineContract {
-  /** Starts the render loop. */
-  start(): Promise<void>;
-
-  /** Stops the render loop. */
-  stop(): Promise<void>;
-
-  /** Renders a single frame to the output surface. */
-  render(): void;
-
-  /** Resizes the render surface to the given dimensions. */
-  resize(width: number, height: number): void;
-
-  /** Loads a visual preset by identifier. */
-  loadPreset(presetId: string): Promise<void>;
-
-  /** Sets a visual parameter by dot-notation path. */
-  setParameter(path: string, value: number | string | boolean): void;
-}
-```
-
-### Adapter Boundary
 
 ```typescript
 interface AsciiAdapter {
@@ -115,63 +109,29 @@ interface AsciiAdapter {
 }
 ```
 
-Implementation: `src/visuals/asciiAdapter.ts`
-
-### Expected Parameter Paths (examples)
-
-| Path              | Type   | Description                    |
-| ----------------- | ------ | ------------------------------ |
-| `grid.columns`    | number | ASCII grid column count        |
-| `grid.rows`       | number | ASCII grid row count           |
-| `color.palette`   | string | Named color palette identifier |
-| `animation.speed` | number | Animation speed multiplier     |
-
-Exact parameter schemas will be defined by the ASCII Engine package.
-
-### Lifecycle
-
-```text
-init() → start() → [render/setParameter]* → stop() → destroy()
-                ↕                    ↕
-           loadPreset()          resize() (on viewport change)
-```
-
 ---
 
 ## Shared Conventions
 
 ### Preset IDs
 
-Both engines use the same preset identifier strings. A preset world in Plantasonic maps one ID to coordinated sound and visual configurations.
+Plantasonic UI demo ids (`seed-world`, `mold-world`) map to engine bundled presets via `PLANTASONIC_PRESET_MAP` in `src/audio/controlMapping.ts`.
 
 ### Parameter Values
 
 | Type      | Usage                                             |
 | --------- | ------------------------------------------------- |
-| `number`  | Continuous parameters (frequency, speed, opacity) |
-| `string`  | Discrete selections (palette name, wave shape)    |
-| `boolean` | Toggle states (enabled, muted)                    |
-
-### Error Handling
-
-Adapters should catch engine errors and re-emit them via the runtime event bus:
-
-```typescript
-eventBus.emit('error', { source: 'soundAdapter', error });
-```
-
-The runtime transitions to `error` phase and surfaces the failure to the UI.
+| `number`  | Continuous parameters (controls, tempo)           |
+| `string`  | Discrete selections (future)                      |
+| `boolean` | Toggle states (future)                            |
 
 ---
 
 ## Integration Checklist
 
-When connecting real engines:
-
-- [ ] Install engine packages as npm dependencies
-- [ ] Replace `NullSoundAdapter` with concrete implementation
-- [ ] Replace `NullAsciiAdapter` with concrete implementation
-- [ ] Verify all interface methods delegate correctly
-- [ ] Test preset loading synchronizes both engines
-- [ ] Test parameter changes propagate to both engines
-- [ ] Document engine-specific parameter schemas here
+- [x] Install `plantasia-sound-engine@1.0.0-beta.1`
+- [x] Implement `PlantasiaSoundAdapter`
+- [x] Wire `createRuntime()` to real sound adapter
+- [x] Document engine parameter mapping
+- [ ] Replace `MockAsciiAdapter` with real ASCII engine (Phase 6)
+- [ ] Test preset loading synchronizes both engines (Phase 6+)

@@ -1,0 +1,68 @@
+/**
+ * Mock ASCII adapter — logs state changes, no rendering.
+ * Used during Phase 3 before ASCII Visual Engine integration.
+ */
+
+import type { AsciiAdapter } from './asciiAdapter.ts';
+import type { ParameterPath, ParameterValue, PresetId } from '@/runtime/types.ts';
+import type { RuntimeState } from '@/runtime/types.ts';
+
+const LOG_PREFIX = '[MockAscii]';
+
+export class MockAsciiAdapter implements AsciiAdapter {
+  private lastState: Readonly<RuntimeState> | null = null;
+
+  async init(): Promise<void> {
+    await Promise.resolve();
+    console.info(`${LOG_PREFIX} init`);
+  }
+
+  async start(): Promise<void> {
+    await Promise.resolve();
+    console.info(`${LOG_PREFIX} start`);
+  }
+
+  async stop(): Promise<void> {
+    await Promise.resolve();
+    console.info(`${LOG_PREFIX} stop`);
+  }
+
+  render(): void {
+    /* Render loop owned by engine — no-op for mock */
+  }
+
+  resize(width: number, height: number): void {
+    console.info(`${LOG_PREFIX} resize`, { width, height });
+  }
+
+  async loadPreset(presetId: PresetId): Promise<void> {
+    await Promise.resolve();
+    console.info(`${LOG_PREFIX} loadPreset`, presetId);
+  }
+
+  setParameter(path: ParameterPath, value: ParameterValue): void {
+    console.info(`${LOG_PREFIX} setParameter`, { path, value });
+  }
+
+  applyState(state: Readonly<RuntimeState>): void {
+    this.lastState = state;
+    console.info(`${LOG_PREFIX} applyState`, {
+      isPlaying: state.isPlaying,
+      preset: state.preset,
+      activeNotes: state.activeNotes.length,
+      tempo: state.tempo,
+      performance: state.performance,
+    });
+  }
+
+  /** Returns the last state snapshot received (for testing). */
+  getLastState(): Readonly<RuntimeState> | null {
+    return this.lastState;
+  }
+
+  async destroy(): Promise<void> {
+    await Promise.resolve();
+    console.info(`${LOG_PREFIX} destroy`);
+    this.lastState = null;
+  }
+}

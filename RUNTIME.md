@@ -1,236 +1,242 @@
 # Runtime Specification
 
-Describes the Plantasonic runtime layer: shared state, subscriptions, control flow, and lifecycle. **No implementation details for engines** — this document covers orchestration only.
+The Plantasonic runtime is the **integration layer** between UI, engine adapters, and future input modules (MIDI, keyboard, touch). Phase 5 integrates the real sound engine; ASCII remains mock until Phase 6.
 
-Implementation files: `src/runtime/`
+Implementation: `src/runtime/`
+
+---
+
+## Public API
+
+```typescript
+import { createRuntime } from '@/runtime';
+
+const runtime = createRuntime();
+await runtime.init({ container: stageElement });
+
+runtime.start();
+runtime.stop();
+runtime.setPreset('seed-world');
+runtime.noteOn(60, 0.8);
+runtime.noteOff(60);
+runtime.setControl('bloom', 0.65);
+runtime.setTempo(96);
+
+const state = runtime.getState();
+const unsubscribe = runtime.subscribe((state) => {
+  // React to state changes
+});
+```
+
+| Method                    | Description                                       |
+| ------------------------- | ------------------------------------------------- |
+| `init(config)`            | Initialize adapters, optional initial preset      |
+| `start()`                 | Start both adapters, set `isPlaying: true`        |
+| `stop()`                  | Stop both adapters, clear active notes            |
+| `setPreset(id)`           | Load preset into both adapters                    |
+| `noteOn(note, velocity?)` | Trigger note, update active notes and performance |
+| `noteOff(note)`           | Release note                                      |
+| `setControl(name, value)` | Set performance control (0–1)                     |
+| `setTempo(bpm)`           | Set tempo (20–300)                                |
+| `getState()`              | Return immutable state snapshot                   |
+| `subscribe(callback)`     | Register state change listener                    |
+| `resize(w, h)`            | Forward viewport size to ASCII adapter            |
+| `destroy()`               | Tear down adapters and reset state                |
+
+Factory: `createRuntime()` in `src/runtime/createRuntime.ts` — defaults to `PlantasiaSoundAdapter` and `MockAsciiAdapter`.
 
 ---
 
 ## Shared State
 
-The runtime maintains a single `AppState` object managed by `StateStore`:
-
 ```typescript
-interface AppState {
-  transport: TransportState; // Phase, playback, active preset
-  viewport: ViewportState; // Dimensions, DPR, fullscreen
-  performance: PerformanceState; // Frame rate, latency, reduced motion
-  parameters: Record<string, ParameterValue>; // Engine parameter snapshot
+interface RuntimeState {
+  isPlaying: boolean;
+  preset: string | null;
+  activeNotes: number[];
+  tempo: number;
+  controls: {
+    bloom: number;
+    mold: number;
+    density: number;
+    chaos: number;
+    brightness: number;
+  };
+  performance: {
+    lastNote: number | null;
+    velocity: number;
+    energy: number;
+    activity: number;
+  };
 }
 ```
 
-### Transport State
+Default values: `tempo: 72`, controls at `0.5` (chaos `0.25`), `isPlaying: false`, empty `activeNotes`.
 
-| Field            | Type             | Description                          |
-| ---------------- | ---------------- | ------------------------------------ |
-| `phase`          | `RuntimePhase`   | Current lifecycle phase              |
-| `isPlaying`      | `boolean`        | Whether engines are actively running |
-| `activePresetId` | `string \| null` | Currently loaded preset              |
+---
 
-### Viewport State
+## Integration Rule
 
-| Field              | Type      | Description                |
-| ------------------ | --------- | -------------------------- |
-| `width`            | `number`  | Stage width in CSS pixels  |
-| `height`           | `number`  | Stage height in CSS pixels |
-| `devicePixelRatio` | `number`  | Screen pixel density       |
-| `isFullscreen`     | `boolean` | Fullscreen mode active     |
+**UI components must only call runtime methods.**
 
-### Performance State
+```text
+UI (ControlDock, Stage, Sidebar)
+  ↓  runtime.start(), setControl(), etc.
+Runtime
+  ↓  adapter methods + applyState()
+PlantasiaSoundAdapter (Phase 5) / MockAsciiAdapter (Phase 6 pending)
+  ↓  plantasia-sound-engine / future ASCII Visual Engine
+```
 
-| Field              | Type      | Description                       |
-| ------------------ | --------- | --------------------------------- |
-| `targetFrameRate`  | `number`  | Desired render frame rate         |
-| `audioLatencyHint` | `string`  | Web Audio latency preference      |
-| `reducedMotion`    | `boolean` | Respects `prefers-reduced-motion` |
+UI must **not** import or call `src/audio/` or `src/visuals/` adapters directly.
+
+Binding: `src/ui/bindRuntime.ts` → `bindRuntimeToShell(runtime, shell)`
+
+---
+
+## Sound Adapter (Phase 5)
+
+| Adapter               | File                        | Behavior                                      |
+| --------------------- | --------------------------- | --------------------------------------------- |
+| PlantasiaSoundAdapter | `src/audio/soundAdapter.ts` | Wraps `createPlantasiaEngine()` — live audio  |
+| MockAsciiAdapter      | `src/visuals/mockAsciiAdapter.ts` | Logs only until Phase 6               |
+
+Sound adapter implements `applyState()` with deduplicated control/tempo sync. Console diagnostics use `[PlantasiaSound]` prefix.
+
+See [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md).
+
+---
+
+## Mock ASCII Adapter (Phase 3 — until Phase 6)
+
+| Adapter          | File                              | Behavior                                     |
+| ---------------- | --------------------------------- | -------------------------------------------- |
+| MockAsciiAdapter | `src/visuals/mockAsciiAdapter.ts` | Logs all calls; `applyState()` logs snapshot |
+
+Console output uses `[MockAscii]` prefix.
 
 ---
 
 ## Subscriptions
 
-UI components subscribe to state changes without polling:
-
 ```typescript
-const unsubscribe = stateStore.subscribe((state, patch) => {
-  // React to state changes
-  updateStatusDisplay(state.transport.phase);
+const unsubscribe = runtime.subscribe((state) => {
+  updateDock(state.isPlaying, state.preset);
+  updateNoteCount(state.activeNotes.length);
 });
 
-// Cleanup on unmount
+// Cleanup
 unsubscribe();
 ```
 
-### Subscription Rules
+Rules:
 
-1. Subscribers receive immutable state snapshots.
-2. The `patch` argument contains only the fields that changed.
-3. Subscribers must not mutate the state object.
-4. Unsubscribe during component teardown to prevent leaks.
+1. Subscribers receive immutable snapshots via `structuredClone`
+2. Initial callback fires immediately on subscribe
+3. Unsubscribe during teardown to prevent leaks
+
+---
+
+## Event Bus
+
+Typed events in `src/runtime/events.ts` fire alongside state updates:
+
+| Event                            | When                    |
+| -------------------------------- | ----------------------- |
+| `runtime:start`                  | Playback started        |
+| `runtime:stop`                   | Playback stopped        |
+| `preset:load` / `preset:loaded`  | Preset change           |
+| `control:set`                    | Control value changed   |
+| `tempo:set`                      | Tempo changed           |
+| `input:noteOn` / `input:noteOff` | Note input              |
+| `viewport:resize`                | Stage resized           |
+| `error`                          | Adapter or init failure |
 
 ---
 
 ## Control Flow
 
-### Layer Communication
+### Start / Stop
 
 ```text
-UI ──(calls)──→ Runtime ──(delegates)──→ Adapters ──→ Engines
-                  │
-                  ├── stateStore.patch()
-                  └── eventBus.emit()
-                        │
-                        └── UI subscribers react
+User clicks Play
+  → runtime.start()
+    → soundAdapter.start()
+    → asciiAdapter.start()
+    → state.isPlaying = true
+    → applyState() on both mocks
+    → subscribers notified
 ```
 
-UI never calls adapters or engines directly. All coordination flows through the runtime.
-
-### Event Bus
-
-Typed events decouple layers:
-
-| Event                 | Payload              | Trigger               |
-| --------------------- | -------------------- | --------------------- |
-| `runtime:init`        | `{ container }`      | Initialization begins |
-| `runtime:ready`       | `undefined`          | Adapters initialized  |
-| `runtime:start`       | `undefined`          | Playback started      |
-| `runtime:stop`        | `undefined`          | Playback stopped      |
-| `runtime:destroy`     | `undefined`          | Teardown complete     |
-| `preset:load`         | `{ presetId }`       | Preset load requested |
-| `preset:loaded`       | `{ presetId }`       | Preset load complete  |
-| `parameter:set`       | `{ path, value }`    | Parameter changed     |
-| `viewport:resize`     | `{ width, height }`  | Stage resized         |
-| `viewport:fullscreen` | `{ isFullscreen }`   | Fullscreen toggled    |
-| `input:noteOn`        | `{ note, velocity }` | MIDI/key press        |
-| `input:noteOff`       | `{ note }`           | MIDI/key release      |
-| `error`               | `{ source, error }`  | Error in any layer    |
-
----
-
-## Preset Flow
+### Control Change
 
 ```text
-1. User selects preset in UI
-2. UI calls runtime.loadPreset(id)
-3. Runtime emits 'preset:load'
-4. Runtime calls both adapters in parallel:
-     soundAdapter.loadPreset(id)
-     asciiAdapter.loadPreset(id)
-5. On success:
-     stateStore.patch({ activePresetId: id })
-     eventBus.emit('preset:loaded')
-6. On failure:
-     eventBus.emit('error')
-     stateStore.patch({ phase: 'error' })
+User moves bloom slider
+  → runtime.setControl('bloom', 0.7)
+    → state.controls.bloom = 0.7
+    → soundAdapter.setParameter('controls.bloom', 0.7)
+    → asciiAdapter.setParameter('controls.bloom', 0.7)
+    → applyState()
+    → subscribers notified
 ```
 
-Presets are loaded atomically — both engines receive the same preset ID simultaneously.
-
----
-
-## Input Flow
-
-Input modules (MIDI, keyboard, touch) translate hardware events into runtime events:
+### Note Input
 
 ```text
-Hardware Input
-  ↓
-Input Module (midi/keyboard/touch)
-  ↓
-eventBus.emit('input:noteOn', { note, velocity })
-  ↓
-Runtime handler
-  ↓
-soundAdapter.noteOn(note, velocity)
+User presses key A
+  → runtime.noteOn(60, 0.75)
+    → activeNotes updated
+    → performance metrics updated
+    → soundAdapter.noteOn(60, 0.75)
+    → applyState()
 ```
-
-Visual input (touch gestures on stage) will route through the ASCII adapter via `setParameter` in future phases.
-
----
-
-## Lifecycle
-
-### Phases
-
-```text
-idle → initializing → ready → running → stopped
-                              ↓
-                            error
-```
-
-| Phase          | Description                                 |
-| -------------- | ------------------------------------------- |
-| `idle`         | Application loaded, runtime not initialized |
-| `initializing` | Adapters initializing                       |
-| `ready`        | Initialized, awaiting user action           |
-| `running`      | Engines actively producing output           |
-| `stopped`      | Engines stopped, ready to restart           |
-| `error`        | Unrecoverable failure occurred              |
-
-### Lifecycle Methods
-
-```text
-createPlantasonicApp()
-  └── runtime.init({ container })
-        ├── soundAdapter.init()
-        ├── asciiAdapter.init()
-        └── phase: ready
-
-runtime.start()
-  ├── soundAdapter.start()
-  ├── asciiAdapter.start()
-  └── phase: running
-
-runtime.stop()
-  ├── soundAdapter.stop()
-  ├── asciiAdapter.stop()
-  └── phase: stopped
-
-runtime.destroy()
-  ├── soundAdapter.destroy()
-  ├── asciiAdapter.destroy()
-  ├── eventBus.clear()
-  └── phase: idle
-```
-
----
-
-## Event Model
-
-### Synchronous Dispatch
-
-Events are dispatched synchronously. Handlers execute in registration order within the same tick.
-
-### Error Propagation
-
-Errors in adapter methods are caught by the runtime and emitted as `error` events. The runtime does not throw to callers — it returns result objects or emits events.
-
-### Future: Async Events
-
-Long-running operations (preset loading, engine initialization) use `async/await` at the runtime method level. Completion is signaled via state patches and events, not promise returns to UI.
-
----
-
-## Render Loop (Future)
-
-When the ASCII engine is integrated, the runtime will coordinate the render loop:
-
-```text
-requestAnimationFrame loop
-  ├── asciiAdapter.render()
-  ├── Check performance.targetFrameRate
-  └── Schedule next frame
-```
-
-The render loop will be owned by the runtime, not the adapter or UI.
 
 ---
 
 ## File Reference
 
-| File         | Responsibility                |
-| ------------ | ----------------------------- |
-| `runtime.ts` | Orchestrator class            |
-| `state.ts`   | StateStore with subscriptions |
-| `events.ts`  | Typed EventBus                |
-| `types.ts`   | Shared type definitions       |
-| `index.ts`   | Barrel exports                |
+| File               | Responsibility                     |
+| ------------------ | ---------------------------------- |
+| `createRuntime.ts` | Factory with mock adapter defaults |
+| `runtime.ts`       | Orchestrator — public API          |
+| `state.ts`         | StateStore with subscribe/commit   |
+| `events.ts`        | Typed EventBus                     |
+| `types.ts`         | RuntimeState, ControlName, etc.    |
+| `index.ts`         | Barrel exports                     |
+
+---
+
+## Verification (Phase 3)
+
+Automated check for runtime API, centralized state, mock adapter sync, and subscribers:
+
+```bash
+npm run verify:runtime
+```
+
+Manual smoke test:
+
+```bash
+npm run dev
+```
+
+1. Click **Play** — `[PlantasiaSound] audio context initialized`; generative audio starts
+2. Select a preset — engine loads species; dock reflects preset and control defaults
+3. Move sidebar sliders — sound changes in real time; dock updates values
+4. Press **A–G** while playing — notes trigger through engine; active note count updates
+
+---
+
+## Ready for ASCII Engine Integration (Phase 6)
+
+Replace mock ASCII adapter in `createRuntime()`:
+
+```typescript
+createRuntime({
+  asciiAdapter: new AsciiVisualAdapter(),
+});
+```
+
+Sound adapter is production-ready — no further runtime API changes required.
+
+The runtime API and state shape remain stable — only adapter implementations change.

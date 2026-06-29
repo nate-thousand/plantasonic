@@ -3,20 +3,24 @@
  */
 
 export { Runtime } from './runtime.ts';
-export type { RuntimeDependencies } from './runtime.ts';
-export { stateStore, StateStore } from './state.ts';
+export type { RuntimeDependencies, StateSyncAdapter } from './runtime.ts';
+export { createRuntime } from './createRuntime.ts';
+export type { CreateRuntimeOptions } from './createRuntime.ts';
+export { StateStore } from './state.ts';
 export { eventBus, EventBus } from './events.ts';
+export { createInitialRuntimeState, DEFAULT_CONTROLS } from './types.ts';
 export type {
-  AppState,
-  AppStatePatch,
+  ControlName,
+  ControlValues,
   ParameterPath,
   ParameterValue,
+  PerformanceMetrics,
   PresetId,
   RuntimeConfig,
   RuntimeInitResult,
   RuntimePhase,
-  StateSubscriber,
-  TransportState,
+  RuntimeState,
+  RuntimeStatePatch,
+  RuntimeSubscriber,
   Unsubscribe,
-  ViewportState,
 } from './types.ts';

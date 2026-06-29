@@ -19,6 +19,8 @@ export interface RuntimeEventMap {
   'viewport:fullscreen': { isFullscreen: boolean };
   'input:noteOn': { note: number; velocity: number };
   'input:noteOff': { note: number };
+  'control:set': { name: string; value: number };
+  'tempo:set': { tempo: number };
   error: { source: string; error: Error };
 }
 
