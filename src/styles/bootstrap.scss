@@ -1,6 +1,6 @@
 /**
  * Bootstrap 5.0.2 configuration.
- * Design tokens imported via src/design-system/ before this file loads.
+ * Theme variables from plantasonic-design-system/scss/bootstrap-theme.scss.
  */
 
 @import 'bootstrap/scss/functions';
@@ -34,4 +34,4 @@
 @import 'bootstrap/scss/utilities';
 @import 'bootstrap/scss/utilities/api';
 
-@import '../design-system/bootstrap/components';
+@import './bootstrap-components';

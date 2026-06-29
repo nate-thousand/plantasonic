@@ -1,53 +1,35 @@
 # Typography Rules
 
-Reference summary from `ai-native-design-system/foundation/typography/TYPE_SCALE.md`.
+**Canonical source:** [plantasonic-design-system/docs/TYPOGRAPHY.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/TYPOGRAPHY.md)
 
 ---
 
-## Font Families
+## Font families
 
-| Role | Token                  | Stack                              |
-| ---- | ---------------------- | ---------------------------------- |
-| Sans | `$ds-font-family-sans` | Inter, system-ui, Segoe UI, Roboto |
-| Mono | `$ds-font-family-mono` | JetBrains Mono, Cascadia Code      |
-
-Font files will be added to `public/fonts/` when Inter and JetBrains Mono are self-hosted.
+| Role | CSS variable |
+| ---- | ------------ |
+| UI chrome | `--ds-font-family-sans` (Inter) |
+| Status / values | `--ds-font-family-mono` (JetBrains Mono) |
 
 ---
 
-## Type Scale
+## Type scale (common roles)
 
-| Role         | Size     | Use in Plantasonic           |
-| ------------ | -------- | ---------------------------- |
-| H2           | 1.5rem   | Stage title                  |
-| Body         | 1rem     | Dock labels, menu content    |
-| Body small   | 0.875rem | Placeholder text             |
-| Caption      | 0.75rem  | Status labels, dock sections |
-| Mono caption | 0.75rem  | Runtime status in nav        |
-
----
-
-## Rules (from design system)
-
-- One H1 per page (not used in instrument shell — stage uses H2)
-- Minimum 16px body on all viewports
-- Prefer spacing over smaller headings for separation
-- Use `.text-muted` for secondary text via Bootstrap utilities
+| Role | CSS variable | Size |
+| ---- | ------------ | ---- |
+| H2 | `--ds-font-size-h2` | 1.5rem |
+| Body | `--ds-font-size-body` | 1rem |
+| Body small | `--ds-font-size-body-sm` | 0.875rem |
+| Caption | `--ds-font-size-caption` | 0.75rem |
 
 ---
 
-## Bootstrap Mapping
+## Bootstrap mapping
 
-| Role            | Bootstrap                        |
-| --------------- | -------------------------------- |
+| Role | Bootstrap |
+| ---- | --------- |
 | Muted secondary | `.text-secondary`, `.text-muted` |
-| Mono            | `.font-monospace`                |
-| Small           | `.small`, `.btn-sm`              |
+| Mono | `.font-monospace` |
+| Small | `.small`, `.btn-sm` |
 
----
-
-## Implementation
-
-`src/design-system/tokens/_typography.scss`
-
-**Canonical source:** `ai-native-design-system/foundation/typography/`
+Use `var(--ds-font-*)` in custom styles. Do not hardcode font sizes.

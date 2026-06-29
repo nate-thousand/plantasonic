@@ -27,8 +27,13 @@ async function main(): Promise<void> {
 
   assert(subscriberCalls === 1, 'Subscriber should receive initial state');
 
-  const init = await runtime.init({ container: {} as HTMLElement });
+  const init = await runtime.init({
+    container: {} as HTMLElement,
+    initialPresetId: 'seed-world',
+  });
   assert(init.success, 'Runtime init should succeed');
+  assert(runtime.getState().preset === 'seed-world', 'init should load initial preset');
+  assert(runtime.getState().controls.bloom === 0.65, 'seed-world should apply default controls');
 
   await runtime.start();
   assert(runtime.getState().isPlaying, 'start() should set isPlaying');
@@ -53,6 +58,15 @@ async function main(): Promise<void> {
   await runtime.setPreset('mold-world');
   assert(runtime.getState().preset === 'mold-world', 'mold-world should load');
   assert(runtime.getState().tempo === 84, 'mold-world should apply world tempo');
+
+  const startsBeforePresetSwitch = sound.getStartCallCount();
+  await runtime.setPreset('flow-world');
+  assert(runtime.getState().isPlaying, 'setPreset while playing should keep isPlaying');
+  assert(runtime.getState().preset === 'flow-world', 'flow-world should load while playing');
+  assert(
+    sound.getStartCallCount() > startsBeforePresetSwitch,
+    'setPreset while playing should restart sound adapter generative playback',
+  );
 
   runtime.setControl('bloom', 0.75);
   assert(runtime.getState().controls.bloom === 0.75, 'setControl should update controls');

@@ -2,6 +2,8 @@
  * Core runtime type definitions for Plantasonic.
  */
 
+import { DEFAULT_TEMPO } from './performanceParams.ts';
+
 /** Unique identifier for a preset world. */
 export type PresetId = string;
 
@@ -81,7 +83,7 @@ export function createInitialRuntimeState(): RuntimeState {
     isPlaying: false,
     preset: null,
     activeNotes: [],
-    tempo: 72,
+    tempo: DEFAULT_TEMPO,
     controls: { ...DEFAULT_CONTROLS },
     performance: {
       lastNote: null,

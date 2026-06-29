@@ -18,7 +18,12 @@ import type {
 import type { RuntimeState } from '@/runtime/types.ts';
 import { eventBus } from '@/runtime/events.ts';
 import { DEFAULT_CONTROLS } from '@/runtime/types.ts';
-import { ecologyToRuntimeControls, runtimeControlToEcological } from './controlMapping.ts';
+import {
+  ecologyToRuntimeControls,
+  runtimeControlToEcological,
+  runtimeControlsToEcology,
+} from './controlMapping.ts';
+import { clampControlValue, clampTempo, parseControlParameterPath } from './audioParams.ts';
 import { midiToNoteName } from './midiNote.ts';
 
 const LOG_PREFIX = '[PlantasiaSound]';
@@ -72,7 +77,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
   private audioReady = false;
   private controlCache = createControlCache();
   private tempoCache = 72;
-  private lastPresetId: PresetId | null = null;
 
   init(): Promise<void> {
     try {
@@ -100,6 +104,7 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
         console.info(`${LOG_PREFIX} default species loaded`);
       }
       await engine.start();
+      this.syncEcologyToEngine(engine);
     } catch (error) {
       this.reportError('start', error);
       throw error;
@@ -126,7 +131,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
       await engine.loadPreset(presetId);
       const controls = ecologyToRuntimeControls(resolution.ecology);
       this.controlCache = createControlCache(controls);
-      this.lastPresetId = presetId;
       console.info(`${LOG_PREFIX} loadPreset`, {
         presetId,
         species: resolution.speciesId,
@@ -169,12 +173,9 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
         return;
       }
 
-      const controlMatch = /^controls\.(\w+)$/.exec(path);
-      if (controlMatch?.[1]) {
-        const name = controlMatch[1] as ControlName;
-        if (name in DEFAULT_CONTROLS) {
-          this.applyControl(engine, name, value);
-        }
+      const controlMatch = parseControlParameterPath(path);
+      if (controlMatch) {
+        this.applyControl(engine, controlMatch, value);
       }
     } catch (error) {
       this.reportError('setParameter', error, { path, value });
@@ -195,10 +196,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
     if (this.tempoCache !== state.tempo) {
       this.applyTempo(engine, state.tempo);
     }
-
-    if (state.preset !== this.lastPresetId && state.preset !== null) {
-      this.lastPresetId = state.preset;
-    }
   }
 
   destroy(): Promise<void> {
@@ -212,7 +209,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
       this.engine = null;
       this.audioReady = false;
       this.controlCache = createControlCache();
-      this.lastPresetId = null;
     }
     return Promise.resolve();
   }
@@ -224,15 +220,20 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
     return this.engine;
   }
 
+  private syncEcologyToEngine(engine: PlantasiaEngine): void {
+    engine.applyEcology(runtimeControlsToEcology(this.controlCache));
+    this.applyTempo(engine, this.tempoCache);
+  }
+
   private applyControl(engine: PlantasiaEngine, name: ControlName, value: number): void {
-    const clamped = Math.min(1, Math.max(0, value));
+    const clamped = clampControlValue(value);
     if (this.controlCache[name] === clamped) return;
     engine.setControl(runtimeControlToEcological(name), clamped);
     this.controlCache[name] = clamped;
   }
 
   private applyTempo(engine: PlantasiaEngine, bpm: number): void {
-    const tempo = Math.min(300, Math.max(20, Math.round(bpm)));
+    const tempo = clampTempo(bpm);
     if (this.tempoCache === tempo) return;
     engine.setTempo(tempo);
     this.tempoCache = tempo;

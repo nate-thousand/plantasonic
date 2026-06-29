@@ -155,16 +155,23 @@ UI imports `@/presets/registry` for **display metadata only**. All load behavior
 
 ## Registered worlds
 
-| World id | Name | Sound preset | Visual preset | Tempo |
-| -------- | ---- | ------------ | ------------- | ----- |
-| `seed-world` | Seed World | `plantasonic` | `glyphOrganicBloom` | 72 |
-| `mold-world` | Mold World | `vine` | `glyphCorruptedBroadcast` | 84 |
+| World id | Name | Sound preset | Species | Visual preset | Tempo |
+| -------- | ---- | ------------ | ------- | ------------- | ----- |
+| `seed-world` | Seed World | `plantasonic` | seed | `glyphOrganicBloom` | 72 |
+| `mold-world` | Mold World | `vine` | mold | `glyphCorruptedBroadcast` | 84 |
+| `flow-world` | Flow World | `bloom` | flowers | `glyphFlowField` | 96 |
+| `zen-world` | Zen World | `mycelium` | bacteria | `glyphMinimalZen` | 60 |
+| `nebula-world` | Nebula World | `mutation` | mold | `glyphParticleNebula` | 108 |
+
+Engine presets not mapped to a world (`seed`, `root`, `fern`, `coral`, `crystal`, `juno-flowers`) remain loadable via the engine API for future worlds or debugging.
 
 ---
 
 ## Verification
 
 ```bash
+npm run verify:presets   # engine + world preset validation
+npm run verify:sound     # real adapter preset loading
 npm run verify:runtime   # world load, defaults merge, unknown preset rejection
 npm run dev              # select worlds from dock preset dropdown
 ```

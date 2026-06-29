@@ -21,6 +21,11 @@ jobs:
           ref: v0.1.0
           path: ascii-visual-engine
 
+      - uses: actions/checkout@v4
+        with:
+          repository: nate-thousand/plantasonic-design-system
+          path: plantasonic-design-system
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -42,10 +47,6 @@ jobs:
       - name: Format check
         working-directory: plantasonic
         run: npm run format:check
-
-      - name: Verify Figma tokens
-        working-directory: plantasonic
-        run: npm run tokens:verify
 
       - name: Verify integration
         working-directory: plantasonic

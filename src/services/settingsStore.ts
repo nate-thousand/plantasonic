@@ -3,6 +3,7 @@
  */
 
 import type { MidiLearnMapping, VelocityCurve } from '@/interaction/types.ts';
+import { createDefaultMidiLearnMappings } from '@/midi/midiMapping.ts';
 
 const STORAGE_KEY = 'plantasonic.interaction.settings';
 
@@ -29,7 +30,7 @@ export const DEFAULT_INTERACTION_SETTINGS: InteractionSettings = {
   defaultOctave: 4,
   midiChannel: 0,
   keyboardVelocity: 0.75,
-  midiLearnMappings: [],
+  midiLearnMappings: createDefaultMidiLearnMappings(),
 };
 
 type SettingsListener = (settings: Readonly<InteractionSettings>) => void;
@@ -65,7 +66,7 @@ export class SettingsStore {
   }
 
   resetMidiLearnMappings(): void {
-    this.setMidiLearnMappings([]);
+    this.setMidiLearnMappings(createDefaultMidiLearnMappings());
   }
 
   subscribe(listener: SettingsListener): () => void {
@@ -85,15 +86,17 @@ export class SettingsStore {
   private load(): InteractionSettings {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return { ...DEFAULT_INTERACTION_SETTINGS, midiLearnMappings: [] };
+      if (!raw) return { ...DEFAULT_INTERACTION_SETTINGS };
       const parsed = JSON.parse(raw) as Partial<InteractionSettings>;
+      const mappings = parsed.midiLearnMappings;
       return {
         ...DEFAULT_INTERACTION_SETTINGS,
         ...parsed,
-        midiLearnMappings: parsed.midiLearnMappings ?? [],
+        midiLearnMappings:
+          mappings && mappings.length > 0 ? mappings : createDefaultMidiLearnMappings(),
       };
     } catch {
-      return { ...DEFAULT_INTERACTION_SETTINGS, midiLearnMappings: [] };
+      return { ...DEFAULT_INTERACTION_SETTINGS };
     }
   }
 

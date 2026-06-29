@@ -1,38 +1,30 @@
 # Color Rules
 
-Reference summary from `ai-native-design-system/foundation/colors/COLORS.md`.
+**Canonical source:** [plantasonic-design-system/docs/COLORS.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/COLORS.md)
 
-Plantasonic implements a **dark instrument theme** — surface values differ from the design system defaults but use the same semantic token names.
-
----
-
-## Semantic Roles
-
-| Role               | Token                       | Plantasonic value |
-| ------------------ | --------------------------- | ----------------- |
-| Primary action     | `$ds-color-primary`         | `#2d6a4f`         |
-| Secondary action   | `$ds-color-secondary`       | `#40916c`         |
-| Accent / highlight | `$ds-color-accent`          | `#95d5b2`         |
-| Page surface       | `$ds-color-surface-default` | `#0d1117`         |
-| Raised panel       | `$ds-color-surface-raised`  | `#161b22`         |
-| Stage / sunken     | `$ds-color-surface-sunken`  | `#010409`         |
-| Overlay            | `$ds-color-surface-overlay` | `#21262d`         |
-| Primary text       | `$ds-color-text-primary`    | `#e6edf3`         |
-| Secondary text     | `$ds-color-text-secondary`  | `#8b949e`         |
-| Muted text         | `$ds-color-text-muted`      | `#6e7681`         |
+This app does not define color tokens locally. All values come from the package's `css/variables.css`.
 
 ---
 
-## Rules (from design system)
+## Quick reference (dark theme)
 
-- Meet WCAG AA contrast for text on surfaces
-- Do not use status colors for non-status decoration
-- Status colors map to Bootstrap `$success`, `$warning`, `$danger`, `$info`
+| Role | CSS variable | Value |
+| ---- | ------------ | ----- |
+| Primary action | `--ds-color-primary` | `#00FF57` |
+| Accent / highlight | `--ds-color-accent` | `#4DFF89` |
+| App surface | `--ds-color-surface-app` | `#070F0A` |
+| Stage | `--ds-color-surface-stage` | `#000000` |
+| Raised panel | `--ds-color-surface-raised` | `#1A1A1A` |
+| Primary text | `--ds-color-text-primary` | `#E5E5E5` |
+| Secondary text | `--ds-color-text-secondary` | `#999999` |
+| Accent text | `--ds-color-text-accent` | `#4DFF89` |
+
+Do not use brand green for body text. Green is for actions, links, and emphasis only.
 
 ---
 
-## Implementation
+## In this app
 
-`src/design-system/tokens/_colors.scss`
+Use `var(--ds-color-*)` via `_ps-aliases.scss` or directly in component styles. Never hardcode hex values.
 
-**Canonical source:** `ai-native-design-system/foundation/colors/COLORS.md`
+Update tokens in `../plantasonic-design-system/tokens/`, then run `npm run build` in that repo.

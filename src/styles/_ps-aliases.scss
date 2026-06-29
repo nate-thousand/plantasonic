@@ -1,0 +1,88 @@
+/**
+ * SCSS aliases → plantasonic-design-system CSS custom properties.
+ * No token values defined here — only var() references to css/variables.css.
+ */
+
+// Semantic color aliases (legacy ps-* naming in shell styles)
+$ps-surface-base: var(--ds-color-surface-default);
+$ps-surface-app: var(--ds-color-surface-app);
+$ps-surface-nav: var(--ds-color-surface-nav);
+$ps-surface-dock: var(--ds-color-surface-dock);
+$ps-surface-input: var(--ds-color-surface-input);
+$ps-surface-card: var(--ds-color-surface-card);
+$ps-surface-raised: var(--ds-color-surface-raised);
+$ps-surface-overlay: var(--ds-color-surface-overlay);
+$ps-surface-stage: var(--ds-color-surface-stage);
+$ps-text-primary: var(--ds-color-text-primary);
+$ps-text-secondary: var(--ds-color-text-secondary);
+$ps-text-muted: var(--ds-color-text-muted);
+$ps-text-accent: var(--ds-color-text-accent);
+$ps-border-subtle: var(--ds-color-border-subtle);
+$ps-border-strong: var(--ds-color-border-strong);
+$ps-border-interactive: var(--ds-color-border-interactive);
+$ps-border-default: var(--ds-color-border-default);
+$ps-stage-border: var(--ps-stage-border);
+$ps-preset-card-border: var(--ps-preset-card-border);
+$ps-preset-card-active-border: var(--ps-preset-card-active-border);
+$ps-preset-card-radius: var(--ds-radius-default);
+$ps-overlay-radius: var(--ps-overlay-radius);
+$ps-shadow-sidebar: var(--ps-shadow-sidebar);
+$ps-shadow-panel: var(--ps-shadow-panel);
+
+// Product layout
+$ps-nav-height: var(--ps-nav-height);
+$ps-dock-height: var(--ps-dock-height);
+$ps-sidebar-width: var(--ps-sidebar-width);
+$ps-touch-target: var(--ps-touch-target);
+$ps-performance-chrome-opacity: var(--ps-performance-chrome-opacity);
+
+// Typography
+$ps-font-family-sans: var(--ds-font-family-sans);
+$ps-font-family-mono: var(--ds-font-family-mono);
+$ps-font-weight-body: var(--ds-font-weight-body);
+$ps-font-weight-label: var(--ds-font-weight-label);
+$ps-font-weight-mono: var(--ds-font-weight-mono);
+
+// Spacing scale
+$ps-space-xs: var(--ds-space-1);
+$ps-space-sm: var(--ds-space-2);
+$ps-space-md: var(--ds-space-3);
+$ps-space-lg: var(--ds-space-4);
+$ps-space-xl: var(--ds-space-5);
+
+// ds-* tokens referenced directly in globals
+$ds-color-accent: var(--ds-color-accent);
+$ds-color-error: var(--ds-color-error);
+$ds-color-overlay-glass: var(--ds-color-overlay-glass);
+$ds-color-overlay-backdrop: var(--ds-color-overlay-backdrop);
+$ds-color-overlay-scrim-strong: var(--ds-color-overlay-scrim-strong);
+$ds-color-overlay-scrim: var(--ds-color-overlay-scrim);
+$ds-color-overlay-focus-outline: var(--ds-color-overlay-focus-outline);
+$ds-color-error-surface: var(--ds-color-error-surface);
+$ds-color-error-border: var(--ds-color-error-border);
+$ds-color-favorite: var(--ds-color-favorite);
+$ds-color-border-strong: var(--ds-color-border-strong);
+$ds-color-text-inverse: var(--ds-color-text-inverse);
+$ds-font-size-label: var(--ds-font-size-label);
+$ds-font-size-h3: var(--ds-font-size-h3);
+$ds-font-size-h4: var(--ds-font-size-h4);
+$ds-font-size-body: var(--ds-font-size-body);
+$ds-font-size-body-sm: var(--ds-font-size-body-sm);
+$ds-font-size-caption: var(--ds-font-size-caption);
+$ds-font-size-overline: var(--ds-font-size-overline);
+$ds-line-height-tight: var(--ds-line-height-tight);
+$ds-line-height-body: var(--ds-line-height-body);
+$ds-line-height-relaxed: var(--ds-line-height-relaxed);
+$ds-letter-spacing-label: var(--ds-letter-spacing-label);
+$ds-letter-spacing-overline: var(--ds-letter-spacing-overline);
+$ds-letter-spacing-caption: var(--ds-letter-spacing-caption);
+$ds-headings-font-weight: var(--ds-font-weight-headings);
+$ds-shadow-stage-inset: var(--ds-shadow-stage-inset);
+$ds-shadow-glow-accent: var(--ds-shadow-glow-accent);
+$ds-transition-fast: var(--ds-transition-fast);
+$ds-ease-out: var(--ds-ease-out);
+$ds-radius-sm: var(--ds-radius-sm);
+$ds-radius-default: var(--ds-radius-default);
+$ds-space-1: var(--ds-space-1);
+$ds-space-2: var(--ds-space-2);
+$ds-space-12: var(--ds-space-12, 0.75rem);

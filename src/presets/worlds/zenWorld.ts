@@ -10,7 +10,7 @@ export const zenWorld: PresetWorld = {
   description: 'Minimal stillness — sparse glyphs breathing in quiet space.',
   tags: ['minimal', 'calm'],
   version: '1.0.0',
-  sound: { presetId: 'plantasonic' },
+  sound: { presetId: 'mycelium' },
   visual: {
     presetId: 'glyphMinimalZen',
     glyphFamilies: ['minimal', 'geometric'],

@@ -9,6 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **MVP bug check (2026-06-28):** Full system audit — audio, visual, design system, interaction, cross-system sync
+- `npm run verify:design-system` — validates centralized design system package integration
+- Theme switcher (Settings → Accessibility) — dark/light via `data-theme` and `AppSettingsStore`
+- `bootstrapDocumentTheme()` — applies persisted theme before first paint
+- [docs/BUG_CHECK_REPORT.md](./docs/BUG_CHECK_REPORT.md) — audit findings, fixes, known limitations
+
+### Fixed
+
+- **Build:** `GenerativePreferences` import in `generativeValidation.ts` (use `ConstructorParameters<typeof Generator>[0]`)
+- **Transport:** Idempotent `runtime.start()` / `runtime.stop()` — prevents duplicate engine starts on play/stop spam
+- **Preset load:** Visual adapter rethrows `loadPreset` errors; runtime propagates failure after sound load
+- **Fullscreen:** Nav status no longer stuck on `Ready` after exiting fullscreen while playing
+- **Generative validation:** Event kind check corrected (empty catalog vs impossible `< 7` guard)
+
+### Known Limitations
+
+- Pause transport not implemented (play/stop only)
+- Save preset and randomize controls not in UI
+- MIDI/keyboard notes require engine to be playing (`noteOn` when running)
+- Six additional engine species presets exist but are not exposed as worlds in the preset browser
+
+### Added
+
+- **Navigation consolidation:** Single sidebar panel (Controls | Setup); worlds only from dock; removed duplicate Presets/Settings top-nav buttons
+- **Responsive navigation:** Mobile drawer + backdrop dismiss; icon-only top nav; dock two-row layout; world overlay bottom sheet with safe areas
+- **Creative vision:** [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md) — authoritative constraints for audio/visual engine scope and feature decision filter
+
+### Performance (2026-06-28)
+
+- **Performance audit:** [docs/PERFORMANCE_REPORT.md](./docs/PERFORMANCE_REPORT.md)
+- `npm run verify:performance` — latency path invariants
+- RAF coalescing for UI sliders; MIDI/keyboard immediate
+- Parallel preset load; duplicate visual note dispatch removed
+- Resize coalescing; GSAP transition cancel on rapid preset switch
+
+### Added
+
 - **Figma token integration:** W3C Design Tokens JSON export, sync script, generated SCSS, CI verification
 - **Figma MCP pull:** paste a Figma link in Cursor — no manual JSON export (`tokens:pull`, `tokens:import`)
 - **Figma `.tokens.json` import:** drop native Figma export files (`tokens:import-json`) — Theme 1 green palette applied

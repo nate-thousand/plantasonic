@@ -77,17 +77,20 @@ Created by `createInteractionManager(runtime)` in `src/interaction/index.ts`.
 - Note on/off with velocity curve
 - CC messages → learned mappings
 - Sustain pedal (CC 64)
-- Pitch bend → chaos control
+- Pitch bend → brightness control (expression; engine v2 has no per-note pitch bend yet)
+- Mod wheel (CC 1) → bloom via default MPK Mini mapping
 - Channel filter from settings
+- Hot-plug emits `midi:connection` for nav status updates
 - Akai MPK Mini and generic controllers supported
 
 ### Keyboard (`src/keyboard/keyboardModule.ts`)
 
 - Chromatic QWERTY map (A–J row + sharps W/E/T/Y/U)
-- Octave shift: `Z` down, `X` up
-- Sustain: spacebar
-- Transport: Enter = start, Escape = stop
-- Configurable via settings (enable, default octave, velocity)
+- Octave shift: `Z` down, `X` up (persists to settings, shown in dock)
+- Sustain: spacebar (matches MIDI CC 64 semantics)
+- Transport: Enter = start, Escape = stop (ignored while overlay open)
+- Releases all notes on window blur or when keyboard input is disabled
+- Configurable via settings (enable, default octave, velocity curve)
 
 ### Mouse (`src/mouse/mouseModule.ts`)
 
@@ -167,6 +170,8 @@ Future-ready for: Webcam tracking, OSC, gamepads, Bluetooth controllers, custom 
 
 ```bash
 npm run verify:interaction
+npm run verify:midi
+npm run verify:keyboard
 npm run verify:runtime
 npm run build
 npm run dev

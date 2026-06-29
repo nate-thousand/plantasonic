@@ -2,6 +2,8 @@
 
 Plantasonic Phase 9 application experience — principles, navigation, responsive behavior, motion, accessibility, performance mode, and settings.
 
+See [CREATIVE_VISION.md](./CREATIVE_VISION.md) for interaction philosophy and accessibility intent.
+
 ---
 
 ## UX Principles
@@ -16,24 +18,30 @@ Plantasonic Phase 9 application experience — principles, navigation, responsiv
 
 ## Navigation Model
 
+One mental model: **play at the bottom, tune at the side, explore worlds from the dock.**
+
 ```text
 Top Nav
-├── Menu toggle → Sidebar (performance controls + quick input settings)
-├── Presets → Preset browser overlay
-├── Settings → Settings overlay
-├── Perform → Performance mode toggle
-└── Fullscreen → Native fullscreen on app root
+├── Panel toggle → Sidebar (Controls | Setup tabs)
+├── Status (Playing / MIDI)
+├── Perform → Performance mode
+└── Fullscreen
+
+Sidebar (single panel)
+├── Controls — performance sliders + MIDI Learn per control
+└── Setup — Input, Motion, Display (formerly separate Settings overlay + sidebar Input)
 
 Bottom Dock
 ├── Transport (Play / Stop)
-├── Preset (opens browser)
+├── World → preset browser overlay (only entry point for worlds)
 ├── Tempo slider
 └── Notes count
 
-Overlays (modal)
-├── Preset browser — cards, search, tags, favorites, recents
-└── Settings — Input, Motion, Accessibility tabs
+Overlay
+└── World browser — cards, search, tags, favorites, recents
 ```
+
+Removed duplicate entry points: top-nav Presets/Settings buttons, sidebar Input toggles, and “All Settings…” link.
 
 ### Keyboard Shortcuts
 
@@ -42,9 +50,9 @@ Overlays (modal)
 | `A`–`J` | Performance notes (via keyboard module) |
 | `Space` | Play / stop |
 | `P` | Toggle performance mode |
-| `/` | Open preset browser |
-| `?` | Open settings |
-| `Escape` | Close overlay |
+| `/` | Open world browser |
+| `?` | Open sidebar → Setup tab |
+| `Escape` | Close overlay or sidebar (browser default) |
 
 ---
 
@@ -67,17 +75,24 @@ Performance mode (`ps-app--performance`) hides navigation and sidebar, minimizes
 
 Breakpoints align with Bootstrap tiers:
 
-| Viewport | Behavior |
-| -------- | -------- |
-| Desktop (≥992px) | Full nav labels, sidebar pushes stage when open |
-| Tablet (768–991px) | Dock wraps; notes section hidden |
-| Mobile (<768px) | Sidebar overlays stage; dock stacks transport row |
-| Landscape (short) | Reduced dock height; overlay panel fits viewport |
+| Viewport | Navigation | Panel | Dock | Overlays |
+| -------- | ---------- | ----- | ---- | -------- |
+| Desktop (≥768px) | Full labels + status | Sidebar **pushes** stage when open | Full layout | Centered modal |
+| Tablet (768–991px) | Icon + text on nav buttons | Push layout | Notes hidden | Centered modal |
+| Mobile (<768px) | Icon-only Perform / Fullscreen | **Drawer** over stage + backdrop tap to close | Two-row: transport, then world + tempo | Bottom sheet + safe areas |
+| Landscape (short) | Compact nav/dock | Narrower drawer | Reduced height | 95vh max |
+
+Mobile panel behavior:
+
+- Tap **hamburger** → drawer with Controls | Setup tabs
+- Tap **backdrop** or **Escape** → close drawer (unless world overlay is open)
+- Opening **world browser** or **Perform** closes the drawer automatically
+- `?` shortcut opens drawer on Setup tab
 
 Requirements enforced in `globals.scss`:
 
 - No horizontal scrolling on shell
-- Safe-area insets on nav and dock (`env(safe-area-inset-*)`)
+- Safe-area insets on nav, dock, and overlays (`env(safe-area-inset-*)`)
 - Minimum 2.75rem touch targets on interactive controls
 - High-DPI canvas via runtime resize (not CSS scaling)
 
@@ -121,15 +136,9 @@ Two persistence stores:
 | Store | Key | Scope |
 | ----- | --- | ----- |
 | `SettingsStore` | `plantasonic.interaction.settings` | MIDI, keyboard, touch, octave, velocity, MIDI Learn |
-| `AppSettingsStore` | `plantasonic.app.settings` | Motion, reduced motion, favorites, recent presets |
+| `AppSettingsStore` | `plantasonic.app.settings` | Motion, reduced motion, theme, favorites, recent presets |
 
-Settings overlay tabs:
-
-- **Input** — device toggles, octave, keyboard velocity, MIDI Learn reset
-- **Motion** — enable/disable GSAP animations
-- **Accessibility** — reduce motion override, keyboard shortcut reference
-
-Sidebar input toggles sync bidirectionally with the settings overlay.
+All setup UI lives in the **sidebar Setup tab** (Input · Motion · Display sub-tabs). There is no separate Settings overlay.
 
 ---
 

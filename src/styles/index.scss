@@ -1,7 +1,8 @@
 /**
- * Application styles entry — imports design system tokens then Bootstrap.
+ * Application styles entry — plantasonic-design-system + Bootstrap + shell.
  */
 
-@import '../design-system/index.scss';
+@import 'plantasonic-design-system/scss/bootstrap-theme.scss';
+@import './ps-aliases';
 @import './bootstrap.scss';
 @import './globals.scss';

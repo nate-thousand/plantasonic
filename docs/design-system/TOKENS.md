@@ -1,93 +1,63 @@
 # Token Catalog
 
-Semantic design tokens imported into Plantasonic from the AI Native Design System, synced via Figma Variables.
+**Canonical source:** [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system)
 
-**Implementation:** `src/design-system/tokens/`  
-**Figma export:** `src/design-system/tokens/figma/tokens.json`  
-**Sync:** `npm run tokens:sync`
+This app does not maintain local token JSON or generated SCSS. All tokens live in the design system package.
 
 ---
 
-## Figma Pipeline
+## Package structure
 
 ```text
-Figma Variables → tokens.json → generated/_tokens.scss → category partials → Bootstrap
+plantasonic-design-system/tokens/
+  foundation.tokens.json     Primitives — palette, spacing, typography, motion
+  theme.dark.tokens.json     Dark semantic + product tokens (default)
+  theme.light.tokens.json    Light semantic overrides
+        ↓ npm run build
+  css/variables.css            Runtime --ds-* / --ps-* CSS custom properties
+  scss/bootstrap-theme.scss    Bootstrap 5.0.2 SCSS overrides
+  scss/css-theme-bridge.scss   Runtime Bootstrap ↔ CSS variable bridge
 ```
 
-See [figma/README.md](../../src/design-system/tokens/figma/README.md) for export and naming rules.
+---
+
+## CSS variable prefixes
+
+| Prefix | Usage |
+| ------ | ----- |
+| `--ds-*` | Design system semantic tokens |
+| `--ps-*` | Product layout tokens (nav height, dock, touch targets) |
+
+Full architecture: [TOKEN_ARCHITECTURE.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/TOKEN_ARCHITECTURE.md)
 
 ---
 
-## Source Map
+## Common tokens
 
-| Token file         | Figma collection | SCSS variables                                      |
-| ------------------ | ---------------- | --------------------------------------------------- |
-| `figma/tokens.json`| All collections  | Primitive `$ds-*` / `$ps-*` values (generated SCSS) |
-| `_colors.scss`     | Color            | `$ps-*` surface/text aliases                        |
-| `_typography.scss` | Typography       | `$ps-font-*` aliases                                |
-| `_spacing.scss`    | Spacing          | `$ps-space-*` aliases                               |
-| `_layout.scss`     | Product          | Shell dimensions (in generated SCSS)                |
-| `_shadows.scss`    | Elevation        | Documented in generated SCSS                          |
-| `_motion.scss`     | Motion           | Documented in generated SCSS                          |
-| `_css-vars.scss`   | —                | `--ds-*` / `--ps-*` runtime bridge                    |
-
----
-
-## Color Tokens
-
-| Semantic token              | Figma variable          | Bootstrap variable | Purpose           |
-| --------------------------- | ----------------------- | ------------------ | ----------------- |
-| `$ds-color-primary`         | `color-primary`         | `$primary`         | Primary actions   |
-| `$ds-color-secondary`       | `color-secondary`       | `$secondary`       | Secondary actions |
-| `$ds-color-surface-default` | `color-surface-default` | `$body-bg`         | Page background   |
-| `$ds-color-text-primary`    | `color-text-primary`    | `$body-color`      | Body text         |
-| `$ds-color-border-default`  | `color-border-default`  | `$border-color`    | Dividers          |
-| `$ds-color-text-link`       | `color-text-link`       | `$link-color`      | Links             |
-
-Full color rules: [COLORS.md](./COLORS.md)
+| Need | CSS variable |
+| ---- | ------------ |
+| App background | `--ds-color-surface-app` |
+| Stage background | `--ds-color-surface-stage` |
+| Panel background | `--ds-color-surface-raised` |
+| Primary text | `--ds-color-text-primary` |
+| Secondary text | `--ds-color-text-secondary` |
+| Primary action | `--ds-color-primary` |
+| Focus ring | `--ds-shadow-focus` |
+| Default spacing | `--ds-space-3` |
+| Nav height | `--ps-nav-height` |
+| Dock height | `--ps-dock-height` |
+| Touch target | `--ps-touch-target` |
 
 ---
 
-## Typography Tokens
+## Updating tokens
 
-| Token                   | Figma variable   | Value                | Role               |
-| ----------------------- | ---------------- | -------------------- | ------------------ |
-| `$ds-font-family-sans`  | `font-family-sans` | Inter, system stack  | UI text            |
-| `$ds-font-family-mono`  | `font-family-mono` | JetBrains Mono stack | Status, code       |
-| `$ds-font-size-base`    | `font-size-base`   | 1rem                 | Body               |
-| `$ds-font-size-caption` | `font-size-caption`| 0.75rem              | Labels, timestamps |
+```bash
+cd ../plantasonic-design-system
+# Edit tokens/*.tokens.json
+npm run build
+cd ../plantasonic
+npm run build
+```
 
-Full typography rules: [TYPOGRAPHY.md](./TYPOGRAPHY.md)
-
----
-
-## Spacing Tokens
-
-| Token         | Figma variable | Value   | Design system name |
-| ------------- | -------------- | ------- | ------------------ |
-| `$ds-space-1` | `space-1`        | 0.25rem | space/1            |
-| `$ds-space-2` | `space-2`        | 0.5rem  | space/2            |
-| `$ds-space-3` | `space-3`        | 1rem    | space/3            |
-| `$ds-space-4` | `space-4`        | 1.5rem  | space/4            |
-| `$ds-space-5` | `space-5`        | 2rem    | space/5            |
-
-Full spacing rules: [SPACING.md](./SPACING.md)
-
----
-
-## Product Layout Tokens
-
-Plantasonic-specific — `product` collection in Figma:
-
-| Token               | Figma variable       | Value  | Usage                   |
-| ------------------- | -------------------- | ------ | ----------------------- |
-| `$ps-nav-height`    | `product-nav-height` | 3.5rem | Top navigation          |
-| `$ps-dock-height`   | `product-dock-height`| 4.5rem | Control dock            |
-| `$ps-sidebar-width` | `product-sidebar-width` | 18rem | Collapsible menu     |
-| `$ps-surface-stage` | (alias)              | `$ds-color-surface-sunken` | Visual stage |
-
----
-
-## External Source
-
-Canonical definitions: `ai-native-design-system/foundation/` and `ai-native-design-system/figma/variables/`
+See [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md) for full integration workflow.

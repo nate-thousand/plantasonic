@@ -5,7 +5,7 @@
 import type { Runtime } from '@/runtime/runtime.ts';
 import type { ControlName, PresetId, RuntimeState, Unsubscribe } from '@/runtime/types.ts';
 import type { RuntimeSubscriber } from '@/runtime/types.ts';
-import type { SettingsStore } from '@/services/settingsStore.ts';
+import type { SettingsStore, InteractionSettings } from '@/services/settingsStore.ts';
 import { InputRouter } from './inputRouter.ts';
 import type {
   DeviceConnectionState,
@@ -114,6 +114,12 @@ export class InteractionManager {
     this.settings.update(patch);
   }
 
+  onSettingsChange(callback: () => void): Unsubscribe {
+    return this.settings.subscribe(() => {
+      callback();
+    });
+  }
+
   /** Starts MIDI Learn for a runtime target. */
   startMidiLearn(target: MidiLearnTarget): void {
     this.learnTarget = target;
@@ -173,6 +179,9 @@ export class InteractionManager {
         this.settings.subscribe(() => {
           listener();
         }),
+      updateSettings: (patch) => {
+        this.settings.update(patch as Partial<InteractionSettings>);
+      },
     };
   }
 }

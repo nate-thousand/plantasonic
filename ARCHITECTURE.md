@@ -4,6 +4,8 @@
 
 Plantasonic is a browser-based generative audiovisual instrument. It unifies two independent engines — sound and ASCII visuals — into a single performable experience without duplicating engine logic inside the application repository.
 
+**Creative north star:** [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md) — all engine and feature decisions must pass the decision filter defined there.
+
 Plantasonic is the **product app**. It references four external repositories for engines, visual language, and engineering workflow. See [docs/REPO_BOUNDARIES.md](./docs/REPO_BOUNDARIES.md).
 
 ## Responsibilities

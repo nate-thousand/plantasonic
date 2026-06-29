@@ -185,11 +185,13 @@ async function main(): Promise<void> {
     );
   }
 
-  // --- Control sliders ---
+  // --- Control sliders (UI updates coalesce to animation frame) ---
   setSlider(document.querySelector('#ps-control-bloom'), '80');
+  await new Promise((r) => setTimeout(r, 50));
   assert(interaction.getState().controls.bloom === 0.8, 'Bloom slider should update state');
 
   setSlider(document.querySelector('#ps-tempo-slider'), '96');
+  await new Promise((r) => setTimeout(r, 50));
   assert(interaction.getState().tempo === 96, 'Tempo slider should update state');
 
   // --- Keyboard notes (via interaction layer) ---

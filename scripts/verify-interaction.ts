@@ -5,6 +5,7 @@
 import { createInteractionManager } from '../src/interaction/index.ts';
 import { InputRouter } from '../src/interaction/inputRouter.ts';
 import { createRuntime } from '../src/runtime/createRuntime.ts';
+import { createDefaultMidiLearnMappings } from '../src/midi/midiMapping.ts';
 import { SettingsStore, DEFAULT_INTERACTION_SETTINGS } from '../src/services/settingsStore.ts';
 import { MockAsciiAdapter } from './mocks/mockAsciiAdapter.ts';
 import { MockSoundAdapter } from './mocks/mockSoundAdapter.ts';
@@ -20,6 +21,11 @@ async function main(): Promise<void> {
   const interaction = createInteractionManager(runtime);
 
   assert(interaction.getSettings().midiEnabled === DEFAULT_INTERACTION_SETTINGS.midiEnabled);
+  assert(
+    DEFAULT_INTERACTION_SETTINGS.midiLearnMappings.length === 5,
+    'Default settings should seed MPK Mini CC mappings',
+  );
+  assert(createDefaultMidiLearnMappings().length === 5, 'createDefaultMidiLearnMappings returns 5 entries');
   assert(typeof interaction.start === 'function', 'InteractionManager exposes start()');
 
   await runtime.init({ container: {} as HTMLElement });
@@ -50,13 +56,16 @@ async function main(): Promise<void> {
   store.update({ defaultOctave: 5 });
   assert(store.getSettings().defaultOctave === 5, 'Settings update in memory');
 
+  store.resetMidiLearnMappings();
+  assert(store.getSettings().midiLearnMappings.length === 5, 'Reset restores default MIDI mappings');
+
   store.addMidiLearnMapping({
     id: '1:7:control',
     cc: 7,
     channel: 1,
     target: { type: 'control', name: 'bloom' },
   });
-  assert(store.getSettings().midiLearnMappings.length === 1, 'MIDI Learn mappings stored');
+  assert(store.getSettings().midiLearnMappings.length === 6, 'MIDI Learn mappings stored');
 
   interaction.startMidiLearn({ type: 'control', name: 'mold' });
   const mapping = interaction.completeMidiLearn(12, 1);

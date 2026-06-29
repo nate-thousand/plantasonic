@@ -21,7 +21,7 @@ export function createStage(_options: StageOptions = {}): HTMLElement {
       <span class="ps-stage__label">Visual Stage</span>
       <h2 class="ps-stage__title" id="ps-stage-title">ASCII Engine Placeholder</h2>
       <p id="ps-stage-status">Awaiting preset</p>
-      <p class="ps-stage__hint small">Use keyboard (A–J), MIDI, or touch — all input routes through runtime</p>
+      <p class="ps-stage__hint small">Keyboard: A–J notes · Z/X octave · Space sustain · Enter/Esc transport</p>
     </div>
   `;
 

@@ -3,6 +3,7 @@
  * UI and runtime never import the engine package directly except through this module.
  */
 
+import gsap from 'gsap';
 import { AsciiEngine } from 'ascii-visual-engine';
 import type { PresetVisualConfig } from '@/presets/types.ts';
 import type { ParameterPath, ParameterValue, PresetId } from '@/runtime/types.ts';
@@ -40,6 +41,7 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
   private lastActiveNotes = new Set<number>();
   private lastVelocity = 0.75;
   private lastState: RuntimeState = createInitialRuntimeState();
+  private loadGeneration = 0;
   private readonly profiler = new VisualProfiler();
 
   init(mount?: HTMLElement): Promise<void> {
@@ -115,16 +117,23 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
   resize(width: number, height: number): void {
     const engine = this.engine;
     if (!engine || width <= 0 || height <= 0) return;
+    const w = Math.max(1, Math.round(width));
+    const h = Math.max(1, Math.round(height));
     try {
-      this.applyResponsiveQuality(engine, width, height);
-      engine.resize(width, height);
+      this.applyResponsiveQuality(engine, w, h);
+      engine.resize(w, h);
     } catch (error) {
-      this.reportError('resize', error, { width, height });
+      this.reportError('resize', error, { width: w, height: h });
     }
   }
 
   async loadPreset(enginePresetId: PresetId, visual?: PresetVisualConfig): Promise<void> {
     const engine = this.requireEngine();
+    const generation = ++this.loadGeneration;
+
+    if (this.canvas && typeof gsap.killTweensOf === 'function') {
+      gsap.killTweensOf(this.canvas);
+    }
 
     const apply = (): void => {
       engine.setPresetById(enginePresetId);
@@ -132,6 +141,14 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
         applyVisualIdentity(engine, visual);
       }
       this.engineControlCache = {};
+      if (this.canvas) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.applyResponsiveQuality(
+          engine,
+          Math.max(1, Math.round(rect.width)),
+          Math.max(1, Math.round(rect.height)),
+        );
+      }
       console.info(`${LOG_PREFIX} loadPreset`, { enginePresetId, motion: visual?.motion });
     };
 
@@ -145,8 +162,11 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
       } else {
         apply();
       }
+      if (generation !== this.loadGeneration) return;
     } catch (error) {
+      if (generation !== this.loadGeneration) return;
       this.reportError('loadPreset', error, { enginePresetId });
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 
@@ -209,17 +229,23 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
     this.syncEngineControls(engine, changed);
 
     const currentNotes = new Set(state.activeNotes);
-    for (const note of state.activeNotes) {
-      if (!this.lastActiveNotes.has(note)) {
-        this.triggerNoteOn(engine, note, state.performance.velocity);
+    const notesChanged =
+      currentNotes.size !== this.lastActiveNotes.size ||
+      [...currentNotes].some((note) => !this.lastActiveNotes.has(note));
+
+    if (notesChanged) {
+      for (const note of state.activeNotes) {
+        if (!this.lastActiveNotes.has(note)) {
+          this.triggerNoteOn(engine, note, state.performance.velocity);
+        }
       }
-    }
-    for (const note of this.lastActiveNotes) {
-      if (!currentNotes.has(note)) {
-        engine.noteOff({ id: note });
+      for (const note of this.lastActiveNotes) {
+        if (!currentNotes.has(note)) {
+          engine.noteOff({ id: note });
+        }
       }
+      this.lastActiveNotes = currentNotes;
     }
-    this.lastActiveNotes = currentNotes;
 
     const duration = performance.now() - start;
     this.profiler.recordApplyState(duration, Object.keys(changed).length);

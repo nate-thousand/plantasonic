@@ -11,6 +11,7 @@ const LOG_PREFIX = '[MockAscii]';
 
 export class MockAsciiAdapter implements AsciiAdapter {
   private lastState: Readonly<RuntimeState> | null = null;
+  private setParameterCalls = 0;
 
   async init(_mount?: HTMLElement): Promise<void> {
     await Promise.resolve();
@@ -41,7 +42,12 @@ export class MockAsciiAdapter implements AsciiAdapter {
   }
 
   setParameter(path: ParameterPath, value: ParameterValue): void {
+    this.setParameterCalls += 1;
     console.info(`${LOG_PREFIX} setParameter`, { path, value });
+  }
+
+  getSetParameterCallCount(): number {
+    return this.setParameterCalls;
   }
 
   applyState(state: Readonly<RuntimeState>): void {

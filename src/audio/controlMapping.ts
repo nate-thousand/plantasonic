@@ -28,3 +28,14 @@ export function ecologyToRuntimeControls(ecology: EcologyControlState): ControlV
     brightness: ecology.roots,
   };
 }
+
+/** Converts runtime control values to engine ecology state (0–1). */
+export function runtimeControlsToEcology(controls: ControlValues): EcologyControlState {
+  return {
+    bloom: controls.bloom,
+    mold: controls.mold,
+    growth: controls.density,
+    bacteria: controls.chaos,
+    roots: controls.brightness,
+  };
+}

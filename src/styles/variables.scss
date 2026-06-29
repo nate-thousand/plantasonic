@@ -1,6 +1,6 @@
 /**
  * Legacy variables entry point.
- * Token definitions moved to src/design-system/ — import here for backward compatibility.
+ * @deprecated Import src/styles/index.scss instead.
  */
 
-@import '../design-system/index.scss';
+@import './index.scss';

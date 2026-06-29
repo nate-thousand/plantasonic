@@ -4,6 +4,8 @@ Milestone-based development plan with completion tracking. Percentages reflect c
 
 Plantasonic is both a **production audiovisual application** and the **reference implementation** for a repeatable AI-assisted product development system. This roadmap mirrors that platform architecture and preserves delivery history as phases evolve.
 
+**Creative north star:** All future work must align with [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md). Plantasonic is a living ecosystem instrument — not a DAW, not a feature checklist.
+
 ---
 
 ## Development Flow
@@ -369,6 +371,47 @@ Each preset world defines:
 - [x] Visual performance profiler and diff-based control sync
 - [x] Documentation: `docs/VISUAL_LANGUAGE.md`
 - [x] Verification: `npm run verify:visual`
+
+---
+
+## MVP Stabilization — Full System Bug Check ✅
+
+**Status:** Complete  
+**Completion: 100%**  
+**Date:** 2026-06-28
+
+**Objective:** Verify the app is fully usable as an MVP demo — no redesign, no feature removal.
+
+### Delivered
+
+- [x] Full system audit — audio, visual, design system, interaction, cross-system sync
+- [x] Bug report: [docs/BUG_CHECK_REPORT.md](./docs/BUG_CHECK_REPORT.md)
+- [x] Build fix — `generativeValidation.ts` type import
+- [x] Transport idempotency — play/stop spam safe
+- [x] Visual preset load error propagation
+- [x] Fullscreen nav status sync
+- [x] Theme switcher (dark/light) in Settings
+- [x] `npm run verify:design-system`
+- [x] All `verify:*` scripts passing; production build passing
+
+### Known MVP Gaps (documented, not blocking demo)
+
+- [ ] Pause transport
+- [ ] Save / randomize preset UI
+- [ ] Additional engine species exposed as preset worlds
+
+### Performance & Latency ✅
+
+**Date:** 2026-06-28
+
+- [x] Full performance audit — [docs/PERFORMANCE_REPORT.md](./docs/PERFORMANCE_REPORT.md)
+- [x] Audio note path — sound before state commit
+- [x] Visual note deduplication — single `applyState` path
+- [x] UI control RAF coalescing (`ControlCoalescer`)
+- [x] Parallel sound + visual preset load
+- [x] Resize coalescing; GSAP cancel on rapid preset switch
+- [x] Shallow state snapshots for subscribers
+- [x] `npm run verify:performance`
 
 ---
 

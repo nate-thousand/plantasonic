@@ -10,7 +10,7 @@ export const flowWorld: PresetWorld = {
   description: 'Wind currents — spiraling flow fields with rhythmic plantasia tones.',
   tags: ['fluid', 'rhythm'],
   version: '1.0.0',
-  sound: { presetId: 'plantasonic' },
+  sound: { presetId: 'bloom' },
   visual: {
     presetId: 'glyphFlowField',
     glyphFamilies: ['water', 'atmospheric'],

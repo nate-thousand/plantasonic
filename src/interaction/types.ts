@@ -37,6 +37,7 @@ export interface InteractionModuleContext {
   dispatch: (event: InteractionEvent) => void;
   getSettings: () => Readonly<InteractionSettingsSnapshot>;
   onSettingsChange: (listener: () => void) => () => void;
+  updateSettings: (patch: Partial<InteractionSettingsSnapshot>) => void;
 }
 
 /** Contract for pluggable input modules. */

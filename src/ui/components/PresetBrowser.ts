@@ -8,8 +8,7 @@ import type { PresetWorldMeta } from '@/presets/types.ts';
 import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import type { AppSettingsStore } from '@/services/appSettingsStore.ts';
 import { getOverlayPanel } from './OverlayHost.ts';
-import { animateControlFeedback, animatePresetChange } from '../motion/motionController.ts';
-import { getStageElement } from './Stage.ts';
+import { animateControlFeedback } from '../motion/motionController.ts';
 
 function collectTags(worlds: readonly PresetWorldMeta[]): string[] {
   const tags = new Set<string>();
@@ -130,8 +129,6 @@ export function openPresetBrowser(
   const loadPreset = (id: string, card?: HTMLElement): void => {
     interaction.setPreset(id, 'ui');
     appSettings.recordRecentPreset(id);
-    const stage = getStageElement();
-    if (stage) animatePresetChange(stage);
     if (card) animateControlFeedback(card);
     onClose();
   };

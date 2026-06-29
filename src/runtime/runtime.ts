@@ -14,6 +14,7 @@ import type {
   Unsubscribe,
 } from './types.ts';
 import type { RuntimeSubscriber } from './types.ts';
+import { clampControlValue, clampTempo } from './performanceParams.ts';
 import { StateStore } from './state.ts';
 import { eventBus } from './events.ts';
 
@@ -78,6 +79,7 @@ export class Runtime {
   /** Starts both engine adapters. */
   async start(): Promise<void> {
     this.ensureInitialized();
+    if (this.store.getMutableState().isPlaying) return;
     await Promise.all([this.soundAdapter.start(), this.asciiAdapter.start()]);
     this.store.commit({ isPlaying: true });
     eventBus.emit('runtime:start', undefined);
@@ -87,6 +89,7 @@ export class Runtime {
   /** Stops both engine adapters. */
   async stop(): Promise<void> {
     this.ensureInitialized();
+    if (!this.store.getMutableState().isPlaying) return;
     await Promise.all([this.soundAdapter.stop(), this.asciiAdapter.stop()]);
     this.store.commit({
       isPlaying: false,
@@ -108,16 +111,27 @@ export class Runtime {
       throw err;
     }
 
+    const wasPlaying = this.store.getMutableState().isPlaying;
+
     eventBus.emit('preset:load', { presetId: world.id });
 
-    const soundResult = await this.soundAdapter.loadPreset(world.sound.presetId);
+    const soundPromise = this.soundAdapter.loadPreset(world.sound.presetId);
+    const visualPromise = this.asciiAdapter.loadPreset(world.visual.presetId, world.visual);
+
+    const soundResult = await soundPromise;
     if (soundResult === undefined) {
       const err = new Error(`Failed to load sound preset for world: ${world.id}`);
       eventBus.emit('error', { source: 'runtime:setPreset', error: err });
       throw err;
     }
 
-    await this.asciiAdapter.loadPreset(world.visual.presetId, world.visual);
+    try {
+      await visualPromise;
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      eventBus.emit('error', { source: 'runtime:setPreset', error: err });
+      throw err;
+    }
 
     const { controls, tempo } = mergeWorldDefaults(world, soundResult.controls);
 
@@ -128,12 +142,18 @@ export class Runtime {
     });
 
     eventBus.emit('preset:loaded', { presetId: world.id });
+
+    if (wasPlaying) {
+      await Promise.all([this.soundAdapter.start(), this.asciiAdapter.start()]);
+    }
     this.syncAdapters();
   }
 
   /** Triggers note-on through both adapters. */
   noteOn(note: number, velocity = 0.8): void {
     this.ensureInitialized();
+    this.soundAdapter.noteOn(note, velocity);
+
     const state = this.store.getMutableState();
     if (!state.activeNotes.includes(note)) {
       state.activeNotes.push(note);
@@ -149,8 +169,6 @@ export class Runtime {
         activity,
       },
     });
-    this.soundAdapter.noteOn(note, velocity);
-    this.asciiAdapter.setParameter('note', note);
     eventBus.emit('input:noteOn', { note, velocity });
     this.syncAdapters();
   }
@@ -158,6 +176,8 @@ export class Runtime {
   /** Triggers note-off through both adapters. */
   noteOff(note: number): void {
     this.ensureInitialized();
+    this.soundAdapter.noteOff(note);
+
     const state = this.store.getMutableState();
     const activeNotes = state.activeNotes.filter((n) => n !== note);
     const activity = Math.max(0, state.performance.activity - 0.1);
@@ -169,8 +189,6 @@ export class Runtime {
         lastNote: activeNotes.length > 0 ? (activeNotes.at(-1) ?? null) : null,
       },
     });
-    this.soundAdapter.noteOff(note);
-    this.asciiAdapter.setParameter('noteOff', note);
     eventBus.emit('input:noteOff', { note });
     this.syncAdapters();
   }
@@ -178,11 +196,8 @@ export class Runtime {
   /** Sets a named performance control (0–1). */
   setControl(name: ControlName, value: number): void {
     this.ensureInitialized();
-    const clamped = Math.min(1, Math.max(0, value));
+    const clamped = clampControlValue(value);
     this.store.commit({ controls: { [name]: clamped } });
-    const path = `controls.${name}`;
-    this.soundAdapter.setParameter(path, clamped);
-    this.asciiAdapter.setParameter(path, clamped);
     eventBus.emit('control:set', { name, value: clamped });
     this.syncAdapters();
   }
@@ -190,10 +205,8 @@ export class Runtime {
   /** Sets transport tempo in BPM. */
   setTempo(bpm: number): void {
     this.ensureInitialized();
-    const tempo = Math.min(300, Math.max(20, Math.round(bpm)));
+    const tempo = clampTempo(bpm);
     this.store.commit({ tempo });
-    this.soundAdapter.setParameter('tempo', tempo);
-    this.asciiAdapter.setParameter('tempo', tempo);
     eventBus.emit('tempo:set', { tempo });
     this.syncAdapters();
   }
@@ -213,7 +226,7 @@ export class Runtime {
   }
 
   private syncAdapters(): void {
-    const state = this.store.getState();
+    const state = this.store.getMutableState();
     this.soundAdapter.applyState(state);
     this.asciiAdapter.applyState(state);
   }

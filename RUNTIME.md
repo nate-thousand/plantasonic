@@ -73,6 +73,19 @@ interface RuntimeState {
 
 Default values: `tempo: 72`, controls at `0.5` (chaos `0.25`), `isPlaying: false`, empty `activeNotes`.
 
+### Single source of truth
+
+| Layer | Owns | Sync path |
+| ----- | ---- | --------- |
+| **Runtime** (`StateStore`) | Transport, preset, controls, active notes, performance metrics | Authoritative |
+| **SettingsStore** | MIDI/keyboard/touch prefs, octave, CC mappings | `interaction.updateSettings()` |
+| **Adapters** | Derived caches for deduplicated engine calls | `runtime.syncAdapters()` → `applyState()` |
+| **UI** | DOM control values | `interaction.subscribe()` reflects runtime |
+
+Performance changes (`setControl`, `setTempo`, `setPreset`, transport) commit to runtime first, then `syncAdapters()` pushes snapshots to both engines. UI and MIDI route through `InteractionManager` → `InputRouter` → runtime — never adapters directly.
+
+Clamping and tempo bounds live in `src/runtime/performanceParams.ts` (20–300 BPM, controls 0–1).
+
 ---
 
 ## Integration Rule

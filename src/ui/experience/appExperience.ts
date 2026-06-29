@@ -6,11 +6,16 @@ import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import { AppSettingsStore } from '@/services/appSettingsStore.ts';
 import { createOverlayHost } from '../components/OverlayHost.ts';
 import { openPresetBrowser } from '../components/PresetBrowser.ts';
-import { openSettingsPanel } from '../components/SettingsPanel.ts';
+import { bindSettingsPanel, renderSettingsSections } from '../components/settingsBindings.ts';
 import { bindErrorBanner } from '../components/ErrorBanner.ts';
-import { animateSidebarIn, animatePresetChange } from '../motion/motionController.ts';
-import { toggleCollapsibleMenu } from '../components/CollapsibleMenu.ts';
+import { animatePresetChange } from '../motion/motionController.ts';
+import {
+  closeCollapsibleMenu,
+  getSidebarSetupMount,
+  openSidebarTab,
+} from '../components/CollapsibleMenu.ts';
 import { getStageElement } from '../components/Stage.ts';
+import { eventBus } from '@/runtime/events.ts';
 
 export interface AppExperience {
   appSettings: AppSettingsStore;
@@ -35,21 +40,30 @@ export function createAppExperience(options: AppExperienceOptions): AppExperienc
 
   const unbindError = bindErrorBanner(root);
 
+  const setupMount = getSidebarSetupMount();
+  if (setupMount) {
+    renderSettingsSections(setupMount, interaction, appSettings);
+  }
+  const unbindSettings = setupMount
+    ? bindSettingsPanel(setupMount, interaction, appSettings)
+    : () => undefined;
+
   const closeOverlay = (): void => {
     overlayCleanup?.();
     overlayCleanup = null;
     overlay.close();
   };
 
-  const openOverlay = (id: 'presets' | 'settings'): void => {
+  const openPresetOverlay = (): void => {
+    closeCollapsibleMenu();
     closeOverlay();
-    overlay.open(id);
-    if (id === 'presets') {
-      overlayCleanup = openPresetBrowser(interaction, appSettings, closeOverlay);
-    } else {
-      overlayCleanup = openSettingsPanel(interaction, appSettings, closeOverlay);
-    }
+    overlay.open('presets');
+    overlayCleanup = openPresetBrowser(interaction, appSettings, closeOverlay);
   };
+
+  const unsubPanelOpen = eventBus.on('shell:panel-open', () => {
+    closeOverlay();
+  });
 
   const setPerformanceMode = (enabled: boolean): void => {
     performanceMode = enabled;
@@ -57,7 +71,7 @@ export function createAppExperience(options: AppExperienceOptions): AppExperienc
     document.documentElement.toggleAttribute('data-ps-performance', enabled);
 
     if (enabled) {
-      toggleCollapsibleMenu(false);
+      closeCollapsibleMenu();
       closeOverlay();
     }
 
@@ -70,18 +84,7 @@ export function createAppExperience(options: AppExperienceOptions): AppExperienc
     setPerformanceMode(!performanceMode);
   };
 
-  document.querySelector('#ps-presets-btn')?.addEventListener('click', () => {
-    openOverlay('presets');
-  });
-  document.querySelector('#ps-settings-btn')?.addEventListener('click', () => {
-    openOverlay('settings');
-  });
-  document.querySelector('#ps-sidebar-settings-btn')?.addEventListener('click', () => {
-    openOverlay('settings');
-  });
-  document.querySelector('#ps-preset-browse-btn')?.addEventListener('click', () => {
-    openOverlay('presets');
-  });
+  document.querySelector('#ps-preset-browse-btn')?.addEventListener('click', openPresetOverlay);
   document
     .querySelector('#ps-performance-toggle')
     ?.addEventListener('click', togglePerformanceMode);
@@ -103,11 +106,11 @@ export function createAppExperience(options: AppExperienceOptions): AppExperienc
     }
     if (event.key === '/' && !event.metaKey && !event.ctrlKey) {
       event.preventDefault();
-      openOverlay('presets');
+      openPresetOverlay();
     }
     if ((event.key === '?' || (event.shiftKey && event.key === '/')) && !event.metaKey) {
       event.preventDefault();
-      openOverlay('settings');
+      openSidebarTab('setup');
     }
   };
   document.addEventListener('keydown', onKeyDown);
@@ -121,21 +124,15 @@ export function createAppExperience(options: AppExperienceOptions): AppExperienc
     }
   });
 
-  const menuToggle = document.querySelector('#ps-menu-toggle');
-  menuToggle?.addEventListener('click', () => {
-    const sidebar = document.querySelector('#ps-sidebar');
-    if (sidebar?.classList.contains('ps-sidebar--visible')) {
-      animateSidebarIn(sidebar as HTMLElement);
-    }
-  });
-
   return {
     appSettings,
     destroy: () => {
       closeOverlay();
+      unbindSettings();
       unbindError();
       unsubscribe();
       document.removeEventListener('keydown', onKeyDown);
+      unsubPanelOpen();
       overlay.destroy();
     },
   };

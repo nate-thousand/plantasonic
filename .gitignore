@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Figma MCP pull cache (regenerated on import)
-src/design-system/tokens/figma/figma.snapshot.json
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

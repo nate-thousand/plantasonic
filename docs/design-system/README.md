@@ -1,79 +1,55 @@
 # Design System Integration
 
-Plantasonic consumes the [AI Native Design System](https://github.com/nate-thousand/ai-native-design-system) through `src/design-system/` without copying the full repository.
+Plantasonic consumes the centralized **[plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system)** package.
 
-**Workspace source:** `../../ai-native-design-system/` (sibling — not a submodule)
-
----
-
-## Integration Flow
-
-```text
-ai-native-design-system (source of truth)
-  ↓  semantic token definitions
-src/design-system/tokens/
-  ↓  Bootstrap variable mapping
-src/design-system/bootstrap/
-  ↓  compilation
-src/styles/ → Bootstrap components → UI shell
-```
+**Do not maintain local token files in this repo.** See [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md) for consumption details.
 
 ---
 
-## What Was Imported
+## Canonical source
 
-| Design system source                  | Plantasonic location                           | Method                              |
-| ------------------------------------- | ---------------------------------------------- | ----------------------------------- |
-| `foundation/colors/COLORS.md`         | `src/design-system/tokens/_colors.scss`        | Semantic tokens + dark theme values |
-| `foundation/typography/TYPE_SCALE.md` | `src/design-system/tokens/_typography.scss`    | Font families and scale             |
-| `foundation/spacing/SPACING.md`       | `src/design-system/tokens/_spacing.scss`       | 4px grid scale                      |
-| `foundation/radius/RADIUS.md`         | `src/design-system/tokens/_layout.scss`        | Radius tokens                       |
-| `bootstrap/bootstrap-overrides.scss`  | `src/design-system/bootstrap/_overrides.scss`  | Bootstrap mapping                   |
-| `bootstrap/bootstrap-mapping.md`      | [BOOTSTRAP_MAPPING.md](./BOOTSTRAP_MAPPING.md) | Reference table                     |
-| `components/*/`                       | [COMPONENTS.md](./COMPONENTS.md)               | Guidance index                      |
-| `patterns/*/`                         | [PATTERNS.md](./PATTERNS.md)                   | Guidance index                      |
+All token definitions, color values, typography, spacing, and Bootstrap mapping live in the design system package:
 
-## What Was Not Copied
+| Package doc | Contents |
+| ----------- | -------- |
+| [VISION_AND_SCOPE.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/VISION_AND_SCOPE.md) | **Start here** — purpose, boundaries, decision filter |
+| [COLORS.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/COLORS.md) | Semantic color roles and values |
+| [TYPOGRAPHY.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/TYPOGRAPHY.md) | Font families and type scale |
+| [SPACING.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/SPACING.md) | Spacing scale and product layout tokens |
+| [PATTERNS.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/PATTERNS.md) | App shell and interaction patterns |
+| [TOKEN_ARCHITECTURE.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/TOKEN_ARCHITECTURE.md) | Token layers, naming, build pipeline |
+| [COMPONENT_MAPPING.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/COMPONENT_MAPPING.md) | Bootstrap 5.0.2 class mapping |
 
-- `_archive/` folder
-- `examples/` (except reference links)
-- Duplicate READMEs from every subfolder
-- Figma library files
-- AI prompt libraries (engineering belongs in product framework)
-- Full token JSON/CSS exports (SCSS semantics only)
+Token JSON: [plantasonic-design-system/tokens/](https://github.com/nate-thousand/plantasonic-design-system/tree/main/tokens)
 
 ---
 
-## Token Naming
+## Package exports used by this app
 
-| Prefix  | Usage                                                 |
-| ------- | ----------------------------------------------------- |
-| `$ds-*` | Design system semantic tokens — preferred in new code |
-| `$ps-*` | Plantasonic product aliases — app shell compatibility |
-
----
-
-## Sync Workflow
-
-When design system tokens change:
-
-1. Update the canonical file in `ai-native-design-system`
-2. Sync the corresponding `src/design-system/tokens/_*.scss` file
-3. Verify Bootstrap overrides in `bootstrap/_overrides.scss`
-4. Run `npm run build` and visual check
-5. Note change in CHANGELOG.md
+| Export | Role |
+| ------ | ---- |
+| `css/variables.css` | Runtime CSS custom properties (`--ds-*`, `--ps-*`) |
+| `scss/bootstrap-theme.scss` | Bootstrap 5.0.2 theme overrides |
+| `scss/css-theme-bridge.scss` | Runtime Bootstrap ↔ CSS variable bridge (when switching themes) |
 
 ---
 
-## Related
+## App-specific styles
 
-| Document                                       | Description                     |
-| ---------------------------------------------- | ------------------------------- |
-| [TOKENS.md](./TOKENS.md)                       | Token catalog and source map    |
-| [COLORS.md](./COLORS.md)                       | Color rules reference           |
-| [TYPOGRAPHY.md](./TYPOGRAPHY.md)               | Typography rules reference      |
-| [SPACING.md](./SPACING.md)                     | Spacing rules reference         |
-| [BOOTSTRAP_MAPPING.md](./BOOTSTRAP_MAPPING.md) | Component → Bootstrap class map |
-| [COMPONENTS.md](./COMPONENTS.md)               | Component guidance index        |
-| [PATTERNS.md](./PATTERNS.md)                   | Pattern guidance index          |
-| [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md)     | Pipeline overview               |
+Shell layout and post-Bootstrap polish remain in `src/styles/`:
+
+- `globals.scss` — `ps-*` layout classes
+- `_ps-aliases.scss` — `var()` references to package CSS variables
+- `_bootstrap-components.scss` — slider, button, form polish
+
+---
+
+## Local guidance indexes
+
+These files in this folder are **app integration indexes** — they link to the package and document Plantasonic-specific implementations:
+
+- [VISION_AND_SCOPE.md](./VISION_AND_SCOPE.md) — north star (pointer to package)
+- [COMPONENTS.md](./COMPONENTS.md) — factory and shell component map
+- [PATTERNS.md](./PATTERNS.md) — app shell implementation pointer
+- [BOOTSTRAP_MAPPING.md](./BOOTSTRAP_MAPPING.md) — quick Bootstrap reference
+- [COLORS.md](./COLORS.md), [TYPOGRAPHY.md](./TYPOGRAPHY.md), [SPACING.md](./SPACING.md), [TOKENS.md](./TOKENS.md) — pointers to canonical package docs

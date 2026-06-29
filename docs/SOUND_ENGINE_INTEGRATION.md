@@ -101,6 +101,18 @@ Plantasonic runtime controls (0–1) map to engine ecological controls:
 
 Runtime sends `controls.{name}` paths; adapter translates to `engine.setControl()`.
 
+Each control drives the engine **Generator** (phrases, chords, drones, particles, ornaments) via `syncGeneratorEcology()` inside each species. See `src/audio/generativeMapping.ts`.
+
+| Runtime control | Generative effect |
+| --------------- | ----------------- |
+| `density` | Event timing, phrase density, particle swarms |
+| `bloom` | Harmonic openness, velocity, hold duration |
+| `brightness` | Foundation weight, drone length, hold scale |
+| `mold` | Degradation, glitches, timing jitter |
+| `chaos` | Trigger probability, ornaments, micro-events |
+
+After `start()`, the adapter batch-applies cached ecology and tempo so generative systems boot with the current slider values (not species defaults). When switching presets while playing, the runtime restarts both adapters to resume generative output on the new species.
+
 ### Tempo
 
 | Runtime | Engine |
@@ -109,15 +121,15 @@ Runtime sends `controls.{name}` paths; adapter translates to `engine.setControl(
 
 ---
 
-## Supported engine capabilities (Phase 5)
+## Supported engine capabilities
 
 Exposed through the adapter:
 
 - v2 Sound World lifecycle (Seed, Flowers, Mold, Bacteria species)
-- Bundled preset loading with ecology defaults
+- All bundled preset loading with ecology defaults (11 engine presets)
 - Real-time note input via interaction layer (keyboard, MIDI → runtime → adapter)
 - Ecological performance controls (mapped from runtime sliders)
-- Transport tempo (20–300 BPM)
+- Transport tempo (20–300 BPM, clamped in adapter)
 - Graceful error handling and console diagnostics
 
 **Not yet exposed to UI** (available on engine for future adapter extension):
@@ -125,17 +137,20 @@ Exposed through the adapter:
 - `getWaveform()` / `getLevel()` metering
 - Semantic engine events (`notePlayed`, `densityChanged`, etc.)
 - v1 `playPreset()` legacy path
-- MIDI Learn mode
+
+MIDI Learn, default CC mappings, and pitch-bend routing are handled by the interaction layer — see [INTERACTION_LAYER.md](./INTERACTION_LAYER.md).
 
 ---
 
 ## Known limitations
 
-1. **Both engines integrated** — sound and ASCII visuals run through adapters (Phases 5–6 complete).
+1. **Both engines integrated** — sound and ASCII visuals run through adapters.
 2. **Audio context requires user gesture** — first `Play` click initializes audio; silent until then is expected browser behavior.
 3. **Preset worlds are app-scoped** — use world ids (`seed-world`, `mold-world`) with `runtime.setPreset()`; engine preset ids are resolved by the world registry.
 4. **MIDI input** — handled by `src/midi/` interaction module, not the sound adapter. See [INTERACTION_LAYER.md](./INTERACTION_LAYER.md).
 5. **Runtime controls ≠ engine ecology names** — mapping is adapter-owned; do not assume 1:1 naming in UI copy.
+6. **Notes require running engine** — `noteOn` is ignored until `runtime.start()` completes; `noteOff` still fires for cleanup.
+7. **Node verification uses a Web Audio stub** — `npm run verify:sound` validates wiring and preset loading; full Tone.js graph requires browser smoke test.
 
 ---
 
@@ -147,7 +162,7 @@ Exposed through the adapter:
 | Visual event bridge | Adapter forwards `engine.on()` | Optional Phase 7+ UI sync |
 | Full preset manifest | `src/presets/registry.ts` | Complete — see PRESETS.md |
 | Species metadata in UI | World name/description in Stage | Complete |
-| Dedicated MIDI module | `src/midi/` | Phase 8 input layer |
+| Dedicated MIDI module | `src/midi/` | Complete — CC learn, pitch bend, hot-plug |
 
 ---
 
@@ -156,9 +171,20 @@ Exposed through the adapter:
 ```bash
 npm run build
 npm run lint
-npm run verify:runtime   # runtime contract (mock sound + mock ASCII)
-npm run dev              # browser: Play, presets, sliders, A–G keys
+npm run verify:sound       # adapter wiring, control mapping, all bundled presets
+npm run verify:generative  # generative ecology routing, rhythm/probability validation
+npm run verify:presets     # world preset validation
+npm run verify:runtime  # runtime contract (mock sound + mock ASCII)
+npm run dev             # browser: Play, presets, sliders, A–G keys
 ```
+
+`verify:sound` validates:
+
+- Runtime ↔ engine ecological control bijection (`src/audio/engineValidation.ts`)
+- Parameter clamping and path parsing (`src/audio/audioParams.ts`)
+- All 11 bundled engine presets load through the adapter
+- World preset species coverage (≥4 species)
+- Rapid preset switching and control parameter stress paths
 
 Browser smoke test:
 

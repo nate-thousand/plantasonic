@@ -35,7 +35,7 @@ export function createInteractionManager(runtime: Runtime): InteractionManager {
   setMidiLearnBridge({
     getLearnTarget: () => manager.getLearnTarget(),
     completeLearn: (cc, channel) => {
-      manager.completeMidiLearn(cc, channel);
+      return manager.completeMidiLearn(cc, channel);
     },
   });
 

@@ -6,6 +6,7 @@ const STORAGE_KEY = 'plantasonic.app.settings';
 const MAX_RECENT = 5;
 
 export interface AppSettings {
+  theme: 'dark' | 'light';
   motionEnabled: boolean;
   reducedMotion: boolean;
   favoritePresets: string[];
@@ -13,11 +14,26 @@ export interface AppSettings {
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
+  theme: 'dark',
   motionEnabled: true,
   reducedMotion: false,
   favoritePresets: [],
   recentPresets: [],
 };
+
+/** Applies persisted theme before first paint to avoid flash. */
+export function bootstrapDocumentTheme(): void {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as Partial<AppSettings>;
+    if (parsed.theme === 'light' || parsed.theme === 'dark') {
+      document.documentElement.dataset.theme = parsed.theme;
+    }
+  } catch {
+    /* ignore invalid storage */
+  }
+}
 
 type AppSettingsListener = (settings: Readonly<AppSettings>) => void;
 
@@ -76,6 +92,7 @@ export class AppSettingsStore {
   }
 
   private applyDocumentAttributes(): void {
+    document.documentElement.dataset.theme = this.settings.theme;
     document.documentElement.toggleAttribute('data-ps-reduced-motion', this.settings.reducedMotion);
     document.documentElement.toggleAttribute('data-ps-motion-off', !this.settings.motionEnabled);
   }
@@ -95,6 +112,7 @@ export class AppSettingsStore {
       return {
         ...DEFAULT_APP_SETTINGS,
         ...parsed,
+        theme: parsed.theme === 'light' ? 'light' : 'dark',
         favoritePresets: parsed.favoritePresets ?? [],
         recentPresets: parsed.recentPresets ?? [],
       };

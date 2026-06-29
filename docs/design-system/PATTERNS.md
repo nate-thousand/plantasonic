@@ -1,26 +1,10 @@
 # Pattern Guidance
 
-Index of design system interaction patterns relevant to Plantasonic.
+**Canonical source:** [plantasonic-design-system/docs/PATTERNS.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/PATTERNS.md)
 
 ---
 
-## Patterns Used
-
-| Pattern      | Spec source                                                     | Plantasonic implementation   |
-| ------------ | --------------------------------------------------------------- | ---------------------------- |
-| App shell    | `ai-native-design-system/patterns/page-layouts/PAGE_LAYOUTS.md` | `src/ui/layouts/AppShell.ts` |
-| Page layouts | Same                                                            | Nav + stage + dock grid      |
-
----
-
-## App Shell Pattern (from design system)
-
-- Persistent header with brand and primary actions
-- Optional sidebar for settings and presets
-- Main content area (`<main>` or stage region)
-- Mobile: collapse nav to toggler; full-width content with horizontal padding
-
-Plantasonic adaptation:
+## App shell (Plantasonic)
 
 ```text
 ┌─────────────────────────────────┐
@@ -33,15 +17,14 @@ Plantasonic adaptation:
 └─────────────────────────────────┘
 ```
 
----
-
-## Future Patterns
-
-| Pattern        | Spec source                               | Phase                 |
-| -------------- | ----------------------------------------- | --------------------- |
-| Empty states   | `patterns/empty-states/EMPTY_STATES.md`   | Preset list           |
-| Errors         | `patterns/errors/ERRORS.md`               | Runtime error display |
-| Loading states | `patterns/empty-states/LOADING_STATES.md` | Engine init           |
+| Component | Implementation |
+| --------- | -------------- |
+| AppShell | `src/ui/layouts/AppShell.ts` |
+| TopNav | `src/ui/components/TopNav.ts` |
+| Stage | `src/ui/components/Stage.ts` |
+| ControlDock | `src/ui/components/ControlDock.ts` |
+| CollapsibleMenu | `src/ui/components/CollapsibleMenu.ts` |
+| OverlayHost | `src/ui/components/OverlayHost.ts` |
 
 ---
 
@@ -49,6 +32,17 @@ Plantasonic adaptation:
 
 - Instrument UI uses efficient density — not marketing spacing
 - Stage area stays visually quiet — chrome uses muted tokens
-- Controls live in the dock, not overlaid on the stage
+- Controls live in the dock and sidebar, not overlaid on the stage
+- One primary button per view section for the main action
 
-**Canonical index:** `ai-native-design-system/patterns/README.md`
+---
+
+## Future patterns
+
+| Pattern | Phase |
+| ------- | ----- |
+| Empty states | Preset list |
+| Errors | Runtime error display |
+| Loading states | Engine init |
+
+Pattern specs will be added to the design system package as they are standardized.

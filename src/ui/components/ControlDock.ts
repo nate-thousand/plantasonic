@@ -6,7 +6,16 @@ import { resolvePresetWorld } from '@/presets/registry.ts';
 import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import type { ControlName } from '@/runtime/types.ts';
 import type { RuntimeState } from '@/runtime/types.ts';
+import {
+  controlValueToPercent,
+  DEFAULT_TEMPO,
+  MAX_TEMPO,
+  MIN_TEMPO,
+  percentToControlValue,
+} from '@/runtime/performanceParams.ts';
+import { eventBus } from '@/runtime/events.ts';
 import { animateControlFeedback } from '../motion/motionController.ts';
+import { startControlMidiLearn } from './InteractionSettings.ts';
 import {
   createButton,
   createPresetSelector,
@@ -52,7 +61,7 @@ export function createControlDock(): HTMLElement {
   preset.className = 'ps-dock__section ps-dock__section--preset';
   const presetLabel = document.createElement('span');
   presetLabel.className = 'ps-dock__label';
-  presetLabel.textContent = 'Preset';
+  presetLabel.textContent = 'World';
   preset.append(presetLabel, createPresetSelector());
 
   const tempo = document.createElement('div');
@@ -65,13 +74,17 @@ export function createControlDock(): HTMLElement {
     createSlider({
       id: 'ps-tempo-slider',
       label: 'Tempo',
-      min: 40,
-      max: 180,
-      value: 72,
+      min: MIN_TEMPO,
+      max: MAX_TEMPO,
+      value: DEFAULT_TEMPO,
       controlName: 'tempo',
       className: 'ps-dock__range',
     }),
-    createStatus({ id: 'ps-tempo-status', label: '72 bpm', className: 'ps-dock__status' }),
+    createStatus({
+      id: 'ps-tempo-status',
+      label: `${String(DEFAULT_TEMPO)} bpm`,
+      className: 'ps-dock__status',
+    }),
   );
 
   const notes = document.createElement('div');
@@ -81,6 +94,7 @@ export function createControlDock(): HTMLElement {
   notesLabel.textContent = 'Notes';
   notes.append(
     notesLabel,
+    createStatus({ id: 'ps-octave-status', label: 'Oct 4', className: 'ps-dock__status' }),
     createStatus({ id: 'ps-notes-status', label: '0 active', className: 'ps-dock__status' }),
   );
 
@@ -128,11 +142,21 @@ export function bindControlDock(interaction: InteractionManager): () => void {
     updateDockStatus(state);
   });
 
+  const updateOctaveStatus = (octave: number): void => {
+    const el = document.querySelector('#ps-octave-status');
+    if (el) el.textContent = `Oct ${String(octave)}`;
+  };
+  updateOctaveStatus(interaction.getSettings().defaultOctave);
+  const unsubOctave = eventBus.on('keyboard:octave', ({ octave }) => {
+    updateOctaveStatus(octave);
+  });
+
   return () => {
     playBtn?.removeEventListener('click', onPlay);
     stopBtn?.removeEventListener('click', onStop);
     tempoSlider?.removeEventListener('input', onTempo);
     unsubscribe();
+    unsubOctave();
   };
 }
 
@@ -161,27 +185,43 @@ function updateDockStatus(state: Readonly<RuntimeState>): void {
 export function bindControlSliders(interaction: InteractionManager): () => void {
   const controls: ControlName[] = ['bloom', 'mold', 'density', 'chaos', 'brightness'];
   const handlers: Array<{ el: HTMLInputElement; fn: () => void }> = [];
+  const learnHandlers: Array<{ el: HTMLButtonElement; fn: () => void }> = [];
 
   for (const name of controls) {
     const slider = document.querySelector<HTMLInputElement>(`#ps-control-${name}`);
     const label = document.querySelector(`#ps-control-${name}-val`);
+    const learnBtn = document.querySelector<HTMLButtonElement>(`#ps-control-${name}-learn`);
     if (!slider) continue;
 
     const fn = (): void => {
-      const value = Number(slider.value) / 100;
+      const value = percentToControlValue(Number(slider.value));
       interaction.setControl(name, value, 'ui');
       if (label) label.textContent = slider.value;
       slider.setAttribute('aria-valuenow', slider.value);
     };
     slider.addEventListener('input', fn);
     handlers.push({ el: slider, fn });
+
+    if (learnBtn) {
+      const onLearn = (): void => {
+        startControlMidiLearn(interaction, name);
+        learnBtn.textContent = 'Listening…';
+        learnBtn.setAttribute('aria-pressed', 'true');
+        window.setTimeout(() => {
+          learnBtn.textContent = 'Learn';
+          learnBtn.setAttribute('aria-pressed', 'false');
+        }, 5000);
+      };
+      learnBtn.addEventListener('click', onLearn);
+      learnHandlers.push({ el: learnBtn, fn: onLearn });
+    }
   }
 
   const unsubscribe = interaction.subscribe((state) => {
     for (const name of controls) {
       const slider = document.querySelector<HTMLInputElement>(`#ps-control-${name}`);
       const label = document.querySelector(`#ps-control-${name}-val`);
-      const pct = Math.round(state.controls[name] * 100);
+      const pct = controlValueToPercent(state.controls[name]);
       if (slider && Number(slider.value) !== pct) {
         slider.value = String(pct);
         slider.setAttribute('aria-valuenow', String(pct));
@@ -193,6 +233,9 @@ export function bindControlSliders(interaction: InteractionManager): () => void 
   return () => {
     for (const { el, fn } of handlers) {
       el.removeEventListener('input', fn);
+    }
+    for (const { el, fn } of learnHandlers) {
+      el.removeEventListener('click', fn);
     }
     unsubscribe();
   };

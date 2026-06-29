@@ -15,9 +15,14 @@ export class StateStore {
   private state: RuntimeState = createInitialRuntimeState();
   private readonly subscribers = new Set<RuntimeSubscriber>();
 
-  /** Returns a deep-frozen snapshot of the current state. */
+  /** Returns a shallow snapshot of the current state. */
   getState(): Readonly<RuntimeState> {
-    return structuredClone(this.state);
+    return {
+      ...this.state,
+      activeNotes: [...this.state.activeNotes],
+      controls: { ...this.state.controls },
+      performance: { ...this.state.performance },
+    };
   }
 
   /** Returns mutable internal state reference (runtime use only). */

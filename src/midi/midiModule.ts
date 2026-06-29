@@ -7,8 +7,12 @@ import type {
   InteractionModule,
   InteractionModuleContext,
 } from '@/interaction/types.ts';
-import { midiVelocityToRuntime } from '@/interaction/velocity.ts';
-import { applyCcMapping, findCcMapping } from './midiMapping.ts';
+import { eventBus } from '@/runtime/events.ts';
+import {
+  parseMidiMessage,
+  routeParsedMidiMessage,
+  type MidiMessageRouterState,
+} from './midiMessage.ts';
 
 const LOG_PREFIX = '[Midi]';
 
@@ -18,7 +22,10 @@ type MidiInput = MIDIInput;
 /** Global learn target setter injected by InteractionManager. */
 export type MidiLearnBridge = {
   getLearnTarget: () => import('@/interaction/types.ts').MidiLearnTarget | null;
-  completeLearn: (cc: number, channel: number) => void;
+  completeLearn: (
+    cc: number,
+    channel: number,
+  ) => import('@/interaction/types.ts').MidiLearnMapping | null;
 };
 
 let learnBridge: MidiLearnBridge | null = null;
@@ -36,15 +43,17 @@ export class MidiModule implements InteractionModule {
   private access: MidiAccess | null = null;
   private inputs = new Map<string, MidiInput>();
   private unsubscribeSettings: (() => void) | null = null;
-  private sustainPedal = false;
-  private sustainedNotes = new Set<number>();
+  private routerState: MidiMessageRouterState = {
+    sustainPedal: false,
+    sustainedNotes: new Set<number>(),
+  };
 
-  async init(context: InteractionModuleContext): Promise<void> {
+  init(context: InteractionModuleContext): Promise<void> {
     this.context = context;
     this.unsubscribeSettings = context.onSettingsChange(() => {
       void this.syncEnabledState();
     });
-    await this.syncEnabledState();
+    return this.syncEnabledState();
   }
 
   destroy(): Promise<void> {
@@ -53,7 +62,8 @@ export class MidiModule implements InteractionModule {
     this.detachAllInputs();
     this.access = null;
     this.context = null;
-    this.sustainedNotes.clear();
+    this.routerState.sustainedNotes.clear();
+    this.routerState.sustainPedal = false;
     return Promise.resolve();
   }
 
@@ -69,11 +79,31 @@ export class MidiModule implements InteractionModule {
     };
   }
 
+  /** Handles a raw MIDI message (used by Web MIDI and verification scripts). */
+  handleRawMessage(data: Uint8Array | readonly number[]): void {
+    const context = this.context;
+    if (!context) return;
+
+    const parsed = parseMidiMessage(data);
+    if (!parsed) return;
+
+    const settings = context.getSettings();
+    routeParsedMidiMessage(parsed, {
+      context,
+      channelFilter: settings.midiChannel,
+      velocityCurve: settings.velocityCurve,
+      learnTarget: learnBridge?.getLearnTarget() ?? null,
+      completeLearn: (cc, channel) => learnBridge?.completeLearn(cc, channel) ?? null,
+      state: this.routerState,
+    });
+  }
+
   private async syncEnabledState(): Promise<void> {
     const settings = this.context?.getSettings();
     if (!settings?.midiEnabled) {
       this.detachAllInputs();
       this.access = null;
+      this.emitConnectionChange();
       return;
     }
     await this.ensureAccess();
@@ -94,7 +124,9 @@ export class MidiModule implements InteractionModule {
       this.refreshInputs();
       console.info(`${LOG_PREFIX} access granted`, { inputs: this.inputs.size });
     } catch (error) {
-      console.warn(`${LOG_PREFIX} access denied`, error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.warn(`${LOG_PREFIX} access denied`, err);
+      eventBus.emit('error', { source: 'midi:access', error: err });
     }
   }
 
@@ -105,124 +137,32 @@ export class MidiModule implements InteractionModule {
     for (const input of this.access.inputs.values()) {
       this.attachInput(input);
     }
+    this.emitConnectionChange();
   }
 
   private attachInput(input: MidiInput): void {
     if (this.inputs.has(input.id)) return;
     input.onmidimessage = (event) => {
-      this.handleMessage(event);
+      if (event.data) {
+        this.handleRawMessage(event.data);
+      }
     };
     this.inputs.set(input.id, input);
     console.info(`${LOG_PREFIX} connected`, input.name ?? input.id);
+    this.emitConnectionChange();
   }
 
   private detachAllInputs(): void {
-    for (const input of this.inputs.values()) {
-      input.onmidimessage = null;
-    }
-    this.inputs.clear();
-  }
-
-  private handleMessage(event: MIDIMessageEvent): void {
-    const context = this.context;
-    if (!context || !event.data) return;
-
-    const data = event.data;
-    const status = data[0] ?? 0;
-    const channel = (status & 0x0f) + 1;
-    const settings = context.getSettings();
-
-    if (settings.midiChannel !== 0 && settings.midiChannel !== channel) {
-      return;
-    }
-
-    const command = status & 0xf0;
-
-    if (command === 0x90) {
-      const note = data[1] ?? 0;
-      const velocity = data[2] ?? 0;
-      if (velocity === 0) {
-        this.releaseNote(note);
-        return;
+    if (this.inputs.size > 0) {
+      for (const input of this.inputs.values()) {
+        input.onmidimessage = null;
       }
-      const vel = midiVelocityToRuntime(velocity, settings.velocityCurve);
-      context.dispatch({
-        action: { type: 'noteOn', note, velocity: vel },
-        source: 'midi',
-        timestamp: Date.now(),
-      });
-      return;
-    }
-
-    if (command === 0x80) {
-      const note = data[1] ?? 0;
-      this.releaseNote(note);
-      return;
-    }
-
-    if (command === 0xb0) {
-      const cc = data[1] ?? 0;
-      const value = data[2] ?? 0;
-      this.handleCc(cc, channel, value);
-      return;
-    }
-
-    if (command === 0xe0) {
-      const lsb = data[1] ?? 0;
-      const msb = data[2] ?? 0;
-      const bend = ((msb << 7) | lsb) / 16383;
-      context.dispatch({
-        action: { type: 'setControl', name: 'chaos', value: bend },
-        source: 'midi',
-        timestamp: Date.now(),
-      });
+      this.inputs.clear();
     }
   }
 
-  private handleCc(cc: number, channel: number, value: number): void {
-    const context = this.context;
-    if (!context) return;
-
-    if (cc === 64) {
-      this.sustainPedal = value >= 64;
-      if (!this.sustainPedal) {
-        for (const note of this.sustainedNotes) {
-          context.dispatch({
-            action: { type: 'noteOff', note },
-            source: 'midi',
-            timestamp: Date.now(),
-          });
-        }
-        this.sustainedNotes.clear();
-      }
-      return;
-    }
-
-    const learnTarget = learnBridge?.getLearnTarget();
-    if (learnTarget) {
-      learnBridge?.completeLearn(cc, channel);
-      return;
-    }
-
-    const mapping = findCcMapping(context.getSettings().midiLearnMappings, cc, channel);
-    if (mapping) {
-      applyCcMapping(context, mapping, value);
-    }
-  }
-
-  private releaseNote(note: number): void {
-    const context = this.context;
-    if (!context) return;
-
-    if (this.sustainPedal) {
-      this.sustainedNotes.add(note);
-      return;
-    }
-
-    context.dispatch({
-      action: { type: 'noteOff', note },
-      source: 'midi',
-      timestamp: Date.now(),
-    });
+  private emitConnectionChange(): void {
+    const state = this.getConnectionState();
+    eventBus.emit('midi:connection', state);
   }
 }

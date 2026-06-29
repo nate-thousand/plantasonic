@@ -3,6 +3,7 @@
  */
 
 import type { ControlName } from '@/runtime/types.ts';
+import { tempoFromNormalized } from '@/runtime/performanceParams.ts';
 import type {
   InteractionModuleContext,
   MidiLearnMapping,
@@ -28,7 +29,7 @@ export function applyCcMapping(
       break;
     case 'tempo':
       context.dispatch({
-        action: { type: 'setTempo', tempo: Math.round(40 + normalized * 140) },
+        action: { type: 'setTempo', tempo: tempoFromNormalized(normalized) },
         source: 'midi',
         timestamp: Date.now(),
       });
@@ -62,5 +63,15 @@ export const DEFAULT_MPK_MINI_CC_HINTS: ReadonlyArray<{ cc: number; name: Contro
   { cc: 4, name: 'chaos' },
   { cc: 5, name: 'brightness' },
 ];
+
+/** Builds persisted CC mappings from the default MPK Mini control layout. */
+export function createDefaultMidiLearnMappings(): MidiLearnMapping[] {
+  return DEFAULT_MPK_MINI_CC_HINTS.map(({ cc, name }) => ({
+    id: `0:${String(cc)}:control`,
+    cc,
+    channel: 0,
+    target: { type: 'control', name },
+  }));
+}
 
 export type { MidiLearnTarget };

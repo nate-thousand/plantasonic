@@ -7,10 +7,10 @@ import type { PresetWorld } from '../types.ts';
 export const nebulaWorld: PresetWorld = {
   id: 'nebula-world',
   name: 'Nebula World',
-  description: 'Particle nebula — orbiting glyphs in vine-toned cosmic drift.',
+  description: 'Particle nebula — orbiting glyphs with glitch-toned cosmic drift.',
   tags: ['particles', 'energy'],
   version: '1.0.0',
-  sound: { presetId: 'vine' },
+  sound: { presetId: 'mutation' },
   visual: {
     presetId: 'glyphParticleNebula',
     glyphFamilies: ['atmospheric', 'fractal'],
@@ -26,11 +26,11 @@ export const nebulaWorld: PresetWorld = {
   defaults: {
     tempo: 108,
     controls: {
-      bloom: 0.7,
-      mold: 0.35,
-      density: 0.75,
-      chaos: 0.4,
-      brightness: 0.65,
+      bloom: 0.45,
+      mold: 0.55,
+      density: 0.7,
+      chaos: 0.65,
+      brightness: 0.5,
     },
   },
 };

@@ -14,12 +14,14 @@
     "verify:interaction": "npx tsx scripts/verify-interaction.ts",
     "verify:visual": "npx tsx scripts/verify-visual-language.ts",
     "verify:integration": "npx tsx scripts/verify-integration.ts",
-    "tokens:sync": "npx tsx scripts/sync-figma-tokens.ts sync",
-    "tokens:verify": "npx tsx scripts/sync-figma-tokens.ts verify",
-    "tokens:export": "npx tsx scripts/sync-figma-tokens.ts export",
-    "tokens:pull": "npx tsx scripts/pull-figma-tokens.ts pull",
-    "tokens:import": "npx tsx scripts/pull-figma-tokens.ts import",
-    "tokens:import-json": "npx tsx scripts/import-figma-tokens-json.ts",
+    "verify:sound": "npx tsx scripts/verify-sound-engine.ts",
+    "verify:presets": "npx tsx scripts/verify-presets.ts",
+    "verify:midi": "npx tsx scripts/verify-midi.ts",
+    "verify:keyboard": "npx tsx scripts/verify-keyboard.ts",
+    "verify:generative": "npx tsx scripts/verify-generative.ts",
+    "verify:state": "npx tsx scripts/verify-state.ts",
+    "verify:design-system": "npx tsx scripts/verify-design-system.ts",
+    "verify:performance": "npx tsx scripts/verify-performance.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -39,6 +41,7 @@
     "bootstrap": "^5.0.2",
     "gsap": "^3.15.0",
     "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
+    "plantasonic-design-system": "file:../plantasonic-design-system",
     "sass": "^1.101.0"
   }
 }

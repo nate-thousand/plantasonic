@@ -43,7 +43,18 @@ export function bindInteractionSettings(interaction: InteractionManager): () => 
   octaveInput?.addEventListener('change', onOctave);
   learnReset?.addEventListener('click', onLearnReset);
 
+  const syncFromSettings = (): void => {
+    const current = interaction.getSettings();
+    if (midiToggle) midiToggle.checked = current.midiEnabled;
+    if (keyboardToggle) keyboardToggle.checked = current.keyboardEnabled;
+    if (touchToggle) touchToggle.checked = current.touchEnabled;
+    if (octaveInput) octaveInput.value = String(current.defaultOctave);
+  };
+
+  const unsubSettings = interaction.onSettingsChange(syncFromSettings);
+
   return () => {
+    unsubSettings();
     midiToggle?.removeEventListener('change', onMidi);
     keyboardToggle?.removeEventListener('change', onKeyboard);
     touchToggle?.removeEventListener('change', onTouch);

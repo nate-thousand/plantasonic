@@ -3,10 +3,16 @@
  * Composes top nav, collapsible menu, stage, and control dock.
  */
 
+import { eventBus } from '@/runtime/events.ts';
 import { createTopNav, setNavStatus } from '../components/TopNav.ts';
 import { createStage, getStageDimensions } from '../components/Stage.ts';
 import { createControlDock } from '../components/ControlDock.ts';
-import { createCollapsibleMenu, toggleCollapsibleMenu } from '../components/CollapsibleMenu.ts';
+import {
+  closeCollapsibleMenu,
+  createCollapsibleMenu,
+  isSidebarOpen,
+  setSidebarOpen,
+} from '../components/CollapsibleMenu.ts';
 import { animateFullscreenTransition } from '../motion/motionController.ts';
 
 export interface AppShellOptions {
@@ -20,16 +26,13 @@ export interface AppShell {
 }
 
 export function createAppShell(options: AppShellOptions = {}): AppShell {
-  let menuOpen = false;
-
   const root = document.createElement('div');
   root.className = 'ps-app';
   root.id = 'ps-app';
 
   const nav = createTopNav({
     onMenuToggle: () => {
-      menuOpen = !menuOpen;
-      toggleCollapsibleMenu(menuOpen);
+      setSidebarOpen(!isSidebarOpen());
     },
     onFullscreenToggle: () => {
       void toggleFullscreen(root);
@@ -39,18 +42,33 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
   const main = document.createElement('div');
   main.className = 'ps-main';
 
+  const backdrop = document.createElement('button');
+  backdrop.type = 'button';
+  backdrop.className = 'ps-sidebar-backdrop';
+  backdrop.id = 'ps-sidebar-backdrop';
+  backdrop.hidden = true;
+  backdrop.setAttribute('aria-label', 'Close performance panel');
+  backdrop.addEventListener('click', () => {
+    closeCollapsibleMenu();
+  });
+
   const sidebar = createCollapsibleMenu();
   const stage = createStage({ fullscreenTarget: root });
   const dock = createControlDock();
 
-  main.append(sidebar, stage);
+  main.append(backdrop, sidebar, stage);
   root.append(nav, main, dock);
 
   let resizeObserver: ResizeObserver | undefined;
+  let resizeRaf = 0;
   if (typeof ResizeObserver !== 'undefined') {
     resizeObserver = new ResizeObserver(() => {
-      const dims = getStageDimensions();
-      options.onResize?.(dims.width, dims.height);
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0;
+        const dims = getStageDimensions();
+        options.onResize?.(dims.width, dims.height);
+      });
     });
     resizeObserver.observe(stage);
   } else {
@@ -62,18 +80,33 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
     const isFullscreen = document.fullscreenElement === root;
     root.classList.toggle('ps-app--fullscreen', isFullscreen);
     animateFullscreenTransition(root, isFullscreen);
-    setNavStatus(isFullscreen ? 'Fullscreen' : 'Ready');
+    if (isFullscreen) {
+      setNavStatus('Fullscreen');
+    }
+    eventBus.emit('viewport:fullscreen', { isFullscreen });
     const dims = getStageDimensions();
     options.onResize?.(dims.width, dims.height);
   };
   document.addEventListener('fullscreenchange', onFullscreenChange);
 
+  const onKeyDown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Escape' || !isSidebarOpen()) return;
+    const overlay = document.querySelector('#ps-overlay-host');
+    if (overlay instanceof HTMLElement && !overlay.hidden) return;
+    event.preventDefault();
+    closeCollapsibleMenu();
+  };
+  document.addEventListener('keydown', onKeyDown);
+
   return {
     root,
     stage,
     destroy: () => {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
       resizeObserver?.disconnect();
       document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('keydown', onKeyDown);
+      closeCollapsibleMenu();
       root.remove();
     },
   };

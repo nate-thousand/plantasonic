@@ -11,6 +11,9 @@ const LOG_PREFIX = '[MockSound]';
 
 export class MockSoundAdapter implements StateSyncSoundAdapter {
   private lastState: Readonly<RuntimeState> | null = null;
+  private startCallCount = 0;
+  private setParameterCallCount = 0;
+  private applyStateCallCount = 0;
 
   async init(): Promise<void> {
     await Promise.resolve();
@@ -18,6 +21,7 @@ export class MockSoundAdapter implements StateSyncSoundAdapter {
   }
 
   async start(): Promise<void> {
+    this.startCallCount += 1;
     await Promise.resolve();
     console.info(`${LOG_PREFIX} start`);
   }
@@ -42,10 +46,12 @@ export class MockSoundAdapter implements StateSyncSoundAdapter {
   }
 
   setParameter(path: ParameterPath, value: ParameterValue): void {
+    this.setParameterCallCount += 1;
     console.info(`${LOG_PREFIX} setParameter`, { path, value });
   }
 
   applyState(state: Readonly<RuntimeState>): void {
+    this.applyStateCallCount += 1;
     this.lastState = state;
     console.info(`${LOG_PREFIX} applyState`, {
       isPlaying: state.isPlaying,
@@ -60,9 +66,24 @@ export class MockSoundAdapter implements StateSyncSoundAdapter {
     return this.lastState;
   }
 
+  getStartCallCount(): number {
+    return this.startCallCount;
+  }
+
+  getSetParameterCallCount(): number {
+    return this.setParameterCallCount;
+  }
+
+  getApplyStateCallCount(): number {
+    return this.applyStateCallCount;
+  }
+
   async destroy(): Promise<void> {
     await Promise.resolve();
     console.info(`${LOG_PREFIX} destroy`);
     this.lastState = null;
+    this.startCallCount = 0;
+    this.setParameterCallCount = 0;
+    this.applyStateCallCount = 0;
   }
 }

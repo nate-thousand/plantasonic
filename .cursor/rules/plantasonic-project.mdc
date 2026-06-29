@@ -1,11 +1,13 @@
 ---
-description: Plantasonic project context — stack, boundaries, integration phases
+description: Plantasonic project context — stack, boundaries, creative vision, integration phases
 alwaysApply: true
 ---
 
 # Plantasonic Project
 
-Browser-based generative audiovisual instrument — first proof of the repeatable AI-assisted product system.
+Browser-based generative audiovisual instrument — a **living digital ecosystem**, not a synthesizer with visuals. First proof of the repeatable AI-assisted product system.
+
+**Creative constraints:** Read `docs/CREATIVE_VISION.md` before any audio engine, visual engine, preset, or feature work. Run the six-question decision filter. If a change does not make Plantasonic feel more alive, do not implement it.
 
 **Stack:** Vite, TypeScript (strict), Bootstrap 5.0.2, GSAP. Not Next.js or React.
 
@@ -14,23 +16,27 @@ Browser-based generative audiovisual instrument — first proof of the repeatabl
 | External repo | Role | Integration |
 |---------------|------|-------------|
 | ai-product-framework | Process, templates, Cursor rules | `docs/product-framework/` |
-| ai-native-design-system | Tokens, Bootstrap, UI rules | `src/design-system/` |
+| plantasonic-design-system | Tokens, Bootstrap, UI rules | npm package, `src/styles/` |
 | plantasia-sound-engine | Audio engine | `src/audio/soundAdapter.ts` — **integrated** (`1.0.0-beta.1`) |
-| ascii-visual-engine | Visual engine | `src/visuals/plantasiaAsciiAdapter.ts` — **integrated** (`v0.1.0`) |
+| ascii-visual-engine | Visual engine | `src/visuals/plantasiaAsciiAdapter.ts` — **integrated** |
 
-**Do not:** merge repos, copy engine code, import unstable engine packages, hardcode theme values.
+**Do not:** merge repos, copy engine code, import unstable engine packages, hardcode theme values, add DAW-style parameter panels, add decorative visualizers disconnected from ecosystem metaphor.
 
 ## Key docs
 
-- `docs/INTEGRATION_PLAN.md` — current phase scope
+- `docs/CREATIVE_VISION.md` — **authoritative** creative vision and engine scope
+- `docs/INTEGRATION_PLAN.md` — phased delivery scope
+- `docs/VISUAL_LANGUAGE.md` — visual identity implementation
+- `docs/USER_EXPERIENCE.md` — interaction philosophy
 - `docs/REPO_BOUNDARIES.md` — ownership rules
-- `docs/product-framework/CODING_STANDARDS.md` — coding rules
-- `docs/design-system/` — token and component guidance
+- `docs/PERFORMANCE_REPORT.md` — latency constraints (performance over decoration)
 
 ## Architecture
 
 UI → Runtime → Adapters → External engines. Runtime is the only layer that calls both adapters.
 
+Performance controls use ecological names (Bloom, Mold, Density, Chaos, Brightness) — not synthesis jargon.
+
 ## Current phase
 
-Phase 8 complete — unified interaction layer routes all input through runtime. Next: Phase 9 application experience.
+MVP stabilization and performance complete. Next platform work: recording/sharing (Phase 11) only when aligned with creative vision.

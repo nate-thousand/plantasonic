@@ -2,11 +2,13 @@
 
 **Authoritative specification:** [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md)
 
-This index maps design system components to Plantasonic implementations. Full specs remain in `ai-native-design-system/components/`.
+**Bootstrap mapping:** [plantasonic-design-system/docs/COMPONENT_MAPPING.md](https://github.com/nate-thousand/plantasonic-design-system/blob/main/docs/COMPONENT_MAPPING.md)
+
+This index maps design system components to Plantasonic implementations in this app.
 
 ---
 
-## Reusable Controls (`src/ui/controls/`)
+## Reusable controls (`src/ui/controls/`)
 
 | Component | Factory | Bootstrap base |
 | --------- | ------- | -------------- |
@@ -25,7 +27,7 @@ This index maps design system components to Plantasonic implementations. Full sp
 
 ---
 
-## Shell Components
+## Shell components
 
 | Component | File |
 | --------- | ---- |
@@ -44,8 +46,12 @@ This index maps design system components to Plantasonic implementations. Full sp
 ## Rules
 
 - One primary button per view section for the main action
-- All interactive elements need visible focus states
-- Minimum 2.75rem touch targets on controls
-- Use `$ds-*` tokens — no hardcoded colors
+- All interactive elements need visible focus states (`--ds-shadow-focus`)
+- Minimum `--ps-touch-target` (2.75rem) on controls
+- Use `var(--ds-*)` / `var(--ps-*)` — no hardcoded colors
 
-**Canonical index:** `ai-native-design-system/components/README.md`
+---
+
+## Reference implementations
+
+The design system showcase (`plantasonic-design-system/showcase/`) provides reference implementations for Bootstrap and Plantasonic patterns. Match token usage and layout when building new UI.

@@ -4,6 +4,8 @@ Plantasonic Phase 10 — expressive visual identity, motion system, and audio-re
 
 The ASCII Visual Engine renders glyphs. Plantasonic defines **what each world means visually** — glyph families, patterns, motion quality, transitions, and how runtime state drives the scene.
 
+See [CREATIVE_VISION.md](./CREATIVE_VISION.md) for the authoritative visual engine scope and decision filter.
+
 ---
 
 ## Visual Philosophy

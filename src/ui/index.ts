@@ -18,7 +18,14 @@ export {
   bindControlDock,
   bindControlSliders,
 } from './components/ControlDock.ts';
-export { createCollapsibleMenu, toggleCollapsibleMenu } from './components/CollapsibleMenu.ts';
+export {
+  closeCollapsibleMenu,
+  createCollapsibleMenu,
+  isSidebarOpen,
+  openSidebarTab,
+  setSidebarOpen,
+  showSidebarTab,
+} from './components/CollapsibleMenu.ts';
 export { createAppShell } from './layouts/AppShell.ts';
 export type { AppShell, AppShellOptions } from './layouts/AppShell.ts';
 export { bindRuntimeToShell } from './bindRuntime.ts';

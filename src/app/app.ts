@@ -32,7 +32,10 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
     setNavStatus('Error');
   });
 
-  const result = await runtime.init({ container: shell.stage });
+  const result = await runtime.init({
+    container: shell.stage,
+    initialPresetId: 'seed-world',
+  });
 
   if (!result.success) {
     setNavStatus('Error');

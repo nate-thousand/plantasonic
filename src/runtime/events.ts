@@ -4,7 +4,7 @@
  */
 
 import type { ParameterPath, ParameterValue, PresetId } from './types.ts';
-import type { InteractionSource } from '@/interaction/types.ts';
+import type { InteractionSource, DeviceConnectionState } from '@/interaction/types.ts';
 
 /** All runtime event names and their payload shapes. */
 export interface RuntimeEventMap {
@@ -18,11 +18,15 @@ export interface RuntimeEventMap {
   'parameter:set': { path: ParameterPath; value: ParameterValue };
   'viewport:resize': { width: number; height: number };
   'viewport:fullscreen': { isFullscreen: boolean };
+  'shell:panel-open': undefined;
+  'shell:panel-close': undefined;
   'input:noteOn': { note: number; velocity: number };
   'input:noteOff': { note: number };
   'control:set': { name: string; value: number };
   'tempo:set': { tempo: number };
   'interaction:dispatch': { source: InteractionSource; action: string };
+  'midi:connection': DeviceConnectionState;
+  'keyboard:octave': { octave: number };
   error: { source: string; error: Error };
 }
 
