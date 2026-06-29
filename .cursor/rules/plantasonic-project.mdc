@@ -16,7 +16,7 @@ Browser-based generative audiovisual instrument — first proof of the repeatabl
 | ai-product-framework | Process, templates, Cursor rules | `docs/product-framework/` |
 | ai-native-design-system | Tokens, Bootstrap, UI rules | `src/design-system/` |
 | plantasia-sound-engine | Audio engine | `src/audio/soundAdapter.ts` — **integrated** (`1.0.0-beta.1`) |
-| ASCII Visual Engine | Visual engine | `src/visuals/mockAsciiAdapter.ts` — mock until Phase 6 |
+| ascii-visual-engine | Visual engine | `src/visuals/plantasiaAsciiAdapter.ts` — **integrated** (`v0.1.0`) |
 
 **Do not:** merge repos, copy engine code, import unstable engine packages, hardcode theme values.
 
@@ -33,4 +33,4 @@ UI → Runtime → Adapters → External engines. Runtime is the only layer that
 
 ## Current phase
 
-Phase 5 complete — sound engine integrated via adapter. Do not integrate ASCII engine until Phase 6.
+Phase 8 complete — unified interaction layer routes all input through runtime. Next: Phase 9 application experience.

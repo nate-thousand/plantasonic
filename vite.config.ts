@@ -8,7 +8,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['tone', 'plantasia-sound-engine'],
+    include: ['tone', 'plantasia-sound-engine', 'ascii-visual-engine'],
   },
   css: {
     preprocessorOptions: {

@@ -9,6 +9,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 8:** Unified interaction layer (`src/interaction/`)
+- Input modules: MIDI, keyboard, mouse, touch
+- `InteractionManager` + `InputRouter` — all input normalizes to runtime events
+- MIDI Learn with localStorage persistence (`SettingsStore`)
+- Automation provider interface (`src/automation/` — no implementation)
+- Sidebar input settings panel (MIDI/keyboard/touch toggles, octave, learn reset)
+- `docs/INTERACTION_LAYER.md`
+- `npm run verify:interaction`
+
+### Changed
+
+- UI (ControlDock, sliders) dispatches through interaction layer, not runtime directly
+- Keyboard input moved from `Stage.ts` to `src/keyboard/keyboardModule.ts`
+- Web MIDI removed from sound adapter — routes through interaction → runtime
+- Sliders tagged with `data-ps-control` for mouse/touch modules
+
+### Added
+
+- **Phase 7:** Unified preset world system (`src/presets/`)
+- `PresetWorld` schema with sound/visual engine refs and default controls/tempo
+- World modules: `seed-world`, `mold-world`
+- `docs/PRESETS.md` — authoring guide
+- Runtime resolves worlds before loading adapters; rejects unknown preset ids
+
+### Changed
+
+- `runtime.setPreset()` loads engine presets from world definitions atomically
+- ControlDock preset dropdown driven by `listPresetWorlds()` (no hardcoded ids)
+- Stage overlay shows world name and description from registry
+- Removed adapter-level preset id maps (worlds own engine mappings)
+
+### Added
+
+- **Phase 6:** ASCII Visual Engine integration via `PlantasiaAsciiAdapter`
+- `ascii-visual-engine@v0.1.0` dependency (`file:../ascii-visual-engine`)
+- `docs/ASCII_VISUAL_ENGINE_INTEGRATION.md` — visual mapping, stage mounting, verification
+- Visual control mapping (`src/visuals/visualControlMapping.ts`)
+- Full-bleed canvas mount in `#ps-stage`
+
+### Changed
+
+- `createRuntime()` defaults to `PlantasiaAsciiAdapter` (mock ASCII moved to `scripts/mocks/`)
+- `runtime.init()` passes container to ASCII adapter for stage mounting
+- `runtime.noteOff()` forwards `noteOff` to ASCII adapter
+- CI builds sibling `ascii-visual-engine` before Plantasonic build
+
+### Added
+
 - **Phase 5:** Plantasia Sound Engine integration via `PlantasiaSoundAdapter`
 - `plantasia-sound-engine@1.0.0-beta.1` npm dependency
 - `docs/SOUND_ENGINE_INTEGRATION.md` — runtime mapping, control translation, verification

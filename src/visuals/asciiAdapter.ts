@@ -22,7 +22,7 @@ export interface AsciiEngineContract {
  */
 export interface AsciiAdapter {
   /** Prepares the adapter and underlying engine resources. */
-  init(): Promise<void>;
+  init(mount?: HTMLElement): Promise<void>;
 
   /** Starts the render loop. */
   start(): Promise<void>;
@@ -51,7 +51,7 @@ export interface AsciiAdapter {
  * Implements the interface without producing visuals.
  */
 export class NullAsciiAdapter implements AsciiAdapter {
-  async init(): Promise<void> {
+  async init(_mount?: HTMLElement): Promise<void> {
     /* Engine integration point */
   }
 

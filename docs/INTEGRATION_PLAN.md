@@ -193,34 +193,27 @@ This plan follows the repeatable product system defined in [SYSTEM_OVERVIEW.md](
 
 **Objective:** Connect ASCII Visual Engine through `AsciiAdapter`.
 
-**Status: Not started**
-
-### Prerequisites
-
-- `plantasia-ascii-engine` package published (or stable extraction from engine-test)
-- Phase 5 sound engine integrated
-- Stage element ready in UI shell
+**Status: Complete**
 
 ### Tasks
 
-- [ ] Pin stable visual engine version in `package.json`
-- [ ] Implement `AsciiVisualAdapter` wrapping engine API
-- [ ] Replace `NullAsciiAdapter` in app bootstrap
-- [ ] Mount render surface in `#ps-stage`
-- [ ] Wire resize observer to `runtime.resize()`
-- [ ] Implement render loop coordination in runtime
-- [ ] Verify lifecycle and preset loading
+- [x] Pin stable visual engine version in `package.json` (`ascii-visual-engine@v0.1.0`)
+- [x] Implement `PlantasiaAsciiAdapter` wrapping engine API
+- [x] Replace mock adapter in `createRuntime()`
+- [x] Mount render surface in `#ps-stage`
+- [x] Wire resize observer to `runtime.resize()` (via app shell)
+- [x] Verify lifecycle and preset loading
 
 ### External references
 
-- **plantasia-ascii-engine:** npm dependency — visual rendering only
-- **plantasia-engine-test:** Reference for ASCII grammar and visual preset patterns
+- **ascii-visual-engine:** [github.com/nate-thousand/ascii-visual-engine](https://github.com/nate-thousand/ascii-visual-engine) — visual rendering only
+- **Integration guide:** [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./ASCII_VISUAL_ENGINE_INTEGRATION.md)
 
 ### Exit criteria
 
-- ASCII visuals render in stage when runtime starts
-- Resize and fullscreen update render surface
-- No direct engine imports outside `src/visuals/`
+- [x] ASCII visuals render in stage when runtime starts
+- [x] Resize updates render surface
+- [x] No direct engine imports outside `src/visuals/`
 
 ### Do not
 
@@ -233,28 +226,22 @@ This plan follows the repeatable product system defined in [SYSTEM_OVERVIEW.md](
 
 **Objective:** App-level preset worlds that coordinate sound and visual engines.
 
-**Status: Not started**
-
-### Prerequisites
-
-- Phases 5 and 6 complete — both engines integrated
-- Preset manifest structure exists (`src/presets/manifest.ts`)
+**Status: Complete**
 
 ### Tasks
 
-- [ ] Define preset world schema (metadata + engine configs)
-- [ ] Author first preset world module in `src/presets/worlds/`
-- [ ] Implement preset selection UI in control dock or menu
-- [ ] Implement preset world modules in `src/presets/worlds/` (demo preset select wired in Phase 3)
-- [ ] Wire `runtime.setPreset()` to full preset world system
-- [ ] Verify atomic loading across both adapters
-- [ ] Document preset authoring in `docs/PRESETS.md`
+- [x] Define preset world schema (metadata + engine configs)
+- [x] Author preset world modules in `src/presets/worlds/`
+- [x] Wire preset selection UI to manifest (`ControlDock`)
+- [x] Wire `runtime.setPreset()` to preset world registry
+- [x] Verify atomic loading across both adapters
+- [x] Document preset authoring in `docs/PRESETS.md`
 
 ### Exit criteria
 
-- User can select a preset and both engines load synchronously
-- Preset metadata displays in UI
-- At least one complete preset world exists
+- [x] User can select a preset and both engines load synchronously
+- [x] Preset metadata displays in UI
+- [x] Two complete preset worlds exist (`seed-world`, `mold-world`)
 
 ---
 

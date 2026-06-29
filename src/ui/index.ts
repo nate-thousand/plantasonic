@@ -8,8 +8,11 @@ export {
   getStageDimensions,
   getStageElement,
   updateStageStatus,
-  bindStageKeyboard,
 } from './components/Stage.ts';
+export {
+  bindInteractionSettings,
+  startControlMidiLearn,
+} from './components/InteractionSettings.ts';
 export {
   createControlDock,
   bindControlDock,

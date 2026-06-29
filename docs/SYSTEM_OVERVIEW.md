@@ -82,7 +82,7 @@ Engines are **npm packages** that deliver a single capability. They have no know
 | Engine                 | Repository                           | Capability                        |
 | ---------------------- | ------------------------------------ | --------------------------------- |
 | Plantasia Sound Engine | `plantasia-sound-engine`             | Audio synthesis, presets, Tone.js |
-| ASCII Visual Engine    | `plantasia-ascii-engine` _(planned)_ | ASCII rendering, canvas/WebGL     |
+| ASCII Visual Engine    | `ascii-visual-engine` | ASCII rendering, canvas/WebGL     |
 
 **Reference until ASCII engine ships:** `plantasia-engine-test` documents visual grammar and integration patterns — read only, do not embed.
 
@@ -144,7 +144,7 @@ App (UI shell)
 Runtime (state + events + lifecycle)
   ↓
 ├── Sound Adapter ──→ plantasia-sound-engine
-└── ASCII Adapter ──→ plantasia-ascii-engine
+└── ASCII Adapter ──→ ascii-visual-engine
 ```
 
 Design tokens flow separately:
@@ -192,11 +192,11 @@ See [REPEATABLE_APP_TEMPLATE.md](./REPEATABLE_APP_TEMPLATE.md) for the step-by-s
 | AI Product Framework    | **Integrated** | `docs/product-framework/`, `.cursor/rules/`  |
 | AI Native Design System | **Integrated** | `src/design-system/`, `docs/design-system/`  |
 | Sound Engine            | **Integrated** | `src/audio/soundAdapter.ts` → `plantasia-sound-engine` |
-| ASCII Visual Engine     | Mock (Phase 6) | `src/visuals/mockAsciiAdapter.ts`          |
+| ASCII Visual Engine     | **Integrated** | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Runtime                 | **Functional** | `src/runtime/`                             |
 | App                     | Wired to runtime | `src/ui/`, `src/app/`                    |
 
-Phases 1–5 complete. Sound engine live. See [INTEGRATION_PLAN.md](./INTEGRATION_PLAN.md) Phase 6 next.
+Phases 1–7 complete. Unified preset worlds live. See [INTEGRATION_PLAN.md](./INTEGRATION_PLAN.md) Phase 8 next.
 
 ---
 

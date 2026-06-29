@@ -116,3 +116,7 @@ When design system tokens change:
 - Engineering workflow (see `docs/product-framework/`)
 
 The design system governs **application chrome** — navigation, controls, and layout.
+
+## Interaction Controls
+
+Performance sliders use `data-ps-control="<name>"` attributes for mouse and touch module binding. Input settings (MIDI, keyboard, touch toggles) live in the sidebar **Input** panel. See [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md).

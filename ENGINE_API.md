@@ -90,15 +90,17 @@ eventBus.emit('error', { source: 'soundAdapter:loadPreset', error });
 
 ## ASCII Engine
 
-External package: **Plantasia ASCII Engine** (future dependency — Phase 6)
+External package: **ASCII Visual Engine** (`ascii-visual-engine@v0.1.0`)
 
-Implementation: `src/visuals/mockAsciiAdapter.ts` (mock until Phase 6)
+Implementation: `src/visuals/plantasiaAsciiAdapter.ts`
+
+See [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./docs/ASCII_VISUAL_ENGINE_INTEGRATION.md) for full mapping.
 
 ### Interface
 
 ```typescript
 interface AsciiAdapter {
-  init(): Promise<void>;
+  init(mount?: HTMLElement): Promise<void>;
   start(): Promise<void>;
   stop(): Promise<void>;
   render(): void;
@@ -109,13 +111,26 @@ interface AsciiAdapter {
 }
 ```
 
+### Parameter paths
+
+| Path | Maps to |
+| ---- | ------- |
+| `controls.bloom` | `strength` |
+| `controls.mold` | `glitchAmount` |
+| `controls.density` | `density` |
+| `controls.chaos` | `randomness` |
+| `controls.brightness` | `trailAmount` |
+| `tempo` | `speed` (BPM / 72) |
+| `note` | `noteOn({ id, intensity, x, y })` |
+| `noteOff` | `noteOff({ id })` |
+
 ---
 
 ## Shared Conventions
 
 ### Preset IDs
 
-Plantasonic UI demo ids (`seed-world`, `mold-world`) map to engine bundled presets via `PLANTASONIC_PRESET_MAP` in `src/audio/controlMapping.ts`.
+App-level preset world ids (`seed-world`, `mold-world`) are defined in `src/presets/worlds/`. Each world maps to engine bundled preset ids for sound and visual adapters. See [docs/PRESETS.md](./docs/PRESETS.md).
 
 ### Parameter Values
 
@@ -133,5 +148,5 @@ Plantasonic UI demo ids (`seed-world`, `mold-world`) map to engine bundled prese
 - [x] Implement `PlantasiaSoundAdapter`
 - [x] Wire `createRuntime()` to real sound adapter
 - [x] Document engine parameter mapping
-- [ ] Replace `MockAsciiAdapter` with real ASCII engine (Phase 6)
-- [ ] Test preset loading synchronizes both engines (Phase 6+)
+- [x] Replace mock ASCII adapter with `PlantasiaAsciiAdapter` (Phase 6)
+- [x] Test preset loading synchronizes both engines (Phase 6)

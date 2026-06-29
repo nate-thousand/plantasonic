@@ -2,6 +2,7 @@
  * Application bootstrap and lifecycle management.
  */
 
+import { createInteractionManager } from '@/interaction/index.ts';
 import { createRuntime, eventBus } from '@/runtime/index.ts';
 import { createAppShell, bindRuntimeToShell, setNavStatus } from '@/ui/index.ts';
 
@@ -12,6 +13,7 @@ export interface PlantasonicApp {
 /** Initializes and mounts the Plantasonic application. */
 export async function createPlantasonicApp(container: HTMLElement): Promise<PlantasonicApp> {
   const runtime = createRuntime();
+  const interaction = createInteractionManager(runtime);
 
   const shell = createAppShell({
     onResize: (width, height) => {
@@ -23,7 +25,7 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
 
   container.appendChild(shell.root);
 
-  const unbindUi = bindRuntimeToShell(runtime, shell);
+  const unbindUi = bindRuntimeToShell(interaction, shell);
 
   eventBus.on('error', ({ source, error }) => {
     console.error(`[Plantasonic] ${source}:`, error);
@@ -34,11 +36,14 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
 
   if (!result.success) {
     setNavStatus('Error');
+  } else {
+    await interaction.init();
   }
 
   return {
     destroy: async () => {
       unbindUi();
+      await interaction.destroy();
       await runtime.destroy();
       shell.destroy();
     },

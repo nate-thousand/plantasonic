@@ -1,18 +1,18 @@
 /**
  * Mock ASCII adapter — logs state changes, no rendering.
- * Used during Phase 3 before ASCII Visual Engine integration.
+ * Used by scripts/verify-runtime.ts only.
  */
 
-import type { AsciiAdapter } from './asciiAdapter.ts';
-import type { ParameterPath, ParameterValue, PresetId } from '@/runtime/types.ts';
-import type { RuntimeState } from '@/runtime/types.ts';
+import type { AsciiAdapter } from '../../src/visuals/asciiAdapter.ts';
+import type { ParameterPath, ParameterValue, PresetId } from '../../src/runtime/types.ts';
+import type { RuntimeState } from '../../src/runtime/types.ts';
 
 const LOG_PREFIX = '[MockAscii]';
 
 export class MockAsciiAdapter implements AsciiAdapter {
   private lastState: Readonly<RuntimeState> | null = null;
 
-  async init(): Promise<void> {
+  async init(_mount?: HTMLElement): Promise<void> {
     await Promise.resolve();
     console.info(`${LOG_PREFIX} init`);
   }

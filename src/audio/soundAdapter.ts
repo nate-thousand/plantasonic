@@ -18,11 +18,7 @@ import type {
 import type { RuntimeState } from '@/runtime/types.ts';
 import { eventBus } from '@/runtime/events.ts';
 import { DEFAULT_CONTROLS } from '@/runtime/types.ts';
-import {
-  ecologyToRuntimeControls,
-  resolveEnginePresetId,
-  runtimeControlToEcological,
-} from './controlMapping.ts';
+import { ecologyToRuntimeControls, runtimeControlToEcological } from './controlMapping.ts';
 import { midiToNoteName } from './midiNote.ts';
 
 const LOG_PREFIX = '[PlantasiaSound]';
@@ -74,7 +70,6 @@ function createControlCache(controls: ControlValues = DEFAULT_CONTROLS): Control
 export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
   private engine: PlantasiaEngine | null = null;
   private audioReady = false;
-  private midiEnabled = false;
   private controlCache = createControlCache();
   private tempoCache = 72;
   private lastPresetId: PresetId | null = null;
@@ -105,7 +100,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
         console.info(`${LOG_PREFIX} default species loaded`);
       }
       await engine.start();
-      await this.tryEnableMidi(engine);
     } catch (error) {
       this.reportError('start', error);
       throw error;
@@ -126,22 +120,20 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
 
   async loadPreset(presetId: PresetId): Promise<PresetLoadResult | undefined> {
     const engine = this.requireEngine();
-    const enginePresetId = resolveEnginePresetId(presetId);
 
     try {
-      const resolution = resolvePresetToSpecies(enginePresetId);
-      await engine.loadPreset(enginePresetId);
+      const resolution = resolvePresetToSpecies(presetId);
+      await engine.loadPreset(presetId);
       const controls = ecologyToRuntimeControls(resolution.ecology);
       this.controlCache = createControlCache(controls);
       this.lastPresetId = presetId;
       console.info(`${LOG_PREFIX} loadPreset`, {
         presetId,
-        enginePresetId,
         species: resolution.speciesId,
       });
       return { controls };
     } catch (error) {
-      this.reportError('loadPreset', error, { presetId, enginePresetId });
+      this.reportError('loadPreset', error, { presetId });
       return undefined;
     }
   }
@@ -219,7 +211,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
     } finally {
       this.engine = null;
       this.audioReady = false;
-      this.midiEnabled = false;
       this.controlCache = createControlCache();
       this.lastPresetId = null;
     }
@@ -245,19 +236,6 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
     if (this.tempoCache === tempo) return;
     engine.setTempo(tempo);
     this.tempoCache = tempo;
-  }
-
-  private async tryEnableMidi(engine: PlantasiaEngine): Promise<void> {
-    if (this.midiEnabled) return;
-    try {
-      const connected = await engine.enableMidi();
-      this.midiEnabled = connected;
-      if (connected) {
-        console.info(`${LOG_PREFIX} Web MIDI enabled`);
-      }
-    } catch (error) {
-      this.reportError('enableMidi', error);
-    }
   }
 
   private reportError(source: string, error: unknown, context?: Record<string, unknown>): void {

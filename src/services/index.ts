@@ -1,6 +1,6 @@
 /**
- * Shared services (future).
- * Cross-cutting concerns such as persistence, analytics, and PWA utilities.
+ * Shared application services.
  */
 
-export {};
+export { DEFAULT_INTERACTION_SETTINGS, SettingsStore } from './settingsStore.ts';
+export type { InteractionSettings } from './settingsStore.ts';

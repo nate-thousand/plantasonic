@@ -24,16 +24,16 @@ Plantasonic Runtime         →  integration layer (state, events, adapters)
 Plantasonic App             →  user experience
 ```
 
-**Integration status:** Phases 1–5 complete — framework, design system, functional runtime, **live sound engine**. ASCII engine still mock (Phase 6).
+**Integration status:** Phases 1–8 complete — both engines live, unified preset worlds, unified interaction layer.
 
 | Layer                   | Location in Plantasonic                                   |
 | ----------------------- | --------------------------------------------------------- |
 | AI Product Framework    | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
 | AI Native Design System | `src/design-system/`, `docs/design-system/`               |
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
-| ASCII Visual Engine     | `src/visuals/mockAsciiAdapter.ts` (mock — Phase 6)        |
+| ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Runtime                 | `src/runtime/` — functional API + adapter wiring          |
-| App                     | `src/app/`, `src/ui/`, `src/presets/`                     |
+| App                     | `src/app/`, `src/ui/`, `src/presets/` (world registry)    |
 
 See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md) for the phased build plan.
 
@@ -63,7 +63,7 @@ Plantasonic is the product app at the center of an independent repository ecosys
 | --------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------ |
 | [plantasonic](https://github.com/nate-thousand/plantasonic)                       | **Product app** (this repo)         | —                                                            |
 | [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio engine library                | npm dependency via `src/audio/soundAdapter.ts`               |
-| `plantasia-ascii-engine`                                                          | ASCII engine library _(planned)_    | npm dependency via `src/visuals/asciiAdapter.ts`             |
+| `ascii-visual-engine`                                                             | ASCII engine library                | npm dependency via `src/visuals/plantasiaAsciiAdapter.ts`      |
 | [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and pattern reference until ASCII engine ships |
 | `ai-native-design-system`                                                         | Design tokens, components, patterns | Token imports into `src/styles/`                             |
 | `ai-product-framework`                                                            | Engineering workflow and templates  | Docs and templates at project setup                          |
@@ -168,13 +168,12 @@ npm run format        # Prettier write
 3. Update [CHANGELOG.md](./CHANGELOG.md) for user-facing changes.
 4. Track progress in [ROADMAP.md](./ROADMAP.md).
 
-## Future Engine Integration
+Sound and ASCII engines integrated. See integration docs:
 
-Sound engine integrated in Phase 5. Remaining:
+- [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md)
+- [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./docs/ASCII_VISUAL_ENGINE_INTEGRATION.md)
 
-- `src/visuals/mockAsciiAdapter.ts` → ASCII Visual Engine (Phase 6)
-
-The runtime API is stable — swap adapter implementations only. See [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md), [RUNTIME.md](./RUNTIME.md), and [ENGINE_API.md](./ENGINE_API.md).
+The runtime API is stable — swap adapter implementations only. See [RUNTIME.md](./RUNTIME.md) and [ENGINE_API.md](./ENGINE_API.md).
 
 ## Documentation
 
@@ -187,6 +186,9 @@ The runtime API is stable — swap adapter implementations only. See [docs/SOUND
 | [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md)   | Reusable workflow for future apps   |
 | [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md)                 | Phased delivery plan                |
 | [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md) | Phase 5 sound engine integration    |
+| [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./docs/ASCII_VISUAL_ENGINE_INTEGRATION.md) | Phase 6 ASCII engine integration |
+| [docs/PRESETS.md](./docs/PRESETS.md) | Phase 7 unified preset worlds |
+| [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md) | Phase 8 interaction architecture |
 | [docs/product-framework/README.md](./docs/product-framework/README.md) | AI Product Framework integration    |
 | [docs/design-system/README.md](./docs/design-system/README.md)         | AI Native Design System integration |
 | [HANDOFF.md](./HANDOFF.md)                                             | Current session handoff             |

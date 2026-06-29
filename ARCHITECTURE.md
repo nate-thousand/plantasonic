@@ -26,7 +26,7 @@ Plantasonic is the **product app**. It references four external repositories for
 | Repository                                                                        | Role                                | How Plantasonic uses it                             |
 | --------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------- |
 | [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio synthesis library             | npm dependency → `src/audio/soundAdapter.ts`        |
-| `plantasia-ascii-engine` _(planned)_                                              | ASCII rendering library             | npm dependency → `src/visuals/asciiAdapter.ts`      |
+| `ascii-visual-engine`                                                             | ASCII rendering library             | npm dependency → `src/visuals/plantasiaAsciiAdapter.ts` |
 | [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and patterns until ASCII engine ships |
 | `ai-native-design-system`                                                         | Design tokens, components, patterns | `src/design-system/`, `docs/design-system/`         |
 | `ai-product-framework`                                                            | Engineering workflow and templates  | `docs/product-framework/`, `.cursor/rules/`         |
@@ -194,11 +194,11 @@ Plantasonic (this repo)
   → src/runtime/     integration layer
   → src/ui/          app shell wired to runtime
   → src/audio/soundAdapter.ts   PlantasiaSoundAdapter (live)
-  → src/visuals/mockAsciiAdapter.ts   mock (Phase 6)
+  → src/visuals/plantasiaAsciiAdapter.ts   PlantasiaAsciiAdapter (live)
 
 External engines (npm)
   → plantasia-sound-engine@1.0.0-beta.1 (integrated)
-  → ASCII Visual Engine (Phase 6)
+  → ascii-visual-engine@v0.1.0 (integrated)
 ```
 
 See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md).
@@ -208,17 +208,28 @@ See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) and [docs/INTEGRATION_P
 ```text
 main.ts
   └── app/
-        ├── ui/          (no engine deps)
-        ├── runtime/     (depends on adapter interfaces only)
-        ├── audio/       (adapter interface)
-        └── visuals/     (adapter interface)
+        ├── interaction/   (input modules → runtime dispatch)
+        ├── ui/              (dispatches via interaction layer)
+        ├── runtime/         (depends on adapter interfaces only)
+        ├── audio/           (adapter interface)
+        └── visuals/         (adapter interface)
+
+interaction/
+  ├── interactionManager.ts
+  ├── inputRouter.ts         → runtime/
+  ├── keyboard/
+  ├── midi/
+  ├── mouse/
+  ├── touch/
+  └── automation/            (interface only)
 
 runtime/
-  ├── audio/soundAdapter   (interface import)
-  ├── visuals/asciiAdapter (interface import)
+  ├── audio/soundAdapter     (interface import)
+  ├── visuals/asciiAdapter   (interface import)
+  ├── presets/registry       (preset world resolution)
   ├── state.ts
   ├── events.ts
   └── types.ts
 ```
 
-No circular dependencies. UI depends on runtime types for display state only.
+No circular dependencies. UI and input modules dispatch through the interaction layer. Runtime is the only layer that calls adapters.

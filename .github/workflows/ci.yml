@@ -12,16 +12,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: plantasonic
+
+      - uses: actions/checkout@v4
+        with:
+          repository: nate-thousand/ascii-visual-engine
+          ref: v0.1.0
+          path: ascii-visual-engine
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: plantasonic/package-lock.json
 
-      - run: npm ci
+      - name: Build ASCII Visual Engine
+        working-directory: ascii-visual-engine
+        run: npm ci && npm run build
 
-      - run: npm run lint
+      - name: Install Plantasonic dependencies
+        working-directory: plantasonic
+        run: npm ci
 
-      - run: npm run format:check
+      - name: Lint
+        working-directory: plantasonic
+        run: npm run lint
 
-      - run: npm run build
+      - name: Format check
+        working-directory: plantasonic
+        run: npm run format:check
+
+      - name: Build
+        working-directory: plantasonic
+        run: npm run build

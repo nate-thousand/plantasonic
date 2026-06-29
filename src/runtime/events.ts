@@ -4,6 +4,7 @@
  */
 
 import type { ParameterPath, ParameterValue, PresetId } from './types.ts';
+import type { InteractionSource } from '@/interaction/types.ts';
 
 /** All runtime event names and their payload shapes. */
 export interface RuntimeEventMap {
@@ -21,6 +22,7 @@ export interface RuntimeEventMap {
   'input:noteOff': { note: number };
   'control:set': { name: string; value: number };
   'tempo:set': { tempo: number };
+  'interaction:dispatch': { source: InteractionSource; action: string };
   error: { source: string; error: Error };
 }
 

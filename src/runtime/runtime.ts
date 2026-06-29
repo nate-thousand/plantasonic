@@ -5,12 +5,12 @@
 
 import type { SoundAdapter } from '@/audio/soundAdapter.ts';
 import type { AsciiAdapter } from '@/visuals/asciiAdapter.ts';
+import { mergeWorldDefaults, resolvePresetWorld } from '@/presets/registry.ts';
 import type {
   ControlName,
   RuntimeConfig,
   RuntimeInitResult,
   RuntimeState,
-  RuntimeStatePatch,
   Unsubscribe,
 } from './types.ts';
 import type { RuntimeSubscriber } from './types.ts';
@@ -47,7 +47,7 @@ export class Runtime {
     eventBus.emit('runtime:init', { container: config.container });
 
     try {
-      await Promise.all([this.soundAdapter.init(), this.asciiAdapter.init()]);
+      await Promise.all([this.soundAdapter.init(), this.asciiAdapter.init(config.container)]);
       this.initialized = true;
       eventBus.emit('runtime:ready', undefined);
 
@@ -97,18 +97,37 @@ export class Runtime {
     this.syncAdapters();
   }
 
-  /** Loads a preset into both adapters. */
+  /** Loads a preset world into both adapters and syncs runtime state. */
   async setPreset(presetId: string): Promise<void> {
     this.ensureInitialized();
-    eventBus.emit('preset:load', { presetId });
-    const soundResult = await this.soundAdapter.loadPreset(presetId);
-    await this.asciiAdapter.loadPreset(presetId);
-    const patch: RuntimeStatePatch = { preset: presetId };
-    if (soundResult && 'controls' in soundResult) {
-      patch.controls = soundResult.controls;
+
+    const world = resolvePresetWorld(presetId);
+    if (!world) {
+      const err = new Error(`Unknown preset world: ${presetId}`);
+      eventBus.emit('error', { source: 'runtime:setPreset', error: err });
+      throw err;
     }
-    this.store.commit(patch);
-    eventBus.emit('preset:loaded', { presetId });
+
+    eventBus.emit('preset:load', { presetId: world.id });
+
+    const soundResult = await this.soundAdapter.loadPreset(world.sound.presetId);
+    if (soundResult === undefined) {
+      const err = new Error(`Failed to load sound preset for world: ${world.id}`);
+      eventBus.emit('error', { source: 'runtime:setPreset', error: err });
+      throw err;
+    }
+
+    await this.asciiAdapter.loadPreset(world.visual.presetId);
+
+    const { controls, tempo } = mergeWorldDefaults(world, soundResult.controls);
+
+    this.store.commit({
+      preset: world.id,
+      controls,
+      tempo,
+    });
+
+    eventBus.emit('preset:loaded', { presetId: world.id });
     this.syncAdapters();
   }
 
@@ -151,6 +170,7 @@ export class Runtime {
       },
     });
     this.soundAdapter.noteOff(note);
+    this.asciiAdapter.setParameter('noteOff', note);
     eventBus.emit('input:noteOff', { note });
     this.syncAdapters();
   }

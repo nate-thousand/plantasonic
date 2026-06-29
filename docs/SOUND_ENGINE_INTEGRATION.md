@@ -46,7 +46,7 @@ Audio output (Tone.js / Web Audio — internal to engine)
 | Method | Engine call | Notes |
 | ------ | ----------- | ----- |
 | `init()` | `createPlantasiaEngine()` | Does not unlock audio context (requires user gesture) |
-| `start()` | `initialize()` → `loadDefaultSpecies()` if needed → `start()` → `enableMidi()` | Audio context unlocks on Play |
+| `start()` | `initialize()` → `loadDefaultSpecies()` if needed → `start()` | Audio context unlocks on Play |
 | `stop()` | `allNotesOff()` → `stopSpecies()` | Idempotent |
 | `loadPreset(id)` | `resolvePresetToSpecies()` → `loadPreset()` | Returns preset default controls to runtime |
 | `noteOn(midi, vel)` | `noteOn(midiToNoteName(midi), vel)` | Velocity 0–1 |
@@ -81,22 +81,11 @@ Errors are caught, logged with `[PlantasiaSound]` prefix, and emitted on the run
 
 | Runtime | Adapter | Engine |
 | ------- | ------- | ------ |
-| `setPreset(id)` | `loadPreset(id)` | `engine.loadPreset(enginePresetId)` |
+| `setPreset(worldId)` | `loadPreset(world.sound.presetId)` | `engine.loadPreset(enginePresetId)` |
 
-When a preset loads successfully, the adapter returns `{ controls }` derived from engine ecology defaults. Runtime commits these to shared state before `syncAdapters()`.
+Runtime resolves app-level world ids via `src/presets/registry.ts` before calling adapters. See [PRESETS.md](./PRESETS.md).
 
-### Plantasonic preset id mapping
-
-UI demo presets map to bundled engine presets in `src/audio/controlMapping.ts`:
-
-| Plantasonic UI id | Engine preset id | Species |
-| ----------------- | ---------------- | ------- |
-| `seed-world` | `plantasonic` | seed |
-| `mold-world` | `vine` | mold |
-
-Engine preset ids (`plantasonic`, `seed`, `bloom`, `vine`, `mycelium`, etc.) also work if passed directly to `runtime.setPreset()`.
-
-Full engine map: `PRESET_SPECIES_MAP` in `plantasia-sound-engine`.
+When a preset loads successfully, the adapter returns `{ controls }` derived from engine ecology defaults. Runtime merges world defaults over engine defaults before committing state.
 
 ### Control mapping
 
@@ -126,7 +115,7 @@ Exposed through the adapter:
 
 - v2 Sound World lifecycle (Seed, Flowers, Mold, Bacteria species)
 - Bundled preset loading with ecology defaults
-- Real-time note input (keyboard demo + Web MIDI when available)
+- Real-time note input via interaction layer (keyboard, MIDI → runtime → adapter)
 - Ecological performance controls (mapped from runtime sliders)
 - Transport tempo (20–300 BPM)
 - Graceful error handling and console diagnostics
@@ -142,10 +131,10 @@ Exposed through the adapter:
 
 ## Known limitations
 
-1. **ASCII visuals still mock** — Phase 6 will integrate the ASCII engine; sound runs live, visuals log only.
+1. **Both engines integrated** — sound and ASCII visuals run through adapters (Phases 5–6 complete).
 2. **Audio context requires user gesture** — first `Play` click initializes audio; silent until then is expected browser behavior.
-3. **UI preset list is demo-scoped** — only `seed-world` and `mold-world` in the dock; engine ships more presets (see engine `presets/` bundle).
-4. **Web MIDI** — enabled automatically on start when the browser supports it; no UI indicator yet.
+3. **Preset worlds are app-scoped** — use world ids (`seed-world`, `mold-world`) with `runtime.setPreset()`; engine preset ids are resolved by the world registry.
+4. **MIDI input** — handled by `src/midi/` interaction module, not the sound adapter. See [INTERACTION_LAYER.md](./INTERACTION_LAYER.md).
 5. **Runtime controls ≠ engine ecology names** — mapping is adapter-owned; do not assume 1:1 naming in UI copy.
 
 ---
@@ -155,10 +144,10 @@ Exposed through the adapter:
 | Extension | Location | Notes |
 | --------- | -------- | ----- |
 | Metering → UI | Adapter + runtime subscriber | `engine.getLevel()` |
-| Visual event bridge | Adapter forwards `engine.on()` | Phase 6 ASCII sync |
-| Full preset manifest | `src/presets/manifest.ts` | Phase 7 unified worlds |
+| Visual event bridge | Adapter forwards `engine.on()` | Optional Phase 7+ UI sync |
+| Full preset manifest | `src/presets/registry.ts` | Complete — see PRESETS.md |
+| Species metadata in UI | World name/description in Stage | Complete |
 | Dedicated MIDI module | `src/midi/` | Phase 8 input layer |
-| Species metadata in UI | Runtime preset metadata | Phase 7 |
 
 ---
 

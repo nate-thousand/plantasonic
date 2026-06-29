@@ -75,9 +75,18 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 0;
+  overflow: hidden;
   background-color: $ps-surface-stage;
   border-top: 1px solid $ps-border-subtle;
   border-bottom: 1px solid $ps-border-subtle;
+}
+
+.ps-stage__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .ps-stage__placeholder {
@@ -103,6 +112,24 @@ body {
   font-weight: 500;
   color: $ps-text-primary;
   margin: 0;
+}
+
+.ps-sidebar__settings {
+  display: flex;
+  flex-direction: column;
+  gap: $ps-space-sm;
+  margin-top: $ps-space-lg;
+  padding-top: $ps-space-md;
+  border-top: 1px solid $ps-border-subtle;
+}
+
+.ps-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $ps-space-sm;
+  font-size: 0.875rem;
+  color: $ps-text-secondary;
 }
 
 .ps-dock {

@@ -1,10 +1,10 @@
 /**
- * Phase 3 runtime verification — run with: npx tsx scripts/verify-runtime.ts
+ * Runtime verification — run with: npm run verify:runtime
  */
 
 import { createRuntime } from '../src/runtime/createRuntime.ts';
 import { MockSoundAdapter } from './mocks/mockSoundAdapter.ts';
-import { MockAsciiAdapter } from '../src/visuals/mockAsciiAdapter.ts';
+import { MockAsciiAdapter } from './mocks/mockAsciiAdapter.ts';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) {
@@ -25,7 +25,6 @@ async function main(): Promise<void> {
     lastSubscriberState = state;
   });
 
-  // subscribe() invokes callback immediately
   assert(subscriberCalls === 1, 'Subscriber should receive initial state');
 
   const init = await runtime.init({ container: {} as HTMLElement });
@@ -38,8 +37,22 @@ async function main(): Promise<void> {
 
   await runtime.setPreset('seed-world');
   assert(runtime.getState().preset === 'seed-world', 'setPreset should update preset');
+  assert(runtime.getState().controls.bloom === 0.65, 'seed-world should apply world default controls');
+  assert(runtime.getState().tempo === 72, 'seed-world should apply world default tempo');
   assert(sound.getLastState()?.preset === 'seed-world', 'MockSound should reflect preset');
   assert(ascii.getLastState()?.preset === 'seed-world', 'MockAscii should reflect preset');
+
+  let unknownRejected = false;
+  try {
+    await runtime.setPreset('unknown-world');
+  } catch {
+    unknownRejected = true;
+  }
+  assert(unknownRejected, 'setPreset should reject unknown preset worlds');
+
+  await runtime.setPreset('mold-world');
+  assert(runtime.getState().preset === 'mold-world', 'mold-world should load');
+  assert(runtime.getState().tempo === 84, 'mold-world should apply world tempo');
 
   runtime.setControl('bloom', 0.75);
   assert(runtime.getState().controls.bloom === 0.75, 'setControl should update controls');
@@ -66,7 +79,7 @@ async function main(): Promise<void> {
   unsubscribe();
   await runtime.destroy();
 
-  console.info('[verify-runtime] All Phase 3 runtime checks passed.');
+  console.info('[verify-runtime] All runtime checks passed.');
 }
 
 main().catch((error: unknown) => {

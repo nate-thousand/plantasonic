@@ -1,6 +1,6 @@
 # Runtime Specification
 
-The Plantasonic runtime is the **integration layer** between UI, engine adapters, and future input modules (MIDI, keyboard, touch). Phase 5 integrates the real sound engine; ASCII remains mock until Phase 6.
+The Plantasonic runtime is the **integration layer** between UI, engine adapters, and future input modules (MIDI, keyboard, touch). Phases 5–6 integrate the real sound and ASCII visual engines.
 
 Implementation: `src/runtime/`
 
@@ -33,7 +33,7 @@ const unsubscribe = runtime.subscribe((state) => {
 | `init(config)`            | Initialize adapters, optional initial preset      |
 | `start()`                 | Start both adapters, set `isPlaying: true`        |
 | `stop()`                  | Stop both adapters, clear active notes            |
-| `setPreset(id)`           | Load preset into both adapters                    |
+| `setPreset(id)`           | Load preset world into both adapters (resolves world registry) |
 | `noteOn(note, velocity?)` | Trigger note, update active notes and performance |
 | `noteOff(note)`           | Release note                                      |
 | `setControl(name, value)` | Set performance control (0–1)                     |
@@ -43,7 +43,7 @@ const unsubscribe = runtime.subscribe((state) => {
 | `resize(w, h)`            | Forward viewport size to ASCII adapter            |
 | `destroy()`               | Tear down adapters and reset state                |
 
-Factory: `createRuntime()` in `src/runtime/createRuntime.ts` — defaults to `PlantasiaSoundAdapter` and `MockAsciiAdapter`.
+Factory: `createRuntime()` in `src/runtime/createRuntime.ts` — defaults to `PlantasiaSoundAdapter` and `PlantasiaAsciiAdapter`.
 
 ---
 
@@ -84,8 +84,8 @@ UI (ControlDock, Stage, Sidebar)
   ↓  runtime.start(), setControl(), etc.
 Runtime
   ↓  adapter methods + applyState()
-PlantasiaSoundAdapter (Phase 5) / MockAsciiAdapter (Phase 6 pending)
-  ↓  plantasia-sound-engine / future ASCII Visual Engine
+PlantasiaSoundAdapter / PlantasiaAsciiAdapter
+  ↓  plantasia-sound-engine / ascii-visual-engine
 ```
 
 UI must **not** import or call `src/audio/` or `src/visuals/` adapters directly.
@@ -99,7 +99,6 @@ Binding: `src/ui/bindRuntime.ts` → `bindRuntimeToShell(runtime, shell)`
 | Adapter               | File                        | Behavior                                      |
 | --------------------- | --------------------------- | --------------------------------------------- |
 | PlantasiaSoundAdapter | `src/audio/soundAdapter.ts` | Wraps `createPlantasiaEngine()` — live audio  |
-| MockAsciiAdapter      | `src/visuals/mockAsciiAdapter.ts` | Logs only until Phase 6               |
 
 Sound adapter implements `applyState()` with deduplicated control/tempo sync. Console diagnostics use `[PlantasiaSound]` prefix.
 
@@ -107,13 +106,26 @@ See [docs/SOUND_ENGINE_INTEGRATION.md](./docs/SOUND_ENGINE_INTEGRATION.md).
 
 ---
 
-## Mock ASCII Adapter (Phase 3 — until Phase 6)
+## ASCII Adapter (Phase 6)
+
+| Adapter               | File                                   | Behavior                                      |
+| --------------------- | -------------------------------------- | --------------------------------------------- |
+| PlantasiaAsciiAdapter | `src/visuals/plantasiaAsciiAdapter.ts` | Wraps `AsciiEngine` — live canvas visuals     |
+
+ASCII adapter mounts a full-bleed canvas in `#ps-stage`, implements `applyState()` with deduplicated control/tempo/note sync. Console diagnostics use `[PlantasiaAscii]` prefix.
+
+See [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./docs/ASCII_VISUAL_ENGINE_INTEGRATION.md).
+
+---
+
+## Mock Adapters (verify script only)
 
 | Adapter          | File                              | Behavior                                     |
 | ---------------- | --------------------------------- | -------------------------------------------- |
-| MockAsciiAdapter | `src/visuals/mockAsciiAdapter.ts` | Logs all calls; `applyState()` logs snapshot |
+| MockSoundAdapter | `scripts/mocks/mockSoundAdapter.ts` | Logs all calls for headless verification   |
+| MockAsciiAdapter | `scripts/mocks/mockAsciiAdapter.ts` | Logs all calls for headless verification   |
 
-Console output uses `[MockAscii]` prefix.
+Used by `scripts/verify-runtime.ts` only — not wired in production `createRuntime()`.
 
 ---
 
@@ -220,23 +232,30 @@ Manual smoke test:
 npm run dev
 ```
 
-1. Click **Play** — `[PlantasiaSound] audio context initialized`; generative audio starts
-2. Select a preset — engine loads species; dock reflects preset and control defaults
-3. Move sidebar sliders — sound changes in real time; dock updates values
-4. Press **A–G** while playing — notes trigger through engine; active note count updates
+1. Click **Play** — audio and ASCII visuals start
+2. Select a preset — both engines load mapped presets; dock reflects control defaults
+3. Move sidebar sliders — sound and visuals update in real time
+4. Press **A–J** while playing — keyboard routes through interaction layer to both engines
+5. Connect MIDI controller — Web MIDI via interaction layer (enable in sidebar Input settings)
 
 ---
 
-## Ready for ASCII Engine Integration (Phase 6)
+## Interaction Layer (Phase 8)
 
-Replace mock ASCII adapter in `createRuntime()`:
+All user input dispatches through `InteractionManager` before reaching the runtime. UI components never call adapters directly.
 
-```typescript
-createRuntime({
-  asciiAdapter: new AsciiVisualAdapter(),
-});
+```text
+UI / MIDI / Keyboard / Mouse / Touch
+  ↓
+InteractionManager → InputRouter
+  ↓
+Runtime → Adapters → Engines
 ```
 
-Sound adapter is production-ready — no further runtime API changes required.
+See [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md).
 
-The runtime API and state shape remain stable — only adapter implementations change.
+---
+
+## Phase 9: Application Experience
+
+Next step: responsive polish, preset browser, performance mode, session persistence.

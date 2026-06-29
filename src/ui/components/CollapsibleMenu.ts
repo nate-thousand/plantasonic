@@ -31,6 +31,7 @@ export function createCollapsibleMenu(options: CollapsibleMenuOptions = {}): HTM
           type="range"
           class="form-range"
           id="ps-control-${name}"
+          data-ps-control="${name}"
           min="0"
           max="100"
           value="${String(controlDefaults[name] ?? 50)}"
@@ -47,6 +48,25 @@ export function createCollapsibleMenu(options: CollapsibleMenuOptions = {}): HTM
     <div class="ps-sidebar__content">
       <div class="ps-sidebar__controls">
         ${controlRows}
+      </div>
+      <div class="ps-sidebar__settings">
+        <div class="ps-sidebar__header">Input</div>
+        <label class="ps-settings-row">
+          <input type="checkbox" id="ps-setting-midi" checked /> MIDI
+        </label>
+        <label class="ps-settings-row">
+          <input type="checkbox" id="ps-setting-keyboard" checked /> Keyboard
+        </label>
+        <label class="ps-settings-row">
+          <input type="checkbox" id="ps-setting-touch" checked /> Touch
+        </label>
+        <label class="ps-settings-row">
+          <span>Octave</span>
+          <input type="number" id="ps-setting-octave" min="0" max="8" value="4" class="form-control form-control-sm" />
+        </label>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="ps-midi-learn-reset">
+          Reset MIDI Learn
+        </button>
       </div>
     </div>
   `;

@@ -2,9 +2,10 @@
  * Mock sound adapter for runtime verification scripts only — not used in production.
  */
 
-import type { StateSyncSoundAdapter } from '../../src/audio/soundAdapter.ts';
+import type { PresetLoadResult, StateSyncSoundAdapter } from '../../src/audio/soundAdapter.ts';
 import type { ParameterPath, ParameterValue, PresetId } from '../../src/runtime/types.ts';
 import type { RuntimeState } from '../../src/runtime/types.ts';
+import { DEFAULT_CONTROLS } from '../../src/runtime/types.ts';
 
 const LOG_PREFIX = '[MockSound]';
 
@@ -26,9 +27,10 @@ export class MockSoundAdapter implements StateSyncSoundAdapter {
     console.info(`${LOG_PREFIX} stop`);
   }
 
-  async loadPreset(presetId: PresetId): Promise<void> {
+  async loadPreset(presetId: PresetId): Promise<PresetLoadResult> {
     await Promise.resolve();
     console.info(`${LOG_PREFIX} loadPreset`, presetId);
+    return { controls: { ...DEFAULT_CONTROLS } };
   }
 
   noteOn(note: number, velocity = 0.8): void {

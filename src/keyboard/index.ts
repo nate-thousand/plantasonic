@@ -1,6 +1,5 @@
 /**
- * Keyboard input layer (future).
- * Will map QWERTY keys to musical notes and runtime commands.
+ * Computer keyboard input layer.
  */
 
-export {};
+export { KeyboardModule, DEFAULT_KEY_MAP } from './keyboardModule.ts';

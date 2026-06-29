@@ -1,6 +1,5 @@
 /**
- * Touch input layer (future).
- * Will handle multi-touch gestures for mobile performance controls.
+ * Touch input layer.
  */
 
-export {};
+export { TouchModule } from './touchModule.ts';
