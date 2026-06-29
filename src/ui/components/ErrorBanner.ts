@@ -13,47 +13,89 @@ const MESSAGES: Record<string, string> = {
   'interaction:midi': 'MIDI unavailable in this browser. Use keyboard or on-screen controls.',
 };
 
+/**
+ * Soft sources are expected before the first user gesture (browsers block audio
+ * until interaction). We never alarm the performer for these on cold load.
+ */
+const SOFT_SOURCES = ['soundAdapter:start', 'interaction:midi'];
+
+function isSoftError(source: string, error: Error): boolean {
+  if (SOFT_SOURCES.some((s) => source.startsWith(s))) return true;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes('audio') ||
+    message.includes('autoplay') ||
+    message.includes('gesture') ||
+    message.includes('user activation') ||
+    message.includes('not allowed')
+  );
+}
+
 function resolveMessage(source: string, error: Error): string {
   for (const [prefix, message] of Object.entries(MESSAGES)) {
     if (source.startsWith(prefix)) return message;
   }
-  if (error.message.includes('audio')) {
-    return 'Audio is blocked. Interact with the page, then press Play.';
+  if (error.message.toLowerCase().includes('audio')) {
+    return 'Audio is paused until you interact. Press Play to begin.';
   }
-  if (error.message.includes('MIDI') || error.message.includes('midi')) {
-    return 'MIDI is not available. Enable it in Settings or use keyboard controls.';
+  if (error.message.toLowerCase().includes('midi')) {
+    return 'MIDI is not available. Use the keyboard or on-screen controls.';
   }
-  return 'Something went wrong. Try again or refresh the page.';
+  return 'Something interrupted the instrument. Press Play, or refresh to reset.';
 }
 
-/** Mounts a dismissible error banner and listens to runtime event bus. */
+/** Mounts a calm, auto-dismissing notice and listens to the runtime event bus. */
 export function bindErrorBanner(host: HTMLElement): () => void {
   const banner = document.createElement('div');
   banner.className = 'ps-error-banner';
   banner.id = 'ps-error-banner';
-  banner.setAttribute('role', 'alert');
+  banner.setAttribute('role', 'status');
+  banner.setAttribute('aria-live', 'polite');
   banner.hidden = true;
   banner.innerHTML = `
     <p class="ps-error-banner__text" id="ps-error-banner-text"></p>
-    <button type="button" class="btn btn-sm btn-outline-light" id="ps-error-banner-dismiss">Dismiss</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary" id="ps-error-banner-dismiss">Dismiss</button>
   `;
   host.appendChild(banner);
 
   const text = banner.querySelector('#ps-error-banner-text');
   const dismiss = banner.querySelector('#ps-error-banner-dismiss');
 
+  let hasGesture = false;
+  let dismissTimer = 0;
+
   const hide = (): void => {
+    if (dismissTimer) window.clearTimeout(dismissTimer);
+    dismissTimer = 0;
     banner.hidden = true;
   };
+
+  const onGesture = (): void => {
+    hasGesture = true;
+  };
+  window.addEventListener('pointerdown', onGesture, { once: true });
+  window.addEventListener('keydown', onGesture, { once: true });
 
   dismiss?.addEventListener('click', hide);
 
   const unsubscribe = eventBus.on('error', ({ source, error }) => {
+    const soft = isSoftError(source, error);
+    // Browsers expectedly block audio before the first gesture — stay calm.
+    if (soft && !hasGesture) return;
+
     if (text) text.textContent = resolveMessage(source, error);
     banner.hidden = false;
+
+    if (dismissTimer) window.clearTimeout(dismissTimer);
+    if (soft) {
+      dismissTimer = window.setTimeout(hide, 6000);
+    }
   });
 
   return () => {
+    if (dismissTimer) window.clearTimeout(dismissTimer);
+    window.removeEventListener('pointerdown', onGesture);
+    window.removeEventListener('keydown', onGesture);
     unsubscribe();
     banner.remove();
   };

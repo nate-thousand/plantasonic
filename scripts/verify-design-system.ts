@@ -30,11 +30,18 @@ function main(): void {
   const variablesPath = join(pkgDir, 'css/variables.css');
   const bootstrapThemePath = join(pkgDir, 'scss/bootstrap-theme.scss');
   const shellPath = join(pkgDir, 'src/shell/index.ts');
+  const dsPackageJson = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8')) as {
+    version: string;
+  };
 
   assert(existsSync(variablesPath), 'variables.css missing from design system package');
   assert(existsSync(bootstrapThemePath), 'bootstrap-theme.scss missing from design system package');
   assert(existsSync(shellPath), 'shell API missing from design system package');
   assert(shellEntry.includes('shell'), 'shell package export must resolve');
+  assert(
+    dsPackageJson.version.startsWith('1.'),
+    `design system must be v1.x (got ${dsPackageJson.version})`,
+  );
 
   const variables = readFileSync(variablesPath, 'utf8');
   assert(variables.includes('--ds-color-surface-app'), 'variables.css missing --ds-color-surface-app');
@@ -43,10 +50,15 @@ function main(): void {
 
   const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
     dependencies?: Record<string, string>;
+    workspaces?: string[];
   };
   assert(
     packageJson.dependencies?.['plantasonic-design-system'],
     'package.json must depend on plantasonic-design-system',
+  );
+  assert(
+    packageJson.workspaces?.includes('plantasonic-design-system'),
+    'package.json must list plantasonic-design-system workspace',
   );
 
   const mainTs = readFileSync('src/main.ts', 'utf8');
@@ -64,11 +76,32 @@ function main(): void {
   for (const fragment of [
     'plantasonic-design-system/scss/bootstrap-theme.scss',
     'plantasonic-design-system/scss/css-theme-bridge.scss',
+    'plantasonic-design-system/scss/plantasonic-components.scss',
+    'plantasonic-design-system/scss/primitives.scss',
+    'plantasonic-design-system/scss/components.scss',
+    'plantasonic-design-system/scss/motion.scss',
+    'plantasonic-design-system/scss/instrument.scss',
     'plantasonic-design-system/scss/application-shell.scss',
     'plantasonic-design-system/scss/navigation-framework.scss',
   ]) {
     assert(indexScss.includes(fragment), `index.scss must import ${fragment}`);
   }
+
+  const platformServices = readFileSync('src/platform/services.ts', 'utf8');
+  assert(
+    platformServices.includes('plantasonic-design-system/platform/services'),
+    'platform services must import from design system',
+  );
+
+  const platformEngines = readFileSync('src/platform/engines.ts', 'utf8');
+  assert(
+    platformEngines.includes('plantasonic-design-system/platform/engines'),
+    'platform engines must import installEngine from design system',
+  );
+  assert(
+    !platformEngines.includes('engine-catalog'),
+    'platform engines must not use local engine-catalog mirror',
+  );
 
   const installShell = readFileSync('src/shell/installApplicationShell.ts', 'utf8');
   assert(installShell.includes('renderApplicationShell'), 'installApplicationShell must render via public API');
@@ -84,13 +117,15 @@ function main(): void {
     'createCommandPalette',
     'showcase/',
     'from \'@/design-system/tokens',
+    'platform-services.ts',
+    'engine-catalog.ts',
   ];
   for (const file of srcFiles) {
     const rel = file.replace(/\\/g, '/');
     const content = readFileSync(file, 'utf8');
     for (const needle of forbidden) {
       if (needle.endsWith('.ts') && rel.endsWith(needle)) {
-        throw new Error(`Removed local shell file still present: ${rel}`);
+        throw new Error(`Removed local platform mirror still present: ${rel}`);
       }
       if (content.includes(needle)) {
         throw new Error(`Forbidden design-system duplication in ${rel}: ${needle}`);
@@ -98,7 +133,7 @@ function main(): void {
     }
   }
 
-  console.info('Design system integration: OK');
+  console.info(`Design system integration: OK (plantasonic-design-system@${dsPackageJson.version})`);
 }
 
 main();

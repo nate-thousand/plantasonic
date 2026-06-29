@@ -4,8 +4,14 @@
   "version": "0.2.4",
   "description": "A browser-based generative audiovisual instrument",
   "type": "module",
+  "workspaces": [
+    "plantasonic-design-system"
+  ],
   "scripts": {
+    "ds:tokens": "npm run tokens:build-css --workspace=plantasonic-design-system && npm run generate:scss --workspace=plantasonic-design-system",
+    "predev": "npm run ds:tokens",
     "dev": "vite",
+    "prebuild": "npm run ds:tokens",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src",
@@ -20,7 +26,8 @@
     "verify:keyboard": "npx tsx --tsconfig tsconfig.verify.json scripts/verify-keyboard.ts",
     "verify:generative": "npx tsx --tsconfig tsconfig.verify.json scripts/verify-generative.ts",
     "verify:state": "npx tsx --tsconfig tsconfig.verify.json scripts/verify-state.ts",
-    "verify:design-system": "npx tsx --tsconfig tsconfig.verify.json scripts/verify-design-system.ts",
+    "verify:design-system": "node --experimental-strip-types scripts/verify-design-system.ts",
+    "verify:platform": "node --experimental-strip-types scripts/verify-platform.ts",
     "verify:performance": "npx tsx --tsconfig tsconfig.verify.json scripts/verify-performance.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -41,7 +48,7 @@
     "bootstrap": "^5.0.2",
     "gsap": "^3.15.0",
     "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
-    "plantasonic-design-system": "github:nate-thousand/plantasonic-design-system#v1.2.2",
+    "plantasonic-design-system": "*",
     "sass": "^1.101.0"
   }
 }

@@ -9,6 +9,10 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       'plantasonic-design-system/shell': resolve(dsRoot, 'src/shell/index.ts'),
+      'plantasonic-design-system/motion': resolve(dsRoot, 'src/motion/index.ts'),
+      'plantasonic-design-system/platform/services': resolve(dsRoot, 'src/platform/services.ts'),
+      'plantasonic-design-system/platform/engines': resolve(dsRoot, 'src/platform/engines.ts'),
+      'plantasonic-design-system/platform/types': resolve(dsRoot, 'src/platform/types.ts'),
       'ascii-visual-engine': resolve(asciiRoot, 'src/index.ts'),
     },
   },

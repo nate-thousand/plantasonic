@@ -1,5 +1,6 @@
 /**
- * Bottom transport bar — perform essentials and inspector category rail.
+ * Bottom transport bar — perform essentials (Play/Stop, world, live readouts)
+ * plus a single Controls toggle that opens the contextual inspector.
  */
 
 import { resolvePresetWorld } from '@/presets/registry.ts';
@@ -16,14 +17,7 @@ import {
   createStatus,
   setPresetSelectorName,
 } from '../controls/index.ts';
-import type { NavCategory } from '../navigation/types.ts';
-import { openInspector } from './InspectorPanel.ts';
-
-const CATEGORY_RAIL: readonly { id: NavCategory; label: string }[] = [
-  { id: 'sound', label: 'Sound' },
-  { id: 'visuals', label: 'Visuals' },
-  { id: 'environment', label: 'Environment' },
-];
+import { isInspectorOpen, openInspector, closeInspector } from './InspectorPanel.ts';
 
 export function createControlDock(): HTMLElement {
   const dock = document.createElement('footer');
@@ -64,25 +58,26 @@ export function createControlDock(): HTMLElement {
     createStatus({ id: 'ps-notes-status', label: '0 active', className: 'ps-transport__status' }),
   );
 
-  const rail = document.createElement('nav');
+  const rail = document.createElement('div');
   rail.className = 'ps-transport__rail';
-  rail.setAttribute('aria-label', 'Control categories');
-  for (const cat of CATEGORY_RAIL) {
-    const btn = createButton({
-      id: `ps-rail-${cat.id}`,
-      label: cat.label,
-      variant: 'outline',
-      size: 'sm',
-      className: 'ps-transport__rail-btn',
-      ariaLabel: `Open ${cat.label} controls`,
-    });
-    btn.dataset.inspectorCategory = cat.id;
-    btn.addEventListener('click', () => {
-      openInspector(cat.id);
-      animateControlFeedback(btn);
-    });
-    rail.append(btn);
-  }
+  const controlsBtn = createButton({
+    id: 'ps-controls-toggle',
+    label: 'Controls',
+    variant: 'outline',
+    size: 'sm',
+    className: 'ps-transport__rail-btn',
+    ariaLabel: 'Toggle controls inspector',
+  });
+  controlsBtn.setAttribute('aria-pressed', 'false');
+  controlsBtn.addEventListener('click', () => {
+    if (isInspectorOpen()) {
+      closeInspector();
+    } else {
+      openInspector('sound');
+    }
+    animateControlFeedback(controlsBtn);
+  });
+  rail.append(controlsBtn);
 
   const focusExit = document.createElement('div');
   focusExit.className = 'ps-transport__focus-exit';
@@ -140,11 +135,25 @@ export function bindControlDock(interaction: InteractionManager): () => void {
     updateOctaveStatus(octave);
   });
 
+  const controlsBtn = document.querySelector('#ps-controls-toggle');
+  const setControlsPressed = (open: boolean): void => {
+    controlsBtn?.setAttribute('aria-pressed', String(open));
+    controlsBtn?.classList.toggle('active', open);
+  };
+  const unsubPanelOpen = eventBus.on('shell:panel-open', () => {
+    setControlsPressed(true);
+  });
+  const unsubPanelClose = eventBus.on('shell:panel-close', () => {
+    setControlsPressed(false);
+  });
+
   return () => {
     playBtn?.removeEventListener('click', onPlay);
     stopBtn?.removeEventListener('click', onStop);
     unsubscribe();
     unsubOctave();
+    unsubPanelOpen();
+    unsubPanelClose();
   };
 }
 

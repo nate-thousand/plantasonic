@@ -1,0 +1,251 @@
+{
+  "manifest": {
+    "id": "plantasonic",
+    "name": "Plantasonic",
+    "type": "music-instrument",
+    "version": "0.2.4",
+    "description": "Browser-based generative audiovisual instrument — a living digital ecosystem.",
+    "layout": "instrument",
+    "engines": [
+      "engine.sound",
+      "engine.visual",
+      "engine.midi"
+    ],
+    "plugins": [],
+    "assets": [],
+    "workflows": [
+      "workflow.import-assets",
+      "workflow.generate-documentation",
+      "workflow.generate-visual-presets"
+    ],
+    "services": [
+      "logging",
+      "settings",
+      "autosave",
+      "notifications"
+    ],
+    "dependencies": {
+      "plantasonic-design-system": "file:./plantasonic-design-system",
+      "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
+      "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0"
+    },
+    "documentation": [
+      "README.md",
+      "ROADMAP.md",
+      "CHANGELOG.md",
+      "docs/CREATIVE_VISION.md",
+      "docs/PLATFORM.md",
+      "HANDOFF.md"
+    ],
+    "deployment": {
+      "target": "production",
+      "status": "production",
+      "url": "https://plantasonic.vercel.app"
+    },
+    "createdAt": "2026-06-29T00:00:00.000Z",
+    "updatedAt": "2026-06-29T00:00:00.000Z"
+  },
+  "architecture": {
+    "platform": "plantasonic-design-system",
+    "layer": "creative-ecosystem",
+    "type": "music-instrument",
+    "layout": "instrument",
+    "shellVariant": "instrument",
+    "engines": [
+      {
+        "id": "engine.midi",
+        "name": "MIDI Engine",
+        "status": "beta"
+      },
+      {
+        "id": "engine.visual",
+        "name": "Visual Engine",
+        "package": "ascii-visual-engine",
+        "status": "stable"
+      },
+      {
+        "id": "engine.sound",
+        "name": "Sound Engine",
+        "package": "plantasia-sound-engine",
+        "status": "beta"
+      }
+    ],
+    "plugins": [],
+    "workflows": [
+      {
+        "id": "workflow.import-assets",
+        "name": "Import Assets",
+        "purpose": "Import images, audio, video, and models into the shared asset registry.",
+        "invoke": "platform.importAssets",
+        "inputs": [
+          "files"
+        ],
+        "outputs": [
+          "assetIds"
+        ],
+        "tags": [
+          "assets",
+          "import"
+        ]
+      },
+      {
+        "id": "workflow.generate-documentation",
+        "name": "Generate Documentation",
+        "purpose": "Generate README, API docs, and validation checklist from project manifest.",
+        "invoke": "platform.generateDocumentation",
+        "inputs": [
+          "projectId"
+        ],
+        "outputs": [
+          "docs"
+        ],
+        "tags": [
+          "docs",
+          "ai"
+        ]
+      },
+      {
+        "id": "workflow.generate-visual-presets",
+        "name": "Generate Visual Presets",
+        "purpose": "AI-generated visual parameter presets.",
+        "invoke": "platform.generateVisualPresets",
+        "inputs": [
+          "brief",
+          "count"
+        ],
+        "outputs": [
+          "presetIds"
+        ],
+        "tags": [
+          "visual",
+          "ai",
+          "generate"
+        ]
+      }
+    ],
+    "services": [
+      "logging",
+      "settings",
+      "autosave",
+      "notifications"
+    ],
+    "deployment": {
+      "target": "production",
+      "status": "production",
+      "url": "https://plantasonic.vercel.app"
+    }
+  },
+  "ai": {
+    "designSystem": {
+      "name": "plantasonic-design-system",
+      "sdkVersion": "1.5.0",
+      "metadataSpecVersion": "1.0.0",
+      "generatedAt": "2026-06-29T22:16:12.232Z",
+      "summary": {
+        "component": 12,
+        "primitive": 17,
+        "layout": 9,
+        "pattern": 12,
+        "token": 141,
+        "theme": 2,
+        "total": 193
+      },
+      "categories": {
+        "component": [
+          "containers",
+          "controls",
+          "feedback",
+          "navigation"
+        ],
+        "primitive": [
+          "layout"
+        ],
+        "layout": [
+          "application",
+          "content",
+          "creative",
+          "marketing"
+        ],
+        "pattern": [
+          "application",
+          "creative",
+          "feedback",
+          "navigation"
+        ],
+        "token": [
+          "borders",
+          "brand",
+          "misc",
+          "motion",
+          "overlays",
+          "product-layout",
+          "radius",
+          "shadows",
+          "spacing",
+          "status",
+          "surfaces",
+          "text",
+          "typography"
+        ]
+      },
+      "layers": [
+        {
+          "id": "tokens",
+          "purpose": "W3C design tokens → CSS variables + SCSS."
+        },
+        {
+          "id": "primitives",
+          "purpose": "Composable layout building blocks (Layer 9)."
+        },
+        {
+          "id": "components",
+          "purpose": "Token-driven component library (Layer 1)."
+        },
+        {
+          "id": "motion",
+          "purpose": "Token-driven motion system (Layer 3)."
+        },
+        {
+          "id": "patterns",
+          "purpose": "Reusable product patterns (Layer 5)."
+        },
+        {
+          "id": "layouts",
+          "purpose": "Application + instrument shell layouts (Layer 2)."
+        },
+        {
+          "id": "shell",
+          "purpose": "Application Shell — chrome, navigation, commands."
+        },
+        {
+          "id": "instrument",
+          "purpose": "Creative application framework (regions, transport, canvas)."
+        },
+        {
+          "id": "app",
+          "purpose": "createApplication() SDK (Layer 10)."
+        },
+        {
+          "id": "ai",
+          "purpose": "Registry, SDK, validation, generators, knowledge graph."
+        }
+      ],
+      "deprecated": []
+    },
+    "components": {
+      "plantasonic-design-system": "file:./plantasonic-design-system",
+      "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
+      "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0"
+    },
+    "documentation": [
+      "README.md",
+      "ROADMAP.md",
+      "CHANGELOG.md",
+      "docs/CREATIVE_VISION.md",
+      "docs/PLATFORM.md",
+      "HANDOFF.md"
+    ],
+    "roadmap": "See ROADMAP.md in project plantasonic",
+    "validation": false
+  }
+}

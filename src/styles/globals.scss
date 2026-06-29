@@ -675,31 +675,36 @@ body {
 .ps-app--performance {
   grid-template-rows: 1fr;
 
-  .ps-chrome {
-    display: none;
-  }
-
   .ps-inspector,
   .ps-inspector-backdrop {
     display: none !important;
   }
 
-  .ps-transport {
-    opacity: $ps-performance-chrome-opacity;
+  .ps-stage__placeholder,
+  .ps-stage__hud {
+    display: none;
   }
 
-  .ps-transport__rail,
-  .ps-transport__live {
+  // Focus mode keeps transport essentials (Play / Stop / Exit) but lets the
+  // rest of the bar recede until the performer reaches for it.
+  .ps-transport {
+    opacity: $ps-performance-chrome-opacity;
+    transition: opacity $ds-transition-base ease;
+
+    &:hover,
+    &:focus-within {
+      opacity: 1;
+    }
+  }
+
+  .ps-transport__world,
+  .ps-transport__live,
+  .ps-transport__rail {
     display: none;
   }
 
   .ps-transport__focus-exit {
     display: flex;
-  }
-
-  .ps-stage__placeholder,
-  .ps-stage__hud {
-    display: none;
   }
 }
 
@@ -1106,19 +1111,25 @@ body {
 
 .ps-error-banner {
   position: absolute;
-  top: calc($ps-nav-height + env(safe-area-inset-top));
-  left: max($ps-space-md, env(safe-area-inset-left));
-  right: max($ps-space-md, env(safe-area-inset-right));
+  top: calc($ps-nav-height + $ps-space-md + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $ps-space-md;
+  width: min(32rem, calc(100% - #{$ps-space-xl}));
   padding: $ps-space-sm $ps-space-md;
-  background: $ds-color-error-surface;
-  border: 1px solid $ds-color-error-border;
-  border-radius: $ds-radius-default;
-  color: $ds-color-text-inverse;
+  background: $ps-surface-overlay;
+  backdrop-filter: blur(16px);
+  border: 1px solid $ps-border-subtle;
+  border-left: 3px solid $ds-color-error-border;
+  border-radius: $ps-overlay-radius;
+  color: $ps-text-primary;
+  box-shadow: $ps-shadow-panel;
+  opacity: 1;
+  transition: opacity $ds-transition-base ease;
 
   &[hidden] {
     display: none;
@@ -1129,10 +1140,11 @@ body {
   margin: 0;
   font-size: $ds-font-size-body-sm;
   line-height: $ds-line-height-body;
+  color: $ps-text-secondary;
 }
 
 .ps-app--performance .ps-error-banner {
-  top: max($ps-space-sm, env(safe-area-inset-top));
+  top: max($ps-space-md, env(safe-area-inset-top));
 }
 
 // ---------------------------------------------------------------------------

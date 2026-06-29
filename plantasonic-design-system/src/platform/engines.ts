@@ -122,5 +122,5 @@ export function enginesForPrototype(features: { sound?: boolean; midi?: boolean 
 export function installEngine(id: EngineId): { id: EngineId; package?: string; spec: EngineSpec } {
   const spec = catalog.get(id);
   if (!spec) throw new Error(`Unknown engine: ${id}`);
-  return { id, package: spec.package, spec };
+  return spec.package !== undefined ? { id, package: spec.package, spec } : { id, spec };
 }

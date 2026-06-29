@@ -10,8 +10,9 @@ Plantasonic is not application software — it is a **digital instrument**. Navi
 
 Principles:
 
-- **Calm by default** — only Perform essentials are always visible
-- **Progressive disclosure** — Sound, Visuals, and Environment open on demand
+- **Calm by default** — only Perform essentials are always visible; the sidebar recedes to a slim icon rail so the stage stays the hero
+- **Progressive disclosure** — the rail expands to labels on hover/focus; Sound, Visuals, and Environment open the inspector on demand
+- **Single source per task** — each task has one canonical entry point; navigation is not duplicated across surfaces
 - **Keyboard-first** — command palette for power users
 - **Spatial consistency** — transport at bottom, inspector from left, commands from center
 - **No developer chrome** — debug and diagnostics are not in the primary IA
@@ -35,18 +36,19 @@ Ecology controls map to engine parameters without exposing engine APIs in the UI
 ## Shell layout
 
 ```text
-┌─ Design System Shell (sidebar + topbar) ───────────────────┐
-│ Topbar: runtime status · Focus · ⌘K search               │
-├──────────┬───────────────────────────────────────────────┤
-│ Sidebar  │  Instrument workspace (AppShell)              │
-│ Perform  │  ┌─────────────────────────────────────────┐  │
-│ Sound    │  │         ASCII Stage (hero)              │  │
-│ Visuals  │  └─────────────────────────────────────────┘  │
-│ …        │  Inspector (left) · Transport bar (bottom)    │
-└──────────┴───────────────────────────────────────────────┘
+┌─ Design System Shell (icon rail + minimal topbar) ─────────┐
+│ Topbar: title · runtime status · Focus · ⌘K commands      │
+├───┬────────────────────────────────────────────────────────┤
+│ ◉ │  Instrument workspace (AppShell)                       │
+│ ♪ │  ┌──────────────────────────────────────────────────┐  │
+│ ◐ │  │             ASCII Stage (hero)                    │  │
+│ ⚙ │  └──────────────────────────────────────────────────┘  │
+│ ✦ │  Inspector (slides from left) · Transport (bottom)     │
+└───┴────────────────────────────────────────────────────────┘
+   ↑ icon rail expands to labels on hover / keyboard focus
 ```
 
-The **outer frame** (sidebar, topbar, command palette, theme, persistence) is owned by `plantasonic-design-system` via `renderApplicationShell()` / `bindApplicationShell()`. The **instrument workspace** (stage, inspector, transport) lives inside the shell workspace slot.
+The **outer frame** (icon rail, topbar, command palette, theme, persistence) is owned by `plantasonic-design-system` via `renderApplicationShell()` / `bindApplicationShell()`. On desktop the app styles the sidebar as a slim icon rail that expands to a labelled flyout on hover/focus (without reflowing the stage). The **instrument workspace** (stage, inspector, transport) lives inside the shell workspace slot.
 
 ---
 
@@ -69,8 +71,10 @@ Bottom Perform surface:
 - Play / Stop (large touch targets)
 - Current world selector
 - Live readouts: tempo, octave, active notes
-- Category rail: **Sound · Visuals · Environment** → opens inspector
+- Single **Controls** toggle → opens/closes the inspector (its tabs switch Sound · Visuals · Environment)
 - Exit Focus (visible only in focus mode)
+
+The transport no longer duplicates the three control categories; the sidebar rail and inspector tabs are the canonical category navigation, with the transport offering one quick Controls entry point.
 
 ### 3. Contextual inspector (`InspectorPanel.ts`)
 
@@ -158,6 +162,8 @@ Shell coordination via typed events in `src/runtime/events.ts`:
 | Left sidebar (CollapsibleMenu) | Inspector panel |
 | “Performance mode” label | **Focus mode** (avoids collision with ecology controls) |
 | Duplicate world entry points | World in transport + palette |
+| Triplicated category nav (sidebar + transport rail + palette) | Sidebar rail + inspector tabs canonical; transport has one Controls toggle |
+| Full-width text sidebar | Calm icon rail that expands on hover/focus |
 
 ---
 

@@ -12,6 +12,7 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
+    "resolveJsonModule": true,
     "noEmit": true,
 
     /* Strict type checking */
@@ -27,9 +28,15 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "plantasonic-design-system/shell": ["plantasonic-design-system/src/shell/index.ts"],
+      "plantasonic-design-system/motion": ["plantasonic-design-system/src/motion/index.ts"],
+      "plantasonic-design-system/platform/services": ["plantasonic-design-system/src/platform/services.ts"],
+      "plantasonic-design-system/platform/engines": ["plantasonic-design-system/src/platform/engines.ts"],
+      "plantasonic-design-system/platform/types": ["plantasonic-design-system/src/platform/types.ts"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "platform.json"],
+  "exclude": ["plantasonic-design-system", "node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

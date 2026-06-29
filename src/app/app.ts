@@ -3,6 +3,7 @@
  */
 
 import { createInteractionManager } from '@/interaction/index.ts';
+import { bootstrapPlatform, platformServices } from '@/platform/index.ts';
 import { createRuntime, eventBus } from '@/runtime/index.ts';
 import { installApplicationShell } from '@/shell/index.ts';
 import { createAppShell, bindRuntimeToShell, setNavStatus } from '@/ui/index.ts';
@@ -13,6 +14,7 @@ export interface PlantasonicApp {
 
 /** Initializes and mounts the Plantasonic application. */
 export async function createPlantasonicApp(container: HTMLElement): Promise<PlantasonicApp> {
+  bootstrapPlatform();
   const runtime = createRuntime();
   const interaction = createInteractionManager(runtime);
 
@@ -30,8 +32,7 @@ export async function createPlantasonicApp(container: HTMLElement): Promise<Plan
   const unbindUi = bindRuntimeToShell(interaction, shell, shellHost.root);
 
   eventBus.on('error', ({ source, error }) => {
-    console.error(`[Plantasonic] ${source}:`, error);
-    setNavStatus('Error');
+    platformServices.logging.error(`[${source}]`, error);
   });
 
   const result = await runtime.init({

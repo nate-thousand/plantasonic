@@ -1,5 +1,7 @@
 /**
- * Bridges the design-system application shell with the Plantasonic instrument workspace.
+ * Bridges the design-system application shell with the Plantasonic instrument
+ * workspace. The instrument is stage-first: the design-system chrome recedes to
+ * a calm icon rail and a minimal top bar so the living stage stays the hero.
  */
 
 .ps-app-shell:has(.ps-instrument-workspace) {
@@ -8,10 +10,14 @@
 }
 
 .ps-shell:has(.ps-instrument-workspace) {
+  position: relative;
   height: 100%;
   min-height: 0;
   border: none;
   border-radius: 0;
+
+  // Reserve only a slim rail; the expanded sidebar floats over the stage.
+  --ps-shell-sidebar-width: 3.25rem;
 }
 
 .ps-instrument-workspace {
@@ -40,6 +46,19 @@
   min-height: 0;
 }
 
+// ── Minimal top bar ───────────────────────────────────────────────────────────
+// Keep title, live status, Focus, and Commands. Drop the inert placeholder slot.
+
+.ps-shell:has(.ps-instrument-workspace) {
+  .ps-shell__topbar {
+    background: var(--ds-color-surface-app);
+  }
+
+  .ps-shell__topbar-action[aria-label='Profile slot'] {
+    display: none;
+  }
+}
+
 .ps-shell__runtime-status {
   margin-right: auto;
   margin-left: 0.75rem;
@@ -47,18 +66,99 @@
   color: var(--ds-color-text-secondary);
 }
 
+// ── Calm icon rail (desktop) ──────────────────────────────────────────────────
+// The sidebar collapses to icons by default and expands as a flyout on hover or
+// keyboard focus — progressive disclosure without reflowing the stage.
+
+@media (min-width: 993px) {
+  .ps-shell:has(.ps-instrument-workspace) .ps-shell__sidebar {
+    z-index: 40;
+    width: 3.25rem;
+    padding: var(--ds-space-2) 0.375rem;
+    overflow: hidden;
+    background: var(--ds-color-surface-app);
+    border-right: 1px solid var(--ds-color-border-subtle);
+    transition:
+      width var(--ds-transition-base) var(--ds-ease-out),
+      box-shadow var(--ds-transition-base) var(--ds-ease-out);
+
+    .ps-nav-group {
+      margin-bottom: var(--ds-space-1);
+    }
+
+    .ps-nav-group__label {
+      height: 0;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: opacity var(--ds-transition-fast);
+    }
+
+    .ps-nav-item {
+      justify-content: center;
+      gap: 0;
+      padding: var(--ds-space-2) 0;
+    }
+
+    .ps-shell__sidebar-label {
+      flex: 1;
+      opacity: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: opacity var(--ds-transition-fast);
+    }
+
+    .ps-nav-item__icon {
+      width: 100%;
+      font-size: 1.05rem;
+    }
+
+    &:hover,
+    &:focus-within {
+      position: absolute;
+      top: var(--ps-nav-height);
+      left: 0;
+      bottom: 0;
+      width: var(--ps-sidebar-width);
+      padding: var(--ds-space-2);
+      box-shadow: var(--ps-shadow-sidebar);
+
+      .ps-nav-group {
+        margin-bottom: var(--ds-space-3);
+      }
+
+      .ps-nav-group__label {
+        height: auto;
+        padding: var(--ds-space-1) var(--ds-space-2);
+        margin-bottom: var(--ds-space-1);
+        opacity: 1;
+      }
+
+      .ps-nav-item {
+        justify-content: flex-start;
+        gap: var(--ds-space-2);
+        padding: var(--ds-space-2);
+      }
+
+      .ps-shell__sidebar-label {
+        opacity: 1;
+      }
+
+      .ps-nav-item__icon {
+        width: 1.25rem;
+      }
+    }
+  }
+}
+
+// ── Focus mode ────────────────────────────────────────────────────────────────
+
 .ps-app-shell--performance {
   .ps-shell__sidebar,
   .ps-shell__topbar-actions .ps-search,
   .ps-shell__topbar-action:not(.ps-shell__topbar-action--focus) {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-.ps-instrument.ps-app--performance {
-  .ps-transport,
-  .ps-inspector {
     opacity: 0;
     pointer-events: none;
   }
