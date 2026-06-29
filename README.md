@@ -2,9 +2,9 @@
 
 A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **ASCII Visual Engine** through a shared runtime.
 
-**Current release:** v0.2.1
+**Current release:** v0.2.2
 
-**Production:** https://plantasonic.vercel.app (after deploy)
+**Production:** https://plantasonic.vercel.app
 
 **Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It is also the **first consumer** of [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.x — the public Application Shell, tokens, and Bootstrap theme come from that package, not local copies.
 

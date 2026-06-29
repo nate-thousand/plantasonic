@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] — 2026-06-28
+
+Release pass — documentation, lint, and production deployment validation.
+
+### Fixed
+
+- ESLint/Prettier formatting in `ascii-visual-engine.d.ts`
+- `verify:integration` resolves `ascii-visual-engine` from GitHub source via tsconfig paths (no dist in package)
+
+### Changed
+
+- README production URL updated to canonical Vercel domain
+- ROADMAP Phase 13 release candidate status updated
+
 ## [0.2.1] — 2026-06-28
 
 ### Fixed

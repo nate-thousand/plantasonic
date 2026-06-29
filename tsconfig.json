@@ -27,7 +27,9 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "ascii-visual-engine": ["node_modules/ascii-visual-engine/src/index.ts"],
+      "plantasonic-design-system/shell": ["node_modules/plantasonic-design-system/src/shell/index.ts"]
     }
   },
   "include": ["src"],

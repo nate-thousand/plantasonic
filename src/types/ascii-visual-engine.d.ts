@@ -13,7 +13,13 @@ declare module 'ascii-visual-engine' {
     setPresetById(id: string): void;
     setControl(name: string, value: number): void;
     setQualityPreset(preset: string): void;
-    noteOn(event: { id: number; velocity?: number; intensity?: number; x?: number; y?: number }): void;
+    noteOn(event: {
+      id: number;
+      velocity?: number;
+      intensity?: number;
+      x?: number;
+      y?: number;
+    }): void;
     noteOff(event: { id: number }): void;
   }
 }

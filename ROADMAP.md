@@ -504,16 +504,29 @@ Complete:
 ## Phase 13 — Release Candidate
 
 **Status:** In progress  
-**Completion: 40%**
+**Completion: 60%**
 
 **Objective:** Prepare Plantasonic for public release.
 
-### Delivered (v0.2.0)
+### Delivered (v0.2.2)
 
-- [x] Design-system Application Shell integration
-- [x] Vercel deployment configuration
-- [x] Version tagging and CHANGELOG release notes
+- [x] Design-system Application Shell integration (first consumer of `plantasonic-design-system` v1.2.x)
+- [x] Vercel deployment configuration and production URL
+- [x] Version tagging and CHANGELOG release notes (v0.2.0, v0.2.1, v0.2.2)
 - [x] GitHub release dependency on plantasonic-design-system v1.2.1
+- [x] Removed duplicate local UI shell (`CommandPalette`, `InstrumentChrome`, `TopNav`)
+- [x] `npm run verify:design-system` and `npm run verify:integration` passing
+
+### Known issues (v0.2.2)
+
+- Production bundle > 500 kB (sound + visual engines); code-splitting deferred
+- Audio requires user gesture before playback (browser policy)
+- Light theme less validated than dark in instrument UI
+- Pause transport, save/randomize preset UI not implemented
+
+### Next milestone
+
+Phase 11 — Recording & Sharing, or Phase 13 completion (PWA, quickstart, GitHub release artifacts)
 
 ### Planned
 
