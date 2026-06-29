@@ -2,7 +2,7 @@
 
 A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **ASCII Visual Engine** through a shared runtime.
 
-**Current release:** v0.2.2
+**Current release:** v0.2.3
 
 **Production:** https://plantasonic.vercel.app
 
