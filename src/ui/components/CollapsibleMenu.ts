@@ -2,9 +2,19 @@
  * Collapsible sidebar menu area with performance controls.
  */
 
+import { createButton, createSliderRow, createToggle } from '../controls/index.ts';
+
 export interface CollapsibleMenuOptions {
   id?: string;
 }
+
+const CONTROL_DEFAULTS: Record<string, number> = {
+  bloom: 50,
+  mold: 50,
+  density: 50,
+  chaos: 25,
+  brightness: 50,
+};
 
 export function createCollapsibleMenu(options: CollapsibleMenuOptions = {}): HTMLElement {
   const sidebar = document.createElement('aside');
@@ -14,65 +24,71 @@ export function createCollapsibleMenu(options: CollapsibleMenuOptions = {}): HTM
   sidebar.setAttribute('aria-label', 'Menu panel');
   sidebar.setAttribute('aria-hidden', 'true');
 
-  const controlDefaults: Record<string, number> = {
-    bloom: 50,
-    mold: 50,
-    density: 50,
-    chaos: 25,
-    brightness: 50,
-  };
+  const header = document.createElement('div');
+  header.className = 'ps-sidebar__header';
+  header.textContent = 'Controls';
 
-  const controlRows = ['bloom', 'mold', 'density', 'chaos', 'brightness']
-    .map(
-      (name) => `
-      <div class="ps-control-row">
-        <label class="ps-control-row__label" for="ps-control-${name}">${capitalize(name)}</label>
-        <input
-          type="range"
-          class="form-range"
-          id="ps-control-${name}"
-          data-ps-control="${name}"
-          min="0"
-          max="100"
-          value="${String(controlDefaults[name] ?? 50)}"
-          aria-label="${name} control"
-        />
-        <span class="ps-control-row__value" id="ps-control-${name}-val">${String(controlDefaults[name] ?? 50)}</span>
-      </div>
-    `,
-    )
-    .join('');
+  const content = document.createElement('div');
+  content.className = 'ps-sidebar__content';
 
-  sidebar.innerHTML = `
-    <div class="ps-sidebar__header">Controls</div>
-    <div class="ps-sidebar__content">
-      <div class="ps-sidebar__controls">
-        ${controlRows}
-      </div>
-      <div class="ps-sidebar__settings">
-        <div class="ps-sidebar__header">Input</div>
-        <label class="ps-settings-row">
-          <input type="checkbox" id="ps-setting-midi" checked /> MIDI
-        </label>
-        <label class="ps-settings-row">
-          <input type="checkbox" id="ps-setting-keyboard" checked /> Keyboard
-        </label>
-        <label class="ps-settings-row">
-          <input type="checkbox" id="ps-setting-touch" checked /> Touch
-        </label>
-        <label class="ps-settings-row">
-          <span>Octave</span>
-          <input type="number" id="ps-setting-octave" min="0" max="8" value="4" class="form-control form-control-sm" aria-label="Default octave" />
-        </label>
-        <button type="button" class="btn btn-outline-secondary btn-sm ps-sidebar__btn" id="ps-midi-learn-reset">
-          Reset MIDI Learn
-        </button>
-        <button type="button" class="btn btn-outline-secondary btn-sm ps-sidebar__btn" id="ps-sidebar-settings-btn">
-          All Settings…
-        </button>
-      </div>
-    </div>
+  const controls = document.createElement('div');
+  controls.className = 'ps-sidebar__controls';
+
+  for (const name of ['bloom', 'mold', 'density', 'chaos', 'brightness']) {
+    controls.append(
+      createSliderRow({
+        id: `ps-control-${name}`,
+        label: capitalize(name),
+        min: 0,
+        max: 100,
+        value: CONTROL_DEFAULTS[name] ?? 50,
+        controlName: name,
+        valueId: `ps-control-${name}-val`,
+      }),
+    );
+  }
+
+  const settings = document.createElement('div');
+  settings.className = 'ps-sidebar__settings';
+
+  const settingsHeader = document.createElement('div');
+  settingsHeader.className = 'ps-sidebar__header';
+  settingsHeader.textContent = 'Input';
+
+  settings.append(
+    settingsHeader,
+    createToggle({ id: 'ps-setting-midi', label: 'MIDI', checked: true }),
+    createToggle({ id: 'ps-setting-keyboard', label: 'Keyboard', checked: true }),
+    createToggle({ id: 'ps-setting-touch', label: 'Touch', checked: true }),
+  );
+
+  const octaveRow = document.createElement('label');
+  octaveRow.className = 'ps-settings-row';
+  octaveRow.innerHTML = `
+    <span>Octave</span>
+    <input type="number" id="ps-setting-octave" min="0" max="8" value="4" class="form-control form-control-sm" aria-label="Default octave" />
   `;
+  settings.append(octaveRow);
+
+  settings.append(
+    createButton({
+      id: 'ps-midi-learn-reset',
+      label: 'Reset MIDI Learn',
+      variant: 'outline',
+      size: 'sm',
+      className: 'ps-sidebar__btn',
+    }),
+    createButton({
+      id: 'ps-sidebar-settings-btn',
+      label: 'All Settings…',
+      variant: 'outline',
+      size: 'sm',
+      className: 'ps-sidebar__btn',
+    }),
+  );
+
+  content.append(controls, settings);
+  sidebar.append(header, content);
 
   return sidebar;
 }

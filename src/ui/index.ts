@@ -24,3 +24,4 @@ export type { AppShell, AppShellOptions } from './layouts/AppShell.ts';
 export { bindRuntimeToShell } from './bindRuntime.ts';
 export { createAppExperience } from './experience/appExperience.ts';
 export type { AppExperience } from './experience/appExperience.ts';
+export * from './controls/index.ts';

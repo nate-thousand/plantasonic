@@ -1,0 +1,102 @@
+/**
+ * Post-Bootstrap component polish — token-driven ps-* classes.
+ */
+
+// Range sliders — product-grade track and thumb
+.form-range {
+  height: 1.25rem;
+
+  &::-webkit-slider-runnable-track {
+    height: $form-range-track-height;
+    border-radius: $border-radius-pill;
+  }
+
+  &::-webkit-slider-thumb {
+    margin-top: calc(($form-range-track-height - 1rem) / 2);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid $ds-color-surface-default;
+    transition: transform $ds-transition-fast $ds-ease-out;
+  }
+
+  &:hover::-webkit-slider-thumb {
+    transform: scale(1.08);
+  }
+
+  &:focus::-webkit-slider-thumb {
+    box-shadow: $ds-shadow-focus;
+  }
+}
+
+// Buttons — consistent min touch target
+.btn {
+  min-height: var(--ps-touch-target);
+  transition:
+    background-color $ds-transition-fast $ds-ease-out,
+    border-color $ds-transition-fast $ds-ease-out,
+    color $ds-transition-fast $ds-ease-out,
+    transform $ds-transition-fast $ds-ease-out;
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+.btn-sm {
+  min-height: 2.25rem;
+}
+
+// Form controls
+.form-control,
+.form-select {
+  transition:
+    border-color $ds-transition-fast $ds-ease-out,
+    box-shadow $ds-transition-fast $ds-ease-out;
+}
+
+.form-control-sm {
+  min-height: 2.25rem;
+}
+
+// Cards in overlays
+.card {
+  box-shadow: $ds-shadow-sm;
+}
+
+// Modal / offcanvas dark polish
+.modal-content,
+.offcanvas {
+  border: 1px solid $ds-color-border-subtle;
+}
+
+// Progress
+.progress {
+  background-color: $ds-color-surface-sunken;
+}
+
+// Alerts on dark surface
+.alert {
+  border-width: 1px;
+}
+
+// Spinner
+.spinner-border {
+  color: $ds-color-accent;
+}
+
+// Dropdown
+.dropdown-menu {
+  border: 1px solid $ds-color-border-subtle;
+}
+
+// Nav tabs in settings
+.nav-tabs .nav-link {
+  border-radius: $ds-radius-default $ds-radius-default 0 0;
+  transition: background-color $ds-transition-fast $ds-ease-out;
+}
+
+// Tooltip
+.tooltip-inner {
+  border: 1px solid $ds-color-border-subtle;
+  box-shadow: $ds-shadow-sm;
+}

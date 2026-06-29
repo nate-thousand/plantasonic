@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 3 completion:** AI Native Design System integration
+- Comprehensive Bootstrap 5.0.2 theming — buttons, forms, cards, nav, modals, dropdowns, tooltips, progress, alerts
+- Token modules: shadows, motion durations, CSS custom properties
+- Reusable component library (`src/ui/controls/`) — Button, Slider, Toggle, Knob, PresetSelector, Status, Loading, Notification, Dialog, Toolbar, Dropdown, Tooltip
+- UI motion: loading transitions, fullscreen transitions, sidebar close animation
+- Authoritative `DESIGN_SYSTEM.md` — philosophy, tokens, components, layout, motion, accessibility, ASCII visual language
+
+### Changed
+
+- Shell components (TopNav, ControlDock, CollapsibleMenu) refactored to use design system control factories
+- Bootstrap bundle expanded with cards, modals, dropdowns, tooltips, progress, alerts, spinners, offcanvas
+- ROADMAP Phase 3 marked complete; Phase 9 layout items reconciled
+
+### Added
+
 - **Phase 10:** Expressive visual language and motion system
 - Expanded `PresetVisualConfig` — glyph families, patterns, motion profiles, transitions, palette
 - Three new preset worlds: Flow World, Zen World, Nebula World

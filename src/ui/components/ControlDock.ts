@@ -1,6 +1,5 @@
 /**
  * Bottom control dock — transport, preset, tempo, and status display.
- * All actions delegate to the interaction layer; no direct adapter access.
  */
 
 import { resolvePresetWorld } from '@/presets/registry.ts';
@@ -8,6 +7,13 @@ import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import type { ControlName } from '@/runtime/types.ts';
 import type { RuntimeState } from '@/runtime/types.ts';
 import { animateControlFeedback } from '../motion/motionController.ts';
+import {
+  createButton,
+  createPresetSelector,
+  createSlider,
+  createStatus,
+  setPresetSelectorName,
+} from '../controls/index.ts';
 
 export function createControlDock(): HTMLElement {
   const dock = document.createElement('footer');
@@ -16,67 +22,81 @@ export function createControlDock(): HTMLElement {
   dock.setAttribute('role', 'contentinfo');
   dock.setAttribute('aria-label', 'Control dock');
 
-  dock.innerHTML = `
-    <div class="ps-dock__section ps-dock__section--transport">
-      <span class="ps-dock__label">Transport</span>
-      <button class="btn btn-primary btn-sm ps-dock__btn" type="button" id="ps-play-btn" aria-label="Play">
-        Play
-      </button>
-      <button class="btn btn-outline-secondary btn-sm ps-dock__btn" type="button" id="ps-stop-btn" aria-label="Stop">
-        Stop
-      </button>
-      <span class="ps-dock__status" id="ps-playing-status">Stopped</span>
-    </div>
+  const transport = document.createElement('div');
+  transport.className = 'ps-dock__section ps-dock__section--transport';
+  const transportLabel = document.createElement('span');
+  transportLabel.className = 'ps-dock__label';
+  transportLabel.textContent = 'Transport';
+  transport.append(
+    transportLabel,
+    createButton({
+      id: 'ps-play-btn',
+      label: 'Play',
+      variant: 'primary',
+      size: 'sm',
+      className: 'ps-dock__btn',
+      ariaLabel: 'Play',
+    }),
+    createButton({
+      id: 'ps-stop-btn',
+      label: 'Stop',
+      variant: 'outline',
+      size: 'sm',
+      className: 'ps-dock__btn',
+      ariaLabel: 'Stop',
+    }),
+    createStatus({ id: 'ps-playing-status', label: 'Stopped', className: 'ps-dock__status' }),
+  );
 
-    <div class="ps-dock__section ps-dock__section--preset">
-      <span class="ps-dock__label">Preset</span>
-      <button
-        type="button"
-        class="btn btn-outline-secondary btn-sm ps-dock__preset-btn"
-        id="ps-preset-browse-btn"
-        aria-label="Browse presets"
-        aria-haspopup="dialog"
-      >
-        <span id="ps-preset-name">None</span>
-        <span class="ps-dock__preset-chevron" aria-hidden="true">▾</span>
-      </button>
-    </div>
+  const preset = document.createElement('div');
+  preset.className = 'ps-dock__section ps-dock__section--preset';
+  const presetLabel = document.createElement('span');
+  presetLabel.className = 'ps-dock__label';
+  presetLabel.textContent = 'Preset';
+  preset.append(presetLabel, createPresetSelector());
 
-    <div class="ps-dock__section ps-dock__section--tempo">
-      <span class="ps-dock__label">Tempo</span>
-      <input
-        type="range"
-        class="form-range ps-dock__range"
-        id="ps-tempo-slider"
-        data-ps-control="tempo"
-        min="40"
-        max="180"
-        value="72"
-        aria-label="Tempo"
-        aria-valuemin="40"
-        aria-valuemax="180"
-        aria-valuenow="72"
-      />
-      <span class="ps-dock__status" id="ps-tempo-status">72 bpm</span>
-    </div>
+  const tempo = document.createElement('div');
+  tempo.className = 'ps-dock__section ps-dock__section--tempo';
+  const tempoLabel = document.createElement('span');
+  tempoLabel.className = 'ps-dock__label';
+  tempoLabel.textContent = 'Tempo';
+  tempo.append(
+    tempoLabel,
+    createSlider({
+      id: 'ps-tempo-slider',
+      label: 'Tempo',
+      min: 40,
+      max: 180,
+      value: 72,
+      controlName: 'tempo',
+      className: 'ps-dock__range',
+    }),
+    createStatus({ id: 'ps-tempo-status', label: '72 bpm', className: 'ps-dock__status' }),
+  );
 
-    <div class="ps-dock__section ps-dock__section--notes">
-      <span class="ps-dock__label">Notes</span>
-      <span class="ps-dock__status" id="ps-notes-status">0 active</span>
-    </div>
+  const notes = document.createElement('div');
+  notes.className = 'ps-dock__section ps-dock__section--notes';
+  const notesLabel = document.createElement('span');
+  notesLabel.className = 'ps-dock__label';
+  notesLabel.textContent = 'Notes';
+  notes.append(
+    notesLabel,
+    createStatus({ id: 'ps-notes-status', label: '0 active', className: 'ps-dock__status' }),
+  );
 
-    <div class="ps-dock__section ps-dock__section--performance-exit">
-      <button
-        type="button"
-        class="btn btn-outline-light btn-sm"
-        id="ps-performance-exit"
-        aria-label="Exit performance mode"
-      >
-        Exit Perform
-      </button>
-    </div>
-  `;
+  const perfExit = document.createElement('div');
+  perfExit.className = 'ps-dock__section ps-dock__section--performance-exit';
+  perfExit.append(
+    createButton({
+      id: 'ps-performance-exit',
+      label: 'Exit Perform',
+      variant: 'outline-light',
+      size: 'sm',
+      ariaLabel: 'Exit performance mode',
+    }),
+  );
 
+  dock.append(transport, preset, tempo, notes, perfExit);
   return dock;
 }
 
@@ -118,7 +138,6 @@ export function bindControlDock(interaction: InteractionManager): () => void {
 
 function updateDockStatus(state: Readonly<RuntimeState>): void {
   const playing = document.querySelector('#ps-playing-status');
-  const presetName = document.querySelector('#ps-preset-name');
   const tempo = document.querySelector('#ps-tempo-status');
   const notes = document.querySelector('#ps-notes-status');
   const tempoSlider = document.querySelector<HTMLInputElement>('#ps-tempo-slider');
@@ -128,7 +147,7 @@ function updateDockStatus(state: Readonly<RuntimeState>): void {
   if (playBtn) playBtn.setAttribute('aria-pressed', String(state.isPlaying));
 
   const world = state.preset ? resolvePresetWorld(state.preset) : undefined;
-  if (presetName) presetName.textContent = world?.name ?? 'None';
+  setPresetSelectorName(world?.name ?? 'None');
 
   if (tempo) tempo.textContent = `${String(state.tempo)} bpm`;
   if (notes) notes.textContent = `${String(state.activeNotes.length)} active`;

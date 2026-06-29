@@ -1,0 +1,30 @@
+/**
+ * CSS custom properties layer — runtime theming bridge.
+ */
+
+:root {
+  --ds-color-primary: #{$ds-color-primary};
+  --ds-color-accent: #{$ds-color-accent};
+  --ds-color-surface-default: #{$ds-color-surface-default};
+  --ds-color-surface-raised: #{$ds-color-surface-raised};
+  --ds-color-surface-sunken: #{$ds-color-surface-sunken};
+  --ds-color-text-primary: #{$ds-color-text-primary};
+  --ds-color-text-secondary: #{$ds-color-text-secondary};
+  --ds-color-text-muted: #{$ds-color-text-muted};
+  --ds-color-border-default: #{$ds-color-border-default};
+  --ds-color-border-focus: #{$ds-color-border-focus};
+  --ds-font-family-sans: #{$ds-font-family-sans};
+  --ds-font-family-mono: #{$ds-font-family-mono};
+  --ds-radius-default: #{$ds-radius-default};
+  --ds-shadow-sm: #{$ds-shadow-sm};
+  --ds-shadow-md: #{$ds-shadow-md};
+  --ds-shadow-lg: #{$ds-shadow-lg};
+  --ds-shadow-focus: #{$ds-shadow-focus};
+  --ds-transition-fast: #{$ds-transition-fast};
+  --ds-transition-base: #{$ds-transition-base};
+  --ds-transition-slow: #{$ds-transition-slow};
+  --ps-nav-height: #{$ps-nav-height};
+  --ps-dock-height: #{$ps-dock-height};
+  --ps-sidebar-width: #{$ps-sidebar-width};
+  --ps-touch-target: 2.75rem;
+}

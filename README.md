@@ -29,7 +29,7 @@ Plantasonic App             →  user experience
 | Layer                   | Location in Plantasonic                                   |
 | ----------------------- | --------------------------------------------------------- |
 | AI Product Framework    | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
-| AI Native Design System | `src/design-system/`, `docs/design-system/`               |
+| AI Native Design System | `src/design-system/`, `DESIGN_SYSTEM.md`, `docs/design-system/` |
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
 | ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Visual Language         | `src/visuals/language/`, `docs/VISUAL_LANGUAGE.md`          |

@@ -66,7 +66,7 @@ body {
     bottom: $ps-dock-height;
     width: min($ps-sidebar-width, 85vw);
     z-index: 1040;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    box-shadow: $ps-shadow-sidebar;
   }
 }
 
@@ -221,6 +221,82 @@ body {
 .ps-stage__hint {
   color: $ps-text-muted;
   margin: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Design system components (Phase 3)
+// ---------------------------------------------------------------------------
+
+.ps-knob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $ps-space-xs;
+  padding: $ps-space-sm 0;
+}
+
+.ps-knob__label {
+  font-size: 0.75rem;
+  color: $ps-text-secondary;
+  text-transform: capitalize;
+}
+
+.ps-knob__input {
+  width: 100%;
+  max-width: 5rem;
+  transform: rotate(-90deg);
+  margin: $ps-space-sm 0;
+}
+
+.ps-knob__value {
+  font-family: $ps-font-family-mono;
+  font-size: 0.75rem;
+  color: $ps-text-muted;
+}
+
+.ps-toggle__input {
+  margin: 0;
+}
+
+.ps-status--playing {
+  color: $ds-color-accent;
+}
+
+.ps-status--error {
+  color: $ds-color-error;
+}
+
+.ps-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $ps-space-sm;
+  padding: $ps-space-md;
+  color: $ps-text-secondary;
+}
+
+.ps-loading--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1060;
+  background: rgba($ds-color-surface-default, 0.85);
+}
+
+.ps-loading__label {
+  font-size: 0.875rem;
+}
+
+.ps-notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $ps-space-md;
+}
+
+.ps-toolbar {
+  display: flex;
+  align-items: center;
+  gap: $ps-space-sm;
 }
 
 // ---------------------------------------------------------------------------

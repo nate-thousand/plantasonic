@@ -80,3 +80,49 @@ export function animateControlFeedback(element: HTMLElement): void {
   if (!shouldAnimate()) return;
   gsap.fromTo(element, { scale: 1.04 }, { scale: 1, duration: 0.18, ease: 'power2.out' });
 }
+
+/** Loading overlay fade in. */
+export function animateLoadingIn(element: HTMLElement): void {
+  if (!shouldAnimate()) {
+    gsap.set(element, { opacity: 1 });
+    return;
+  }
+  gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+}
+
+/** Loading overlay fade out. */
+export function animateLoadingOut(element: HTMLElement, onComplete?: () => void): void {
+  if (!shouldAnimate()) {
+    onComplete?.();
+    return;
+  }
+  const vars: gsap.TweenVars = { opacity: 0, duration: 0.2, ease: 'power2.in' };
+  if (onComplete) vars.onComplete = onComplete;
+  gsap.to(element, vars);
+}
+
+/** Fullscreen stage transition. */
+export function animateFullscreenTransition(root: HTMLElement, entering: boolean): void {
+  if (!shouldAnimate()) return;
+  gsap.fromTo(
+    root,
+    { opacity: entering ? 0.94 : 1 },
+    { opacity: entering ? 1 : 0.96, duration: 0.35, ease: 'power2.inOut' },
+  );
+}
+
+/** Sidebar close animation. */
+export function animateSidebarOut(sidebar: HTMLElement, onComplete?: () => void): void {
+  if (!shouldAnimate()) {
+    onComplete?.();
+    return;
+  }
+  const vars: gsap.TweenVars = {
+    x: -12,
+    opacity: 0,
+    duration: 0.2,
+    ease: 'power2.in',
+  };
+  if (onComplete) vars.onComplete = onComplete;
+  gsap.to(sidebar, vars);
+}
