@@ -7,196 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- **MVP bug check (2026-06-28):** Full system audit — audio, visual, design system, interaction, cross-system sync
-- `npm run verify:design-system` — validates centralized design system package integration
-- Theme switcher (Settings → Accessibility) — dark/light via `data-theme` and `AppSettingsStore`
-- `bootstrapDocumentTheme()` — applies persisted theme before first paint
-- [docs/BUG_CHECK_REPORT.md](./docs/BUG_CHECK_REPORT.md) — audit findings, fixes, known limitations
+- **Phase 6 consumer pass complete** — removed dead local shell files (`CommandPalette.ts`, `InstrumentChrome.ts`, `TopNav.ts`, `variables.scss` redirect)
+- **`shell-config.ts`** — documents routes, docks, panels, theme, persistence; instrument transport/inspector remain workspace-owned
+- **`verify:design-system`** — expanded checks for shell API, CSS imports, forbidden duplication/showcase imports
 
-### Fixed
+## [0.2.0] — 2026-06-28
 
-- **Build:** `GenerativePreferences` import in `generativeValidation.ts` (use `ConstructorParameters<typeof Generator>[0]`)
-- **Transport:** Idempotent `runtime.start()` / `runtime.stop()` — prevents duplicate engine starts on play/stop spam
-- **Preset load:** Visual adapter rethrows `loadPreset` errors; runtime propagates failure after sound load
-- **Fullscreen:** Nav status no longer stuck on `Ready` after exiting fullscreen while playing
-- **Generative validation:** Event kind check corrected (empty catalog vs impossible `< 7` guard)
-
-### Known Limitations
-
-- Pause transport not implemented (play/stop only)
-- Save preset and randomize controls not in UI
-- MIDI/keyboard notes require engine to be playing (`noteOn` when running)
-- Six additional engine species presets exist but are not exposed as worlds in the preset browser
+First release integrating [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.x as the authoritative UI infrastructure.
 
 ### Added
 
-- **Navigation consolidation:** Single sidebar panel (Controls | Setup); worlds only from dock; removed duplicate Presets/Settings top-nav buttons
-- **Responsive navigation:** Mobile drawer + backdrop dismiss; icon-only top nav; dock two-row layout; world overlay bottom sheet with safe areas
-- **Creative vision:** [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md) — authoritative constraints for audio/visual engine scope and feature decision filter
-
-### Performance (2026-06-28)
-
-- **Performance audit:** [docs/PERFORMANCE_REPORT.md](./docs/PERFORMANCE_REPORT.md)
-- `npm run verify:performance` — latency path invariants
-- RAF coalescing for UI sliders; MIDI/keyboard immediate
-- Parallel preset load; duplicate visual note dispatch removed
-- Resize coalescing; GSAP transition cancel on rapid preset switch
-
-### Added
-
-- **Figma token integration:** W3C Design Tokens JSON export, sync script, generated SCSS, CI verification
-- **Figma MCP pull:** paste a Figma link in Cursor — no manual JSON export (`tokens:pull`, `tokens:import`)
-- **Figma `.tokens.json` import:** drop native Figma export files (`tokens:import-json`) — Theme 1 green palette applied
-- `npm run tokens:sync`, `tokens:verify`, `tokens:export` — Figma Variables → SCSS pipeline
-- **Phase 3 completion:** AI Native Design System integration
-- Comprehensive Bootstrap 5.0.2 theming — buttons, forms, cards, nav, modals, dropdowns, tooltips, progress, alerts
-- Token modules: shadows, motion durations, CSS custom properties
-- Reusable component library (`src/ui/controls/`) — Button, Slider, Toggle, Knob, PresetSelector, Status, Loading, Notification, Dialog, Toolbar, Dropdown, Tooltip
-- UI motion: loading transitions, fullscreen transitions, sidebar close animation
-- Authoritative `DESIGN_SYSTEM.md` — philosophy, tokens, components, layout, motion, accessibility, ASCII visual language
+- **Application Shell integration** — `renderApplicationShell()` + `bindApplicationShell()` from `plantasonic-design-system/shell`
+- **`src/shell/` module** — shell config, install, navigation bridge, command registration, status injection
+- **Design-system command palette** — instrument commands register via `registerShellCommands()`
+- **Full DS style stack** — `css-theme-bridge`, `navigation-framework`, `application-shell`, `instrument-shell.scss`
+- **Vercel deployment** — `vercel.json` for production app hosting
 
 ### Changed
 
-- Shell components (TopNav, ControlDock, CollapsibleMenu) refactored to use design system control factories
-- Bootstrap bundle expanded with cards, modals, dropdowns, tooltips, progress, alerts, spinners, offcanvas
-- ROADMAP Phase 3 marked complete; Phase 9 layout items reconciled
+- **Outer app chrome** — design-system Application Shell replaces local `InstrumentChrome` header
+- **Theme sync** — `AppSettingsStore` uses shell `setShellTheme()` API
+- **App bootstrap** — instrument workspace (stage, inspector, transport) mounts inside shell workspace slot
+- **Sidebar navigation** — Sound, Visuals, Environment, Worlds, Settings wired via `ps-shell-navigate`
 
-### Added
+### Removed
 
-- **Phase 10:** Expressive visual language and motion system
-- Expanded `PresetVisualConfig` — glyph families, patterns, motion profiles, transitions, palette
-- Three new preset worlds: Flow World, Zen World, Nebula World
-- Visual language modules — glyph taxonomy, pattern library, motion language, audio-reactive mapping
-- GSAP visual world transitions (crossfade, bloom, collapse, dissolve)
-- Renderer abstraction with future backend roadmap (WebGL, PixiJS, Three.js, terminal, SVG)
-- Responsive engine quality presets by viewport
-- `VisualProfiler` — diff-based control sync for performance
-- `docs/VISUAL_LANGUAGE.md`
-- `npm run verify:visual`
+- Local instrument header layout (`InstrumentChrome` no longer mounted in app shell)
+- Duplicate command palette ownership (shell owns ⌘K; app registers commands)
 
-### Changed
+### Preserved
 
-- `PlantasiaAsciiAdapter` — performance metrics modulate engine controls; preset transitions on load
-- Seed World and Mold World — full visual identity configuration
-- Runtime passes visual config to adapter on preset load
+- Stage, inspector, transport dock, preset browser, settings overlays
+- Play/stop, sliders, MIDI, keyboard, preset worlds, ASCII visuals
+- Focus mode, fullscreen, runtime orchestration
 
-### Added
+### Known issues
 
-- **Phase 9:** Application experience layer
-- Preset browser overlay — visual cards, search, tag filters, favorites, recently used
-- Settings overlay — Input, Motion, Accessibility tabs
-- Performance mode — distraction-free layout with keyboard shortcut (`P`)
-- GSAP motion controller — overlay, sidebar, preset, and control feedback animations
-- Error banner — user-facing messages for audio, MIDI, and engine failures
-- `AppSettingsStore` — motion preferences, favorites, recent presets (localStorage)
-- `docs/USER_EXPERIENCE.md` — UX principles, navigation, responsive, motion, accessibility
+- Production bundle > 500 kB (sound + visual engines); code-splitting deferred
+- Audio requires user gesture before playback (browser policy)
+- Light theme less validated than dark in instrument UI
 
-### Changed
+## [0.1.0] — prior releases
 
-- Control dock preset `<select>` replaced with browse button + preset name display
-- Top nav expanded with Presets, Settings, and Perform actions
-- Responsive shell styles — safe areas, touch targets, mobile/tablet/landscape breakpoints
-- Reduced motion support via settings and `prefers-reduced-motion`
-
-### Added
-
-- **Phase 8:** Unified interaction layer (`src/interaction/`)
-- Input modules: MIDI, keyboard, mouse, touch
-- `InteractionManager` + `InputRouter` — all input normalizes to runtime events
-- MIDI Learn with localStorage persistence (`SettingsStore`)
-- Automation provider interface (`src/automation/` — no implementation)
-- Sidebar input settings panel (MIDI/keyboard/touch toggles, octave, learn reset)
-- `docs/INTERACTION_LAYER.md`
-- `npm run verify:interaction`
-
-### Changed
-
-- UI (ControlDock, sliders) dispatches through interaction layer, not runtime directly
-- Keyboard input moved from `Stage.ts` to `src/keyboard/keyboardModule.ts`
-- Web MIDI removed from sound adapter — routes through interaction → runtime
-- Sliders tagged with `data-ps-control` for mouse/touch modules
-
-### Added
-
-- **Phase 7:** Unified preset world system (`src/presets/`)
-- `PresetWorld` schema with sound/visual engine refs and default controls/tempo
-- World modules: `seed-world`, `mold-world`
-- `docs/PRESETS.md` — authoring guide
-- Runtime resolves worlds before loading adapters; rejects unknown preset ids
-
-### Changed
-
-- `runtime.setPreset()` loads engine presets from world definitions atomically
-- ControlDock preset dropdown driven by `listPresetWorlds()` (no hardcoded ids)
-- Stage overlay shows world name and description from registry
-- Removed adapter-level preset id maps (worlds own engine mappings)
-
-### Added
-
-- **Phase 6:** ASCII Visual Engine integration via `PlantasiaAsciiAdapter`
-- `ascii-visual-engine@v0.1.0` dependency (`file:../ascii-visual-engine`)
-- `docs/ASCII_VISUAL_ENGINE_INTEGRATION.md` — visual mapping, stage mounting, verification
-- Visual control mapping (`src/visuals/visualControlMapping.ts`)
-- Full-bleed canvas mount in `#ps-stage`
-
-### Changed
-
-- `createRuntime()` defaults to `PlantasiaAsciiAdapter` (mock ASCII moved to `scripts/mocks/`)
-- `runtime.init()` passes container to ASCII adapter for stage mounting
-- `runtime.noteOff()` forwards `noteOff` to ASCII adapter
-- CI builds sibling `ascii-visual-engine` before Plantasonic build
-
-### Added
-
-- **Phase 5:** Plantasia Sound Engine integration via `PlantasiaSoundAdapter`
-- `plantasia-sound-engine@1.0.0-beta.1` npm dependency
-- `docs/SOUND_ENGINE_INTEGRATION.md` — runtime mapping, control translation, verification
-- Control mapping (`src/audio/controlMapping.ts`) and MIDI note helpers (`src/audio/midiNote.ts`)
-- Preset load returns default controls to runtime state
-
-### Changed
-
-- `createRuntime()` defaults to `PlantasiaSoundAdapter` (mock sound removed from production)
-- `runtime.setPreset()` syncs control defaults from sound adapter preset load
-- ENGINE_API.md updated with actual engine API and parameter paths
-
-### Added (Phase 3)
-
-- Functional runtime with full public API (`start`, `stop`, `setPreset`, `noteOn`, `noteOff`, `setControl`, `setTempo`, `subscribe`, `getState`)
-- `createRuntime()` factory in `src/runtime/createRuntime.ts`
-- `MockAsciiAdapter` with `applyState()` logging
-- UI runtime binding: transport, preset select, tempo, sidebar controls, stage status
-- Demo keyboard input (A–J) routed through runtime
-
-### Changed (Phase 3)
-
-- Runtime state model replaced with `RuntimeState` (controls, performance, activeNotes)
-- App bootstrap uses `createRuntime()` with adapters
-- RUNTIME.md rewritten for runtime API
-
-### Added (Phase 2)
-
-## [0.1.0] - 2026-06-28
-
-### Added
-
-- Project foundation with Vite, TypeScript, and npm
-- Bootstrap 5.0.2 with SCSS design token pipeline
-- GSAP dependency for future animations
-- ESLint and Prettier configuration with strict TypeScript
-- Runtime scaffold (state store, event bus, orchestrator)
-- Sound and ASCII adapter interfaces with null implementations
-- Preset manifest structure
-- Responsive application shell (top nav, stage placeholder, control dock, collapsible menu)
-- Fullscreen API support in application shell
-- Architecture documentation (ARCHITECTURE.md, RUNTIME.md, ENGINE_API.md)
-- Design system documentation (DESIGN_SYSTEM.md)
-- Milestone roadmap (ROADMAP.md)
-- Contributing guidelines (CONTRIBUTING.md)
-- MIT License
-- GitHub Actions CI workflow
-
-[Unreleased]: https://github.com/nate-thousand/plantasonic/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/nate-thousand/plantasonic/releases/tag/v0.1.0
+See git history for MVP navigation redesign, preset worlds, interaction layer, and expressive visual language milestones.

@@ -2,7 +2,11 @@
 
 A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **ASCII Visual Engine** through a shared runtime.
 
-**Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It demonstrates how independent repositories — process framework, design system, capability engines, and a product app — compose into a shippable application without merging codebases or duplicating logic.
+**Current release:** v0.2.0
+
+**Production:** https://plantasonic.vercel.app (after deploy)
+
+**Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It is also the **first consumer** of [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.x — the public Application Shell, tokens, and Bootstrap theme come from that package, not local copies.
 
 Plantasonic is responsible for user experience, runtime orchestration, state management, presets, performance controls, and product documentation. Engine logic, design tokens, and engineering workflow templates live in **separate repositories** — never duplicated inside this repo.
 
@@ -28,18 +32,18 @@ Plantasonic Runtime         →  integration layer (state, events, adapters)
 Plantasonic App             →  user experience
 ```
 
-**Integration status:** Phases 1–10 complete — engines, preset worlds, interaction layer, application experience, and expressive visual language.
+**Integration status:** Phases 1–10 complete. **Design system consumer integration (Phase 3.9)** — Plantasonic is the first app to consume `plantasonic-design-system` for tokens, Bootstrap, and application shell.
 
-| Layer                   | Location in Plantasonic                                   |
-| ----------------------- | --------------------------------------------------------- |
-| AI Product Framework    | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
-| Plantasonic Design System | `plantasonic-design-system` npm package, `src/styles/` |
+| Layer | Location in Plantasonic |
+| ----- | ----------------------- |
+| AI Product Framework | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
+| Plantasonic Design System | `plantasonic-design-system` package → `src/shell/`, `src/styles/` — see [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) |
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
 | ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Visual Language         | `src/visuals/language/`, `docs/VISUAL_LANGUAGE.md`          |
 | Runtime                 | `src/runtime/` — functional API + adapter wiring          |
 | Interaction             | `src/interaction/` — unified input routing                  |
-| App Experience          | `src/ui/experience/`, `docs/USER_EXPERIENCE.md`             |
+| App Experience          | `src/ui/experience/`, `docs/USER_EXPERIENCE.md`, `docs/NAVIGATION.md` |
 | App                     | `src/app/`, `src/ui/`, `src/presets/` (world registry)    |
 
 See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md) for the phased build plan.
@@ -72,7 +76,7 @@ Plantasonic is the product app at the center of an independent repository ecosys
 | [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio engine library                | npm dependency via `src/audio/soundAdapter.ts`               |
 | `ascii-visual-engine`                                                             | ASCII engine library                | npm dependency via `src/visuals/plantasiaAsciiAdapter.ts`      |
 | [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and pattern reference until ASCII engine ships |
-| `plantasonic-design-system`                                                       | Design tokens, CSS variables, Bootstrap theme | npm dependency — `css/variables.css`, `scss/bootstrap-theme.scss` |
+| `plantasonic-design-system`                                                       | Design tokens, CSS variables, Bootstrap theme, application shell | npm dependency — `css/variables.css`, `scss/*`, `shell` API via `src/shell/` |
 | `ai-native-design-system`                                                         | Generic predecessor (archived reference)      | Superseded by plantasonic-design-system                           |
 | `ai-product-framework`                                                            | Engineering workflow and templates  | Docs and templates at project setup                          |
 
@@ -87,6 +91,8 @@ plantasonic/
 │   ├── runtime/       State, events, orchestration
 │   ├── audio/         Sound engine adapter
 │   ├── visuals/       ASCII engine adapter
+│   ├── shell/         Design-system Application Shell integration
+│   ├── shell/         Design-system application shell integration
 │   ├── ui/            Components, layouts, controls, experience layer
 │   ├── presets/       Preset manifest and worlds
 │   ├── interaction/   Unified input routing (MIDI, keyboard, mouse, touch)
@@ -138,7 +144,7 @@ plantasonic/
 
 ### Install
 
-Requires the [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) package as a sibling directory (or CI checkout). The npm `file:` dependency resolves to `../plantasonic-design-system`.
+Requires [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.1+ via npm (GitHub dependency). Local development may use a `file:` symlink at `../plantasonic-design-system` instead.
 
 ```bash
 npm install
@@ -232,6 +238,7 @@ The runtime API is stable — swap adapter implementations only. See [RUNTIME.md
 | [docs/PRESETS.md](./docs/PRESETS.md) | Phase 7 unified preset worlds |
 | [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md) | Phase 8 interaction architecture |
 | [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md) | Phase 9 application experience |
+| [docs/NAVIGATION.md](./docs/NAVIGATION.md) | Navigation architecture (Perform / Sound / Visuals / Environment) |
 | [docs/VISUAL_LANGUAGE.md](./docs/VISUAL_LANGUAGE.md) | Phase 10 visual language and motion |
 | [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md) | Creative constraints and engine scope (decision filter) |
 | [docs/product-framework/README.md](./docs/product-framework/README.md) | AI Product Framework integration    |

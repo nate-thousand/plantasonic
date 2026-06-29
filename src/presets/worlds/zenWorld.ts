@@ -10,6 +10,12 @@ export const zenWorld: PresetWorld = {
   description: 'Minimal stillness — sparse glyphs breathing in quiet space.',
   tags: ['minimal', 'calm'],
   version: '1.0.0',
+  identity: {
+    icon: '🍃',
+    mood: 'Layered · Bright · Living',
+    motionStyle: 'Still · Breathing',
+    accent: 'zen',
+  },
   sound: { presetId: 'mycelium' },
   visual: {
     presetId: 'glyphMinimalZen',

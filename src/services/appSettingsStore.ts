@@ -2,6 +2,8 @@
  * Application experience preferences — theme, motion, favorites, recents.
  */
 
+import { setShellTheme } from 'plantasonic-design-system/shell';
+
 const STORAGE_KEY = 'plantasonic.app.settings';
 const MAX_RECENT = 5;
 
@@ -95,6 +97,7 @@ export class AppSettingsStore {
     document.documentElement.dataset.theme = this.settings.theme;
     document.documentElement.toggleAttribute('data-ps-reduced-motion', this.settings.reducedMotion);
     document.documentElement.toggleAttribute('data-ps-motion-off', !this.settings.motionEnabled);
+    setShellTheme(this.settings.theme);
   }
 
   private notify(): void {

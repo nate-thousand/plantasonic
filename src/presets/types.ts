@@ -41,6 +41,18 @@ export interface PresetWorldDefaults {
   tempo?: number;
 }
 
+/** UI-facing audiovisual identity — presentation metadata only. */
+export interface PresetWorldIdentity {
+  /** Display icon (emoji or single glyph). */
+  icon: string;
+  /** Short mood label shown on preset cards. */
+  mood: string;
+  /** Motion language descriptor for the world. */
+  motionStyle: string;
+  /** CSS modifier for card thumbnail accent (`ps-world--{accent}`). */
+  accent: 'seed' | 'mold' | 'flow' | 'zen' | 'nebula';
+}
+
 /**
  * A complete audiovisual preset world.
  * Runtime resolves worlds and passes engine preset ids to adapters.
@@ -51,13 +63,17 @@ export interface PresetWorld {
   description: string;
   tags: readonly string[];
   version: string;
+  identity: PresetWorldIdentity;
   sound: PresetEngineRef;
   visual: PresetVisualConfig;
   defaults: PresetWorldDefaults;
 }
 
 /** Metadata-only view for UI listing. */
-export type PresetWorldMeta = Pick<PresetWorld, 'id' | 'name' | 'description' | 'tags' | 'version'>;
+export type PresetWorldMeta = Pick<
+  PresetWorld,
+  'id' | 'name' | 'description' | 'tags' | 'version' | 'identity'
+>;
 
 /** Manifest containing all registered preset worlds. */
 export interface PresetManifest {

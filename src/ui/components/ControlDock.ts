@@ -1,124 +1,119 @@
 /**
- * Bottom control dock — transport, preset, tempo, and status display.
+ * Bottom transport bar — perform essentials and inspector category rail.
  */
 
 import { resolvePresetWorld } from '@/presets/registry.ts';
 import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import type { ControlName } from '@/runtime/types.ts';
 import type { RuntimeState } from '@/runtime/types.ts';
-import {
-  controlValueToPercent,
-  DEFAULT_TEMPO,
-  MAX_TEMPO,
-  MIN_TEMPO,
-  percentToControlValue,
-} from '@/runtime/performanceParams.ts';
+import { controlValueToPercent, percentToControlValue } from '@/runtime/performanceParams.ts';
 import { eventBus } from '@/runtime/events.ts';
 import { animateControlFeedback } from '../motion/motionController.ts';
 import { startControlMidiLearn } from './InteractionSettings.ts';
 import {
   createButton,
   createPresetSelector,
-  createSlider,
   createStatus,
   setPresetSelectorName,
 } from '../controls/index.ts';
+import type { NavCategory } from '../navigation/types.ts';
+import { openInspector } from './InspectorPanel.ts';
+
+const CATEGORY_RAIL: readonly { id: NavCategory; label: string }[] = [
+  { id: 'sound', label: 'Sound' },
+  { id: 'visuals', label: 'Visuals' },
+  { id: 'environment', label: 'Environment' },
+];
 
 export function createControlDock(): HTMLElement {
   const dock = document.createElement('footer');
-  dock.className = 'ps-dock';
+  dock.className = 'ps-transport';
   dock.id = 'ps-control-dock';
-  dock.setAttribute('role', 'contentinfo');
-  dock.setAttribute('aria-label', 'Control dock');
+  dock.setAttribute('role', 'toolbar');
+  dock.setAttribute('aria-label', 'Perform transport');
 
-  const transport = document.createElement('div');
-  transport.className = 'ps-dock__section ps-dock__section--transport';
-  const transportLabel = document.createElement('span');
-  transportLabel.className = 'ps-dock__label';
-  transportLabel.textContent = 'Transport';
-  transport.append(
-    transportLabel,
+  const perform = document.createElement('div');
+  perform.className = 'ps-transport__perform';
+  perform.append(
     createButton({
       id: 'ps-play-btn',
       label: 'Play',
       variant: 'primary',
-      size: 'sm',
-      className: 'ps-dock__btn',
+      className: 'ps-transport__btn ps-transport__btn--play',
       ariaLabel: 'Play',
     }),
     createButton({
       id: 'ps-stop-btn',
       label: 'Stop',
       variant: 'outline',
-      size: 'sm',
-      className: 'ps-dock__btn',
+      className: 'ps-transport__btn',
       ariaLabel: 'Stop',
     }),
-    createStatus({ id: 'ps-playing-status', label: 'Stopped', className: 'ps-dock__status' }),
+    createStatus({ id: 'ps-playing-status', label: 'Stopped', className: 'ps-transport__status' }),
   );
 
-  const preset = document.createElement('div');
-  preset.className = 'ps-dock__section ps-dock__section--preset';
-  const presetLabel = document.createElement('span');
-  presetLabel.className = 'ps-dock__label';
-  presetLabel.textContent = 'World';
-  preset.append(presetLabel, createPresetSelector());
+  const world = document.createElement('div');
+  world.className = 'ps-transport__world';
+  world.append(createPresetSelector({ buttonId: 'ps-preset-browse-btn' }));
 
-  const tempo = document.createElement('div');
-  tempo.className = 'ps-dock__section ps-dock__section--tempo';
-  const tempoLabel = document.createElement('span');
-  tempoLabel.className = 'ps-dock__label';
-  tempoLabel.textContent = 'Tempo';
-  tempo.append(
-    tempoLabel,
-    createSlider({
-      id: 'ps-tempo-slider',
-      label: 'Tempo',
-      min: MIN_TEMPO,
-      max: MAX_TEMPO,
-      value: DEFAULT_TEMPO,
-      controlName: 'tempo',
-      className: 'ps-dock__range',
-    }),
-    createStatus({
-      id: 'ps-tempo-status',
-      label: `${String(DEFAULT_TEMPO)} bpm`,
-      className: 'ps-dock__status',
-    }),
+  const live = document.createElement('div');
+  live.className = 'ps-transport__live';
+  live.append(
+    createStatus({ id: 'ps-tempo-status', label: '72 bpm', className: 'ps-transport__status' }),
+    createStatus({ id: 'ps-octave-status', label: 'Oct 4', className: 'ps-transport__status' }),
+    createStatus({ id: 'ps-notes-status', label: '0 active', className: 'ps-transport__status' }),
   );
 
-  const notes = document.createElement('div');
-  notes.className = 'ps-dock__section ps-dock__section--notes';
-  const notesLabel = document.createElement('span');
-  notesLabel.className = 'ps-dock__label';
-  notesLabel.textContent = 'Notes';
-  notes.append(
-    notesLabel,
-    createStatus({ id: 'ps-octave-status', label: 'Oct 4', className: 'ps-dock__status' }),
-    createStatus({ id: 'ps-notes-status', label: '0 active', className: 'ps-dock__status' }),
-  );
+  const rail = document.createElement('nav');
+  rail.className = 'ps-transport__rail';
+  rail.setAttribute('aria-label', 'Control categories');
+  for (const cat of CATEGORY_RAIL) {
+    const btn = createButton({
+      id: `ps-rail-${cat.id}`,
+      label: cat.label,
+      variant: 'outline',
+      size: 'sm',
+      className: 'ps-transport__rail-btn',
+      ariaLabel: `Open ${cat.label} controls`,
+    });
+    btn.dataset.inspectorCategory = cat.id;
+    btn.addEventListener('click', () => {
+      openInspector(cat.id);
+      animateControlFeedback(btn);
+    });
+    rail.append(btn);
+  }
 
-  const perfExit = document.createElement('div');
-  perfExit.className = 'ps-dock__section ps-dock__section--performance-exit';
-  perfExit.append(
+  const focusExit = document.createElement('div');
+  focusExit.className = 'ps-transport__focus-exit';
+  focusExit.append(
     createButton({
-      id: 'ps-performance-exit',
-      label: 'Exit Perform',
+      id: 'ps-focus-exit',
+      label: 'Exit Focus',
       variant: 'outline-light',
       size: 'sm',
-      ariaLabel: 'Exit performance mode',
+      ariaLabel: 'Exit focus mode',
     }),
   );
 
-  dock.append(transport, preset, tempo, notes, perfExit);
+  dock.append(perform, world, live, rail, focusExit);
   return dock;
 }
 
-/** Wires control dock interactions to the interaction layer. */
+/** @deprecated Use isInspectorOpen */
+export function isDockDrawerOpen(): boolean {
+  return false;
+}
+
+/** @deprecated Inspector replaces dock drawer */
+export function setDockDrawerOpen(_isOpen: boolean): void {
+  /* no-op — inspector handles panel state */
+}
+
+/** Wires transport bar to the interaction layer. */
 export function bindControlDock(interaction: InteractionManager): () => void {
   const playBtn = document.querySelector<HTMLButtonElement>('#ps-play-btn');
   const stopBtn = document.querySelector<HTMLButtonElement>('#ps-stop-btn');
-  const tempoSlider = document.querySelector<HTMLInputElement>('#ps-tempo-slider');
 
   const onPlay = (): void => {
     interaction.start('ui');
@@ -128,18 +123,12 @@ export function bindControlDock(interaction: InteractionManager): () => void {
     interaction.stop('ui');
     if (stopBtn) animateControlFeedback(stopBtn);
   };
-  const onTempo = (): void => {
-    const bpm = Number(tempoSlider?.value ?? 72);
-    interaction.setTempo(bpm, 'ui');
-    tempoSlider?.setAttribute('aria-valuenow', String(bpm));
-  };
 
   playBtn?.addEventListener('click', onPlay);
   stopBtn?.addEventListener('click', onStop);
-  tempoSlider?.addEventListener('input', onTempo);
 
   const unsubscribe = interaction.subscribe((state) => {
-    updateDockStatus(state);
+    updateTransportStatus(state);
   });
 
   const updateOctaveStatus = (octave: number): void => {
@@ -154,38 +143,40 @@ export function bindControlDock(interaction: InteractionManager): () => void {
   return () => {
     playBtn?.removeEventListener('click', onPlay);
     stopBtn?.removeEventListener('click', onStop);
-    tempoSlider?.removeEventListener('input', onTempo);
     unsubscribe();
     unsubOctave();
   };
 }
 
-function updateDockStatus(state: Readonly<RuntimeState>): void {
+function updateTransportStatus(state: Readonly<RuntimeState>): void {
   const playing = document.querySelector('#ps-playing-status');
   const tempo = document.querySelector('#ps-tempo-status');
   const notes = document.querySelector('#ps-notes-status');
-  const tempoSlider = document.querySelector<HTMLInputElement>('#ps-tempo-slider');
   const playBtn = document.querySelector<HTMLButtonElement>('#ps-play-btn');
 
   if (playing) playing.textContent = state.isPlaying ? 'Playing' : 'Stopped';
   if (playBtn) playBtn.setAttribute('aria-pressed', String(state.isPlaying));
 
   const world = state.preset ? resolvePresetWorld(state.preset) : undefined;
-  setPresetSelectorName(world?.name ?? 'None');
+  setPresetSelectorName(world?.name ?? 'Choose World');
 
   if (tempo) tempo.textContent = `${String(state.tempo)} bpm`;
   if (notes) notes.textContent = `${String(state.activeNotes.length)} active`;
-  if (tempoSlider && Number(tempoSlider.value) !== state.tempo) {
-    tempoSlider.value = String(state.tempo);
-    tempoSlider.setAttribute('aria-valuenow', String(state.tempo));
-  }
 }
 
-/** Binds performance control sliders in the sidebar menu. */
+/** Binds ecology sliders in the inspector panel. */
 export function bindControlSliders(interaction: InteractionManager): () => void {
   const controls: ControlName[] = ['bloom', 'mold', 'density', 'chaos', 'brightness'];
   const handlers: Array<{ el: HTMLInputElement; fn: () => void }> = [];
   const learnHandlers: Array<{ el: HTMLButtonElement; fn: () => void }> = [];
+
+  const tempoSlider = document.querySelector<HTMLInputElement>('#ps-tempo-slider');
+  const onTempo = (): void => {
+    const bpm = Number(tempoSlider?.value ?? 72);
+    interaction.setTempo(bpm, 'ui');
+    tempoSlider?.setAttribute('aria-valuenow', String(bpm));
+  };
+  tempoSlider?.addEventListener('input', onTempo);
 
   for (const name of controls) {
     const slider = document.querySelector<HTMLInputElement>(`#ps-control-${name}`);
@@ -218,6 +209,10 @@ export function bindControlSliders(interaction: InteractionManager): () => void 
   }
 
   const unsubscribe = interaction.subscribe((state) => {
+    if (tempoSlider && Number(tempoSlider.value) !== state.tempo) {
+      tempoSlider.value = String(state.tempo);
+      tempoSlider.setAttribute('aria-valuenow', String(state.tempo));
+    }
     for (const name of controls) {
       const slider = document.querySelector<HTMLInputElement>(`#ps-control-${name}`);
       const label = document.querySelector(`#ps-control-${name}-val`);
@@ -231,6 +226,7 @@ export function bindControlSliders(interaction: InteractionManager): () => void 
   });
 
   return () => {
+    tempoSlider?.removeEventListener('input', onTempo);
     for (const { el, fn } of handlers) {
       el.removeEventListener('input', fn);
     }

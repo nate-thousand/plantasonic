@@ -1,5 +1,5 @@
 /**
- * Fullscreen stage placeholder with runtime status overlay.
+ * Fullscreen stage — edge-to-edge visualizer with minimal world HUD.
  */
 
 import { resolvePresetWorld } from '@/presets/registry.ts';
@@ -17,34 +17,53 @@ export function createStage(_options: StageOptions = {}): HTMLElement {
   stage.setAttribute('aria-label', 'Visual stage');
 
   stage.innerHTML = `
-    <div class="ps-stage__placeholder">
-      <span class="ps-stage__label">Visual Stage</span>
-      <h2 class="ps-stage__title" id="ps-stage-title">ASCII Engine Placeholder</h2>
-      <p id="ps-stage-status">Awaiting preset</p>
-      <p class="ps-stage__hint small">Keyboard: A–J notes · Z/X octave · Space sustain · Enter/Esc transport</p>
+    <div class="ps-stage__hud" id="ps-stage-hud" aria-live="polite">
+      <div class="ps-stage__world" id="ps-stage-world">
+        <span class="ps-stage__icon" id="ps-stage-icon" aria-hidden="true"></span>
+        <div class="ps-stage__world-text">
+          <h2 class="ps-stage__title" id="ps-stage-title">Enter a world</h2>
+          <p class="ps-stage__mood" id="ps-stage-mood"></p>
+        </div>
+      </div>
+      <p class="ps-stage__status" id="ps-stage-status">Press Play to begin</p>
+    </div>
+    <div class="ps-stage__placeholder" id="ps-stage-placeholder">
+      <span class="ps-stage__label">Audiovisual Instrument</span>
+      <p class="ps-stage__hint">Choose a world · Press Play · Explore with A–J</p>
     </div>
   `;
 
   return stage;
 }
 
-/** Updates stage status text from runtime state. */
+/** Updates stage HUD from runtime state. */
 export function updateStageStatus(state: Readonly<RuntimeState>): void {
   const title = document.querySelector('#ps-stage-title');
+  const mood = document.querySelector('#ps-stage-mood');
+  const icon = document.querySelector('#ps-stage-icon');
   const status = document.querySelector('#ps-stage-status');
+  const placeholder = document.querySelector('#ps-stage-placeholder');
+  const hud = document.querySelector('#ps-stage-hud');
   const world = state.preset ? resolvePresetWorld(state.preset) : undefined;
 
-  if (title) {
-    title.textContent = world?.name ?? 'Visual Stage';
+  if (world) {
+    placeholder?.classList.add('ps-stage__placeholder--hidden');
+    hud?.classList.add('ps-stage__hud--active');
+    if (title) title.textContent = world.name;
+    if (mood) mood.textContent = world.identity.mood;
+    if (icon) icon.textContent = world.identity.icon;
+    hud?.setAttribute('data-world-accent', world.identity.accent);
+  } else {
+    placeholder?.classList.remove('ps-stage__placeholder--hidden');
+    hud?.classList.remove('ps-stage__hud--active');
+    if (title) title.textContent = 'Enter a world';
+    if (mood) mood.textContent = '';
+    if (icon) icon.textContent = '';
   }
+
   if (status) {
-    const mode = state.isPlaying ? 'Running' : 'Idle';
-    const notes =
-      state.activeNotes.length > 0
-        ? `${String(state.activeNotes.length)} notes active`
-        : 'No input';
-    const transport = `${mode} · ${String(state.tempo)} bpm · ${notes}`;
-    status.textContent = world ? `${world.description} — ${transport}` : transport;
+    const mode = state.isPlaying ? 'Live' : 'Idle';
+    status.textContent = `${mode} · ${String(state.tempo)} bpm`;
   }
 }
 

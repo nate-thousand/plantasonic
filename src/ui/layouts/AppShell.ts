@@ -1,21 +1,17 @@
 /**
- * Primary application layout shell.
- * Composes top nav, collapsible menu, stage, and control dock.
+ * Primary application layout — instrument stage, inspector, and transport.
+ * Mounted inside the design-system application shell workspace.
  */
 
 import { eventBus } from '@/runtime/events.ts';
-import { createTopNav, setNavStatus } from '../components/TopNav.ts';
 import { createStage, getStageDimensions } from '../components/Stage.ts';
 import { createControlDock } from '../components/ControlDock.ts';
-import {
-  closeCollapsibleMenu,
-  createCollapsibleMenu,
-  isSidebarOpen,
-  setSidebarOpen,
-} from '../components/CollapsibleMenu.ts';
+import { closeInspector, createInspectorPanel } from '../components/InspectorPanel.ts';
 import { animateFullscreenTransition } from '../motion/motionController.ts';
+import { setNavStatus } from '@/shell/instrumentStatus.ts';
 
 export interface AppShellOptions {
+  mountTarget: HTMLElement;
   onResize?: (width: number, height: number) => void;
 }
 
@@ -25,39 +21,31 @@ export interface AppShell {
   destroy: () => void;
 }
 
-export function createAppShell(options: AppShellOptions = {}): AppShell {
+export function createAppShell(options: AppShellOptions): AppShell {
   const root = document.createElement('div');
-  root.className = 'ps-app';
+  root.className = 'ps-app ps-instrument';
   root.id = 'ps-app';
-
-  const nav = createTopNav({
-    onMenuToggle: () => {
-      setSidebarOpen(!isSidebarOpen());
-    },
-    onFullscreenToggle: () => {
-      void toggleFullscreen(root);
-    },
-  });
 
   const main = document.createElement('div');
   main.className = 'ps-main';
 
   const backdrop = document.createElement('button');
   backdrop.type = 'button';
-  backdrop.className = 'ps-sidebar-backdrop';
-  backdrop.id = 'ps-sidebar-backdrop';
+  backdrop.className = 'ps-inspector-backdrop';
+  backdrop.id = 'ps-inspector-backdrop';
   backdrop.hidden = true;
-  backdrop.setAttribute('aria-label', 'Close performance panel');
+  backdrop.setAttribute('aria-label', 'Close inspector');
   backdrop.addEventListener('click', () => {
-    closeCollapsibleMenu();
+    closeInspector();
   });
 
-  const sidebar = createCollapsibleMenu();
+  const inspector = createInspectorPanel();
   const stage = createStage({ fullscreenTarget: root });
-  const dock = createControlDock();
+  const transport = createControlDock();
 
-  main.append(backdrop, sidebar, stage);
-  root.append(nav, main, dock);
+  main.append(backdrop, inspector, stage, transport);
+  root.append(main);
+  options.mountTarget.replaceChildren(root);
 
   let resizeObserver: ResizeObserver | undefined;
   let resizeRaf = 0;
@@ -89,12 +77,17 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
   };
   document.addEventListener('fullscreenchange', onFullscreenChange);
 
+  const unsubFullscreen = eventBus.on('shell:toggle-fullscreen', () => {
+    void toggleFullscreen(root);
+  });
+
   const onKeyDown = (event: KeyboardEvent): void => {
-    if (event.key !== 'Escape' || !isSidebarOpen()) return;
+    if (event.key !== 'Escape') return;
+    const palette = document.querySelector('[data-ps-command-palette]');
+    if (palette instanceof HTMLElement && !palette.hidden) return;
     const overlay = document.querySelector('#ps-overlay-host');
     if (overlay instanceof HTMLElement && !overlay.hidden) return;
-    event.preventDefault();
-    closeCollapsibleMenu();
+    closeInspector();
   };
   document.addEventListener('keydown', onKeyDown);
 
@@ -106,7 +99,8 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
       resizeObserver?.disconnect();
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('keydown', onKeyDown);
-      closeCollapsibleMenu();
+      unsubFullscreen();
+      closeInspector();
       root.remove();
     },
   };

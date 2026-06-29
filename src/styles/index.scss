@@ -1,8 +1,13 @@
 /**
- * Application styles entry — plantasonic-design-system + Bootstrap + shell.
+ * Application styles entry — plantasonic-design-system + Bootstrap + instrument shell.
  */
 
 @import 'plantasonic-design-system/scss/bootstrap-theme.scss';
 @import './ps-aliases';
 @import './bootstrap.scss';
+@import 'plantasonic-design-system/scss/css-theme-bridge.scss';
+@import 'plantasonic-design-system/scss/plantasonic-components.scss';
+@import 'plantasonic-design-system/scss/navigation-framework.scss';
+@import 'plantasonic-design-system/scss/application-shell.scss';
+@import './instrument-shell.scss';
 @import './globals.scss';

@@ -10,6 +10,12 @@ export const seedWorld: PresetWorld = {
   description: 'Organic growth — blooming glyphs and generative plantasia tones.',
   tags: ['organic', 'calm'],
   version: '1.0.0',
+  identity: {
+    icon: '🌱',
+    mood: 'Warm · Organic · Calm',
+    motionStyle: 'Growing · Blooming',
+    accent: 'seed',
+  },
   sound: { presetId: 'plantasonic' },
   visual: {
     presetId: 'glyphOrganicBloom',

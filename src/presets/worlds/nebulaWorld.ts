@@ -10,6 +10,12 @@ export const nebulaWorld: PresetWorld = {
   description: 'Particle nebula — orbiting glyphs with glitch-toned cosmic drift.',
   tags: ['particles', 'energy'],
   version: '1.0.0',
+  identity: {
+    icon: '✦',
+    mood: 'Dense · Cosmic · Energy',
+    motionStyle: 'Orbiting · Drift',
+    accent: 'nebula',
+  },
   sound: { presetId: 'mutation' },
   visual: {
     presetId: 'glyphParticleNebula',

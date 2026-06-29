@@ -119,6 +119,7 @@ Includes:
 - [x] ASCII visual language documented in DESIGN_SYSTEM.md (implementation in Phase 10)
 - [x] UI motion language complete — loading, fullscreen, sidebar close transitions
 - [x] Accessibility foundation — keyboard map, focus, contrast, reduced motion, touch targets
+- [x] **Application Shell (v0.2.0)** — public `plantasonic-design-system/shell` API; instrument workspace inside DS shell; command palette + theme from package
 
 ### Deferred (future platform work)
 
@@ -166,6 +167,24 @@ Includes:
 
 - [x] Keyboard navigation, focus states, contrast, reduced motion, touch targets, semantic HTML
 - [x] Documented in `DESIGN_SYSTEM.md`
+
+### 3.9 Application Consumer Integration — 100%
+
+**Date:** 2026-06-28
+
+Plantasonic is the **first official consumer** of the centralized `plantasonic-design-system` package.
+
+- [x] npm dependency on `plantasonic-design-system` (`file:../plantasonic-design-system`)
+- [x] Import generated CSS variables and Bootstrap theme from package
+- [x] `renderApplicationShell()` + `bindApplicationShell()` via public API only
+- [x] `src/shell/` — routes, navigation, commands, theme, `persistState`
+- [x] Command palette wired to real app commands via `registerAppCommands()`
+- [x] Removed local `CommandPalette`, `InstrumentChrome`, duplicate token entry points
+- [x] `npm run verify:design-system` — package exports, shell API, no showcase imports
+
+**App-owned (by design):** instrument workspace (stage, inspector, transport), control factories, app-specific SCSS (`globals.scss`, `instrument-shell.scss`, `_bootstrap-components.scss` polish).
+
+**Remaining migration gaps:** transport dock and inspector panels still render inside the workspace rather than DS dock/panel regions; legacy `.ps-chrome` / `.ps-top-nav` SCSS retained for focus-mode responsive rules until fully consolidated.
 
 ---
 
@@ -341,6 +360,13 @@ Each preset world defines:
 - [x] Error banner — user-facing states for audio, MIDI, engine failures
 - [x] App settings persistence (`AppSettingsStore` — favorites, recents, motion)
 - [x] Documentation: `docs/USER_EXPERIENCE.md`
+- [x] **Navigation redesign (2026-06):** Instrument IA — Perform / Sound / Visuals / Environment; command palette; contextual inspector; [docs/NAVIGATION.md](./docs/NAVIGATION.md)
+- [x] **UI concept implementation** — immersive instrument layout per product vision:
+  - Edge-to-edge ASCII stage as hero; chrome floats over the visualizer
+  - Header: Presets · Performance · Settings (+ Fullscreen · About · Help)
+  - Floating glass control dock with collapsible Sound / Motion / Visual / Performance / Global groups
+  - World identity on preset cards (thumbnail, icon, mood, motion style)
+  - Cinematic GSAP transitions for overlays, preset changes, and card entrance
 
 ### Deferred
 
@@ -477,20 +503,17 @@ Complete:
 
 ## Phase 13 — Release Candidate
 
-**Status:** Not started  
-**Completion: 0%**
+**Status:** In progress  
+**Completion: 40%**
 
 **Objective:** Prepare Plantasonic for public release.
 
-Includes:
+### Delivered (v0.2.0)
 
-- QA
-- Documentation review
-- API review
-- Example content
-- Versioning
-- GitHub release
-- Deployment validation
+- [x] Design-system Application Shell integration
+- [x] Vercel deployment configuration
+- [x] Version tagging and CHANGELOG release notes
+- [x] GitHub release dependency on plantasonic-design-system v1.2.1
 
 ### Planned
 

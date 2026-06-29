@@ -10,6 +10,12 @@ export const moldWorld: PresetWorld = {
   description: 'Corrupted broadcast — vine species with glitch-heavy ASCII decay.',
   tags: ['dark', 'chaotic'],
   version: '1.0.0',
+  identity: {
+    icon: '🦠',
+    mood: 'Corrupted · Glitch · Chaotic',
+    motionStyle: 'Unstable · Decay',
+    accent: 'mold',
+  },
   sound: { presetId: 'vine' },
   visual: {
     presetId: 'glyphCorruptedBroadcast',

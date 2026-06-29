@@ -25,12 +25,13 @@ export function resolvePresetWorld(id: PresetId): PresetWorld | undefined {
 
 /** Returns metadata for all registered preset worlds. */
 export function listPresetWorlds(): readonly PresetWorldMeta[] {
-  return PRESET_WORLDS.map(({ id, name, description, tags, version }) => ({
+  return PRESET_WORLDS.map(({ id, name, description, tags, version, identity }) => ({
     id,
     name,
     description,
     tags,
     version,
+    identity,
   }));
 }
 

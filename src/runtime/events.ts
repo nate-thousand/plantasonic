@@ -20,6 +20,15 @@ export interface RuntimeEventMap {
   'viewport:fullscreen': { isFullscreen: boolean };
   'shell:panel-open': undefined;
   'shell:panel-close': undefined;
+  'shell:open-settings': undefined;
+  'shell:open-presets': undefined;
+  'shell:open-inspector': { category: 'sound' | 'visuals' | 'environment' };
+  'shell:close-inspector': undefined;
+  'shell:open-help': undefined;
+  'shell:open-about': undefined;
+  'shell:toggle-fullscreen': undefined;
+  'shell:toggle-focus-mode': undefined;
+  'shell:open-command-palette': undefined;
   'input:noteOn': { note: number; velocity: number };
   'input:noteOff': { note: number };
   'control:set': { name: string; value: number };

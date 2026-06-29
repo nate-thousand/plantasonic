@@ -2,7 +2,7 @@
  * UI module barrel exports.
  */
 
-export { createTopNav, setNavStatus } from './components/TopNav.ts';
+export { setNavStatus } from '@/shell/instrumentStatus.ts';
 export {
   createStage,
   getStageDimensions,
@@ -20,12 +20,11 @@ export {
 } from './components/ControlDock.ts';
 export {
   closeCollapsibleMenu,
-  createCollapsibleMenu,
   isSidebarOpen,
   openSidebarTab,
   setSidebarOpen,
-  showSidebarTab,
-} from './components/CollapsibleMenu.ts';
+  openNavCategory,
+} from './components/ShellNavigation.ts';
 export { createAppShell } from './layouts/AppShell.ts';
 export type { AppShell, AppShellOptions } from './layouts/AppShell.ts';
 export { bindRuntimeToShell } from './bindRuntime.ts';

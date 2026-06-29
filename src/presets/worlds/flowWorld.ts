@@ -10,6 +10,12 @@ export const flowWorld: PresetWorld = {
   description: 'Wind currents — spiraling flow fields with rhythmic plantasia tones.',
   tags: ['fluid', 'rhythm'],
   version: '1.0.0',
+  identity: {
+    icon: '🌊',
+    mood: 'Floating · Slow · Deep',
+    motionStyle: 'Atmospheric · Rhythm',
+    accent: 'flow',
+  },
   sound: { presetId: 'bloom' },
   visual: {
     presetId: 'glyphFlowField',

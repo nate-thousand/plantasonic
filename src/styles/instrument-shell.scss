@@ -1,0 +1,46 @@
+/**
+ * Bridges the design-system application shell with the Plantasonic instrument workspace.
+ */
+
+.ps-instrument-workspace {
+  height: 100%;
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.ps-instrument-workspace .ps-app {
+  grid-template-rows: 1fr;
+  height: 100%;
+}
+
+.ps-shell:has(.ps-instrument-workspace) {
+  .ps-shell__dock,
+  .ps-shell__inspector {
+    display: none !important;
+  }
+}
+
+.ps-shell__runtime-status {
+  margin-right: auto;
+  margin-left: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--ds-color-text-secondary);
+}
+
+.ps-app-shell--performance {
+  .ps-shell__sidebar,
+  .ps-shell__topbar-actions .ps-search,
+  .ps-shell__topbar-action:not(.ps-shell__topbar-action--focus) {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.ps-instrument.ps-app--performance {
+  .ps-transport,
+  .ps-inspector {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

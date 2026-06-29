@@ -33,6 +33,8 @@ async function main(): Promise<void> {
   const { document } = window;
   globalThis.window = window as unknown as Window & typeof globalThis.window;
   globalThis.document = document;
+  globalThis.localStorage = window.localStorage;
+  globalThis.CustomEvent = window.CustomEvent;
   document.documentElement.setAttribute('data-ps-motion-off', '');
   window.matchMedia = () =>
     ({
@@ -115,6 +117,7 @@ async function main(): Promise<void> {
   const { createInteractionManager } = await import('../src/interaction/index.ts');
   const { createAppShell } = await import('../src/ui/layouts/AppShell.ts');
   const { bindRuntimeToShell } = await import('../src/ui/bindRuntime.ts');
+  const { installApplicationShell } = await import('../src/shell/installApplicationShell.ts');
   const { openPresetBrowser } = await import('../src/ui/components/PresetBrowser.ts');
   const { AppSettingsStore } = await import('../src/services/appSettingsStore.ts');
   const { createOverlayHost } = await import('../src/ui/components/OverlayHost.ts');
@@ -123,15 +126,22 @@ async function main(): Promise<void> {
   const runtime = createRuntime({ soundAdapter: new MockSoundAdapter() });
   const interaction = createInteractionManager(runtime);
 
+  const appRoot = document.createElement('div');
+  appRoot.id = 'app';
+  document.body.appendChild(appRoot);
+  appRoot.style.width = '1280px';
+  appRoot.style.height = '800px';
+
+  const shellHost = installApplicationShell(appRoot);
+
   const shell = createAppShell({
+    mountTarget: shellHost.workspace,
     onResize: (width, height) => {
       if (width > 0 && height > 0) runtime.resize(width, height);
     },
   });
 
-  document.body.appendChild(shell.root);
-  shell.root.style.width = '1280px';
-  shell.root.style.height = '800px';
+  shell.root.style.height = '100%';
   shell.stage.style.width = '800px';
   shell.stage.style.height = '500px';
   shell.stage.getBoundingClientRect = () =>
@@ -148,9 +158,9 @@ async function main(): Promise<void> {
     }) as DOMRect;
 
   const overlay = createOverlayHost();
-  shell.root.appendChild(overlay.root);
+  shellHost.root.appendChild(overlay.root);
 
-  const unbind = bindRuntimeToShell(interaction, shell);
+  const unbind = bindRuntimeToShell(interaction, shell, shellHost.root);
 
   const init = await runtime.init({ container: shell.stage });
   assert(init.success, `Runtime init failed: ${init.error?.message ?? 'unknown'}`);

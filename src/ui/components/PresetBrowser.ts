@@ -1,6 +1,5 @@
 /**
- * Visual preset browser — cards, search, categories, favorites, recents.
- * Preset data comes from the runtime registry only.
+ * Visual preset browser — world cards with identity, search, favorites, recents.
  */
 
 import { listPresetWorlds, resolvePresetWorld } from '@/presets/registry.ts';
@@ -8,7 +7,7 @@ import type { PresetWorldMeta } from '@/presets/types.ts';
 import type { InteractionManager } from '@/interaction/interactionManager.ts';
 import type { AppSettingsStore } from '@/services/appSettingsStore.ts';
 import { getOverlayPanel } from './OverlayHost.ts';
-import { animateControlFeedback } from '../motion/motionController.ts';
+import { animateControlFeedback, animatePresetCards } from '../motion/motionController.ts';
 
 function collectTags(worlds: readonly PresetWorldMeta[]): string[] {
   const tags = new Set<string>();
@@ -20,17 +19,25 @@ function collectTags(worlds: readonly PresetWorldMeta[]): string[] {
 
 function renderCard(world: PresetWorldMeta, isFavorite: boolean, isActive: boolean): string {
   const tags = world.tags.map((t) => `<span class="ps-preset-card__tag">${t}</span>`).join('');
+  const { icon, mood, motionStyle, accent } = world.identity;
   return `
     <article
-      class="ps-preset-card${isActive ? ' ps-preset-card--active' : ''}"
+      class="ps-preset-card ps-preset-card--${accent}${isActive ? ' ps-preset-card--active' : ''}"
       data-preset-id="${world.id}"
       tabindex="0"
       role="button"
       aria-pressed="${String(isActive)}"
       aria-label="Load ${world.name}"
     >
+      <div class="ps-preset-card__thumb ps-world-thumb--${accent}" aria-hidden="true">
+        <span class="ps-preset-card__thumb-icon">${icon}</span>
+        <span class="ps-preset-card__thumb-glyphs">${glyphPattern(accent)}</span>
+      </div>
       <header class="ps-preset-card__header">
-        <h3 class="ps-preset-card__title">${world.name}</h3>
+        <div class="ps-preset-card__heading">
+          <span class="ps-preset-card__icon" aria-hidden="true">${icon}</span>
+          <h3 class="ps-preset-card__title">${world.name}</h3>
+        </div>
         <button
           type="button"
           class="ps-preset-card__favorite${isFavorite ? ' ps-preset-card__favorite--on' : ''}"
@@ -40,13 +47,25 @@ function renderCard(world: PresetWorldMeta, isFavorite: boolean, isActive: boole
           ★
         </button>
       </header>
+      <p class="ps-preset-card__mood">${mood}</p>
       <p class="ps-preset-card__desc">${world.description}</p>
+      <p class="ps-preset-card__motion">${motionStyle}</p>
       <footer class="ps-preset-card__footer">
         <div class="ps-preset-card__tags">${tags}</div>
-        <span class="ps-preset-card__version">v${world.version}</span>
       </footer>
     </article>
   `;
+}
+
+function glyphPattern(accent: string): string {
+  const patterns: Record<string, string> = {
+    seed: '·:*·',
+    mold: '#@!#',
+    flow: '~≈~≈',
+    zen: '· · ·',
+    nebula: '✦ · ✦',
+  };
+  return patterns[accent] ?? '· · ·';
 }
 
 function renderSection(
@@ -83,20 +102,25 @@ export function openPresetBrowser(
   const recentWorlds = settings.recentPresets
     .map((id) => resolvePresetWorld(id))
     .filter((w): w is NonNullable<typeof w> => w !== undefined)
-    .map(({ id, name, description, tags: t, version }) => ({
+    .map(({ id, name, description, tags: t, version, identity }) => ({
       id,
       name,
       description,
       tags: t,
       version,
+      identity,
     }));
 
   const favoriteWorlds = worlds.filter((w) => favorites.has(w.id));
 
   panel.setAttribute('aria-labelledby', 'ps-preset-browser-title');
+  panel.classList.add('ps-overlay-panel--wide');
   panel.innerHTML = `
     <header class="ps-overlay-panel__header">
-      <h2 id="ps-preset-browser-title" class="ps-overlay-panel__title">Presets</h2>
+      <div>
+        <h2 id="ps-preset-browser-title" class="ps-overlay-panel__title">Worlds</h2>
+        <p class="ps-overlay-panel__subtitle">Each preset is a complete audiovisual world</p>
+      </div>
       <button type="button" class="btn btn-sm btn-outline-secondary" id="ps-preset-browser-close" aria-label="Close presets">
         Close
       </button>
@@ -106,7 +130,7 @@ export function openPresetBrowser(
         type="search"
         class="form-control form-control-sm ps-preset-browser__search"
         id="ps-preset-search"
-        placeholder="Search presets…"
+        placeholder="Search worlds…"
         aria-label="Search presets"
       />
       <div class="ps-preset-browser__filters" role="group" aria-label="Filter by tag">
@@ -119,7 +143,7 @@ export function openPresetBrowser(
     <div class="ps-preset-browser__content" id="ps-preset-browser-content">
       ${renderSection('Recently Used', recentWorlds, favorites, state.preset ?? '')}
       ${renderSection('Favorites', favoriteWorlds, favorites, state.preset ?? '')}
-      ${renderSection('All Presets', worlds, favorites, state.preset ?? '')}
+      ${renderSection('All Worlds', worlds, favorites, state.preset ?? '')}
     </div>
   `;
 
@@ -144,6 +168,7 @@ export function openPresetBrowser(
         !q ||
         world.name.toLowerCase().includes(q) ||
         world.description.toLowerCase().includes(q) ||
+        world.identity.mood.toLowerCase().includes(q) ||
         world.tags.some((t) => t.toLowerCase().includes(q));
       return matchesTag && matchesQuery;
     });
@@ -155,9 +180,10 @@ export function openPresetBrowser(
       content.innerHTML =
         renderSection('Recently Used', recentWorlds, favorites, currentPreset) +
         renderSection('Favorites', favoriteWorlds, favorites, currentPreset) +
-        renderSection('All Presets', worlds, favorites, currentPreset);
+        renderSection('All Worlds', worlds, favorites, currentPreset);
     }
     bindCards();
+    animatePresetCards(content);
   };
 
   const bindCards = (): void => {
@@ -223,11 +249,13 @@ export function openPresetBrowser(
   panel.querySelector('#ps-preset-browser-close')?.addEventListener('click', onCloseClick);
 
   bindCards();
+  animatePresetCards(panel);
 
   const searchInput = panel.querySelector<HTMLInputElement>('#ps-preset-search');
   searchInput?.focus();
 
   return () => {
+    panel.classList.remove('ps-overlay-panel--wide');
     panel.querySelector('#ps-preset-search')?.removeEventListener('input', onSearch);
     panel.querySelector('.ps-preset-browser__filters')?.removeEventListener('click', onFilter);
     panel.querySelector('#ps-preset-browser-close')?.removeEventListener('click', onCloseClick);

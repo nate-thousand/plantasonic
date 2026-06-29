@@ -27,12 +27,13 @@ export function animateOverlayIn(
 ): void {
   if (!options.animate) {
     setInstant(panel, 1, 0);
+    panel.style.transform = '';
     return;
   }
   gsap.fromTo(
     panel,
-    { opacity: 0, y: 12 },
-    { opacity: 1, y: 0, duration: 0.28, ease: 'power2.out' },
+    { opacity: 0, y: 16, scale: 0.98 },
+    { opacity: 1, y: 0, scale: 1, duration: 0.32, ease: 'power2.out' },
   );
 }
 
@@ -77,7 +78,11 @@ export function animateSidebarIn(sidebar: HTMLElement): void {
 /** Subtle stage pulse on preset change. */
 export function animatePresetChange(stage: HTMLElement): void {
   if (!shouldAnimate()) return;
-  gsap.fromTo(stage, { opacity: 0.92 }, { opacity: 1, duration: 0.35, ease: 'power1.out' });
+  gsap.fromTo(
+    stage,
+    { opacity: 0.88, scale: 0.998 },
+    { opacity: 1, scale: 1, duration: 0.55, ease: 'power2.out' },
+  );
 }
 
 /** Control feedback pulse. */
@@ -130,4 +135,28 @@ export function animateSidebarOut(sidebar: HTMLElement, onComplete?: () => void)
   };
   if (onComplete) vars.onComplete = onComplete;
   gsap.to(sidebar, vars);
+}
+
+/** Floating dock drawer expand. */
+export function animateFloatingPanel(panel: HTMLElement, opening: boolean): void {
+  if (!shouldAnimate()) return;
+  if (opening) {
+    gsap.fromTo(
+      panel,
+      { opacity: 0, y: 12, height: 0 },
+      { opacity: 1, y: 0, height: 'auto', duration: 0.28, ease: 'power2.out' },
+    );
+  }
+}
+
+/** Stagger preset card entrance in browser. */
+export function animatePresetCards(container: ParentNode): void {
+  if (!shouldAnimate()) return;
+  const cards = container.querySelectorAll('.ps-preset-card');
+  if (cards.length === 0) return;
+  gsap.fromTo(
+    cards,
+    { opacity: 0, y: 14, scale: 0.97 },
+    { opacity: 1, y: 0, scale: 1, duration: 0.35, stagger: 0.05, ease: 'power2.out' },
+  );
 }
