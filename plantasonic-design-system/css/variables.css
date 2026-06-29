@@ -1,0 +1,364 @@
+/**
+ * Plantasonic Design System — CSS custom properties
+ * Generated from tokens/foundation.tokens.json + tokens/theme.dark.tokens.json + tokens/theme.light.tokens.json
+ * Do not edit manually — run: npm run tokens:build-css
+ */
+
+:root {
+  /* Brand */
+  --ds-color-primary: #00ff57;
+  --ds-color-primary-hover: #4dff89;
+  --ds-color-primary-pressed: #00cc46;
+  --ds-color-primary-disabled: #333333;
+  --ds-color-secondary: #4dff89;
+  --ds-color-accent: #4dff89;
+
+  /* Surfaces */
+  --ds-color-surface-default: #070f0a;
+  --ds-color-surface-app: #070f0a;
+  --ds-color-surface-stage: #000000;
+  --ds-color-surface-nav: #101c15;
+  --ds-color-surface-dock: #101c15;
+  --ds-color-surface-input: #333333;
+  --ds-color-surface-card: #101c15;
+  --ds-color-surface-raised: #1a1a1a;
+  --ds-color-surface-raised-hover: #182b20;
+  --ds-color-surface-sunken: #050a07;
+  --ds-color-surface-overlay: #333333;
+
+  /* Text */
+  --ds-color-text-primary: #e5e5e5;
+  --ds-color-text-secondary: #999999;
+  --ds-color-text-muted: #808080;
+  --ds-color-text-accent: #4dff89;
+  --ds-color-text-link: #4dff89;
+  --ds-color-text-inverse: #e5e5e5;
+  --ds-color-text-on-primary: #070f0a;
+  --ds-color-text-on-secondary: #070f0a;
+  --ds-color-text-on-accent: #070f0a;
+
+  /* Borders */
+  --ds-color-border-default: rgba(255, 255, 255, 0.14);
+  --ds-color-border-subtle: rgba(255, 255, 255, 0.08);
+  --ds-color-border-strong: #ffffff;
+  --ds-color-border-interactive: #4dff89;
+  --ds-color-border-focus: #4dff89;
+
+  /* Overlays */
+  --ds-color-overlay-backdrop: rgba(0, 0, 0, 0.65);
+  --ds-color-overlay-scrim-light: rgba(255, 255, 255, 0.08);
+  --ds-color-overlay-scrim: rgba(255, 255, 255, 0.08);
+  --ds-color-overlay-scrim-strong: rgba(255, 255, 255, 0.12);
+  --ds-color-overlay-glass: rgba(7, 15, 10, 0.85);
+  --ds-color-overlay-focus-outline: rgba(255, 255, 255, 0.45);
+
+  /* Status */
+  --ds-color-success: #00ff57;
+  --ds-color-warning: #f5c542;
+  --ds-color-error: #ff5c5c;
+  --ds-color-info: #4dff89;
+  --ds-color-error-surface: rgba(180, 40, 40, 0.92);
+  --ds-color-error-border: rgba(255, 255, 255, 0.15);
+  --ds-color-favorite: #f5c542;
+
+  /* Typography */
+  --ds-font-family-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ds-font-family-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --ds-font-size-base: 1rem;
+  --ds-font-size-display: 2.5rem;
+  --ds-font-size-h1: 2rem;
+  --ds-font-size-h2: 1.5rem;
+  --ds-font-size-h3: 1.25rem;
+  --ds-font-size-h4: 1.125rem;
+  --ds-font-size-body: 1rem;
+  --ds-font-size-body-sm: 0.875rem;
+  --ds-font-size-caption: 0.75rem;
+  --ds-font-size-label: 0.875rem;
+  --ds-font-size-overline: 0.6875rem;
+  --ds-font-weight-body: 400;
+  --ds-font-weight-headings: 600;
+  --ds-font-weight-label: 600;
+  --ds-font-weight-mono: 500;
+  --ds-line-height-tight: 1.1;
+  --ds-line-height-body: 1.4;
+  --ds-line-height-relaxed: 1.6;
+  --ds-letter-spacing-label: 0.08em;
+  --ds-letter-spacing-overline: 0.08em;
+  --ds-letter-spacing-caption: 0.04em;
+
+  /* Spacing */
+  --ds-space-0: 0;
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 1rem;
+  --ds-space-4: 1.5rem;
+  --ds-space-5: 2rem;
+  --ds-space-6: 3rem;
+  --ds-space-8: 4rem;
+
+  /* Radius */
+  --ds-radius-xs: 0.125rem;
+  --ds-radius-sm: 0.25rem;
+  --ds-radius-default: 0.5rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-xl: 1.5rem;
+  --ds-radius-pill: 62.4375rem;
+
+  /* Shadows */
+  --ds-shadow-sm: 0 4px 12px rgba(0, 255, 87, 0.08);
+  --ds-shadow-md: 0 8px 24px rgba(0, 255, 87, 0.10);
+  --ds-shadow-lg: 0 16px 48px rgba(0, 255, 87, 0.12);
+  --ds-shadow-focus: 0 0 0 0.2rem rgba(77, 255, 137, 0.35);
+  --ds-shadow-glow-accent: 0 0 24px rgba(77, 255, 137, 0.35);
+  --ds-shadow-stage-inset: inset 0 0 48px rgba(0, 0, 0, 0.65);
+
+  /* Motion */
+  --ds-transition-instant: 80ms;
+  --ds-transition-fast: 150ms;
+  --ds-transition-base: 250ms;
+  --ds-transition-slow: 400ms;
+  --ds-transition-slower: 600ms;
+  --ds-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ds-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ds-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ds-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ds-motion-duration-micro: 80ms;
+  --ds-motion-duration-fast: 150ms;
+  --ds-motion-duration-base: 250ms;
+  --ds-motion-duration-slow: 400ms;
+  --ds-motion-duration-slower: 600ms;
+  --ds-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ds-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ds-motion-easing-entrance: cubic-bezier(0, 0, 0.2, 1);
+  --ds-motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ds-motion-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Product layout */
+  --ps-nav-height: 3.5rem;
+  --ps-dock-height: 4.5rem;
+  --ps-sidebar-width: 18rem;
+  --ps-touch-target: 2.75rem;
+  --ps-touch-target-large: 3.25rem;
+  --ps-instrument-gutter: 1rem;
+  --ps-floating-panel-min: 12rem;
+  --ps-hud-opacity: 0.86;
+  --ps-overlay-radius: 1.5rem;
+  --ps-preset-card-border: rgba(255, 255, 255, 0.14);
+  --ps-preset-card-active-border: #4dff89;
+  --ps-slider-track: #333333;
+  --ps-slider-thumb: #00ff57;
+  --ps-stage-border: rgba(255, 255, 255, 0.14);
+  --ps-performance-chrome-opacity: 0.92;
+  --ps-shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.65);
+  --ps-shadow-sidebar: 4px 0 24px rgba(0, 0, 0, 0.4);
+  --ps-shadow-panel: 0 16px 48px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="dark"] {
+  /* Brand */
+  --ds-color-primary: #00ff57;
+  --ds-color-primary-hover: #4dff89;
+  --ds-color-primary-pressed: #00cc46;
+  --ds-color-primary-disabled: #333333;
+  --ds-color-secondary: #4dff89;
+  --ds-color-accent: #4dff89;
+
+  /* Surfaces */
+  --ds-color-surface-default: #070f0a;
+  --ds-color-surface-app: #070f0a;
+  --ds-color-surface-stage: #000000;
+  --ds-color-surface-nav: #101c15;
+  --ds-color-surface-dock: #101c15;
+  --ds-color-surface-input: #333333;
+  --ds-color-surface-card: #101c15;
+  --ds-color-surface-raised: #1a1a1a;
+  --ds-color-surface-raised-hover: #182b20;
+  --ds-color-surface-sunken: #050a07;
+  --ds-color-surface-overlay: #333333;
+
+  /* Text */
+  --ds-color-text-primary: #e5e5e5;
+  --ds-color-text-secondary: #999999;
+  --ds-color-text-muted: #808080;
+  --ds-color-text-accent: #4dff89;
+  --ds-color-text-link: #4dff89;
+  --ds-color-text-inverse: #e5e5e5;
+  --ds-color-text-on-primary: #070f0a;
+  --ds-color-text-on-secondary: #070f0a;
+  --ds-color-text-on-accent: #070f0a;
+
+  /* Borders */
+  --ds-color-border-default: rgba(255, 255, 255, 0.14);
+  --ds-color-border-subtle: rgba(255, 255, 255, 0.08);
+  --ds-color-border-strong: #ffffff;
+  --ds-color-border-interactive: #4dff89;
+  --ds-color-border-focus: #4dff89;
+
+  /* Overlays */
+  --ds-color-overlay-backdrop: rgba(0, 0, 0, 0.65);
+  --ds-color-overlay-scrim-light: rgba(255, 255, 255, 0.08);
+  --ds-color-overlay-scrim: rgba(255, 255, 255, 0.08);
+  --ds-color-overlay-scrim-strong: rgba(255, 255, 255, 0.12);
+  --ds-color-overlay-glass: rgba(7, 15, 10, 0.85);
+  --ds-color-overlay-focus-outline: rgba(255, 255, 255, 0.45);
+
+  /* Status */
+  --ds-color-success: #00ff57;
+  --ds-color-warning: #f5c542;
+  --ds-color-error: #ff5c5c;
+  --ds-color-info: #4dff89;
+  --ds-color-error-surface: rgba(180, 40, 40, 0.92);
+  --ds-color-error-border: rgba(255, 255, 255, 0.15);
+  --ds-color-favorite: #f5c542;
+
+  /* Typography */
+  --ds-font-family-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ds-font-family-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --ds-font-size-base: 1rem;
+  --ds-font-size-display: 2.5rem;
+  --ds-font-size-h1: 2rem;
+  --ds-font-size-h2: 1.5rem;
+  --ds-font-size-h3: 1.25rem;
+  --ds-font-size-h4: 1.125rem;
+  --ds-font-size-body: 1rem;
+  --ds-font-size-body-sm: 0.875rem;
+  --ds-font-size-caption: 0.75rem;
+  --ds-font-size-label: 0.875rem;
+  --ds-font-size-overline: 0.6875rem;
+  --ds-font-weight-body: 400;
+  --ds-font-weight-headings: 600;
+  --ds-font-weight-label: 600;
+  --ds-font-weight-mono: 500;
+  --ds-line-height-tight: 1.1;
+  --ds-line-height-body: 1.4;
+  --ds-line-height-relaxed: 1.6;
+  --ds-letter-spacing-label: 0.08em;
+  --ds-letter-spacing-overline: 0.08em;
+  --ds-letter-spacing-caption: 0.04em;
+
+  /* Spacing */
+  --ds-space-0: 0;
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 1rem;
+  --ds-space-4: 1.5rem;
+  --ds-space-5: 2rem;
+  --ds-space-6: 3rem;
+  --ds-space-8: 4rem;
+
+  /* Radius */
+  --ds-radius-xs: 0.125rem;
+  --ds-radius-sm: 0.25rem;
+  --ds-radius-default: 0.5rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-xl: 1.5rem;
+  --ds-radius-pill: 62.4375rem;
+
+  /* Shadows */
+  --ds-shadow-sm: 0 4px 12px rgba(0, 255, 87, 0.08);
+  --ds-shadow-md: 0 8px 24px rgba(0, 255, 87, 0.10);
+  --ds-shadow-lg: 0 16px 48px rgba(0, 255, 87, 0.12);
+  --ds-shadow-focus: 0 0 0 0.2rem rgba(77, 255, 137, 0.35);
+  --ds-shadow-glow-accent: 0 0 24px rgba(77, 255, 137, 0.35);
+  --ds-shadow-stage-inset: inset 0 0 48px rgba(0, 0, 0, 0.65);
+
+  /* Motion */
+  --ds-transition-instant: 80ms;
+  --ds-transition-fast: 150ms;
+  --ds-transition-base: 250ms;
+  --ds-transition-slow: 400ms;
+  --ds-transition-slower: 600ms;
+  --ds-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ds-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ds-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ds-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ds-motion-duration-micro: 80ms;
+  --ds-motion-duration-fast: 150ms;
+  --ds-motion-duration-base: 250ms;
+  --ds-motion-duration-slow: 400ms;
+  --ds-motion-duration-slower: 600ms;
+  --ds-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ds-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ds-motion-easing-entrance: cubic-bezier(0, 0, 0.2, 1);
+  --ds-motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ds-motion-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Product layout */
+  --ps-nav-height: 3.5rem;
+  --ps-dock-height: 4.5rem;
+  --ps-sidebar-width: 18rem;
+  --ps-touch-target: 2.75rem;
+  --ps-touch-target-large: 3.25rem;
+  --ps-instrument-gutter: 1rem;
+  --ps-floating-panel-min: 12rem;
+  --ps-hud-opacity: 0.86;
+  --ps-overlay-radius: 1.5rem;
+  --ps-preset-card-border: rgba(255, 255, 255, 0.14);
+  --ps-preset-card-active-border: #4dff89;
+  --ps-slider-track: #333333;
+  --ps-slider-thumb: #00ff57;
+  --ps-stage-border: rgba(255, 255, 255, 0.14);
+  --ps-performance-chrome-opacity: 0.92;
+  --ps-shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.65);
+  --ps-shadow-sidebar: 4px 0 24px rgba(0, 0, 0, 0.4);
+  --ps-shadow-panel: 0 16px 48px rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="light"] {
+  /* Brand */
+  --ds-color-primary-disabled: #b2b2b2;
+
+  /* Surfaces */
+  --ds-color-surface-default: #ffffff;
+  --ds-color-surface-app: #ffffff;
+  --ds-color-surface-stage: #f5f7f6;
+  --ds-color-surface-nav: #ffffff;
+  --ds-color-surface-dock: #ffffff;
+  --ds-color-surface-input: #f0f2f1;
+  --ds-color-surface-card: #ffffff;
+  --ds-color-surface-raised: #ffffff;
+  --ds-color-surface-raised-hover: #ffffff;
+  --ds-color-surface-sunken: #eef1ef;
+  --ds-color-surface-overlay: #f0f2f1;
+
+  /* Text */
+  --ds-color-text-primary: #070f0a;
+  --ds-color-text-secondary: #4d4d4d;
+  --ds-color-text-inverse: #ffffff;
+
+  /* Borders */
+  --ds-color-border-default: rgba(7, 15, 10, 0.14);
+  --ds-color-border-subtle: rgba(7, 15, 10, 0.08);
+  --ds-color-border-strong: #070f0a;
+  --ds-color-border-focus: #070f0a;
+
+  /* Overlays */
+  --ds-color-overlay-backdrop: rgba(0, 0, 0, 0.45);
+  --ds-color-overlay-scrim-light: rgba(7, 15, 10, 0.08);
+  --ds-color-overlay-scrim: rgba(7, 15, 10, 0.08);
+  --ds-color-overlay-scrim-strong: rgba(7, 15, 10, 0.12);
+  --ds-color-overlay-glass: rgba(255, 255, 255, 0.85);
+  --ds-color-overlay-focus-outline: rgba(7, 15, 10, 0.45);
+
+  /* Status */
+  --ds-color-error-border: rgba(7, 15, 10, 0.15);
+
+  /* Shadows */
+  --ds-shadow-sm: 0 4px 12px rgba(0, 255, 87, 0.12);
+  --ds-shadow-md: 0 8px 24px rgba(0, 255, 87, 0.14);
+  --ds-shadow-lg: 0 16px 48px rgba(0, 255, 87, 0.16);
+  --ds-shadow-stage-inset: inset 0 0 48px rgba(0, 0, 0, 0.35);
+
+  /* Product layout */
+  --ps-preset-card-border: rgba(7, 15, 10, 0.14);
+  --ps-preset-card-active-border: #070f0a;
+  --ps-slider-track: #f0f2f1;
+  --ps-stage-border: rgba(7, 15, 10, 0.14);
+  --ps-shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --ps-shadow-sidebar: 4px 0 24px rgba(0, 0, 0, 0.15);
+  --ps-shadow-panel: 0 16px 48px rgba(0, 0, 0, 0.45);
+}

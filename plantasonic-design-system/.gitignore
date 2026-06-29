@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+dist/
+showcase/dist/
+showcase/node_modules/
+npm-debug.log*
+*.log
+.env
+.env.*
+.cache/
+.vercel
