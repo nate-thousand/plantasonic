@@ -1,14 +1,6 @@
 /**
- * Shadow / elevation tokens.
+ * Shadow / elevation tokens — documentation.
  *
- * Source: ai-native-design-system/foundation/elevation/ELEVATION.md
+ * Values: src/design-system/tokens/figma/tokens.json
+ * Source spec: ai-native-design-system/foundation/elevation/ELEVATION.md
  */
-
-$ds-shadow-none: none;
-$ds-shadow-sm: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.35);
-$ds-shadow-md: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.4);
-$ds-shadow-lg: 0 0.75rem 2rem rgba(0, 0, 0, 0.55);
-$ds-shadow-focus: 0 0 0 0.2rem rgba(149, 213, 178, 0.35);
-
-$ps-shadow-overlay: $ds-shadow-lg;
-$ps-shadow-sidebar: 4px 0 24px rgba(0, 0, 0, 0.4);

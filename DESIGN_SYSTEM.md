@@ -26,33 +26,48 @@ External Engines              → npm dependencies (sound, ASCII)
 ```
 
 ```text
-ai-native-design-system (source of truth)
+Figma Variables (export)
   ↓
-src/design-system/tokens/       SCSS semantic tokens + CSS custom properties
+src/design-system/tokens/figma/tokens.json   W3C Design Tokens JSON
+  ↓  npm run tokens:sync
+src/design-system/tokens/figma/generated/      SCSS primitives
   ↓
-src/design-system/bootstrap/    Bootstrap variable overrides + component polish
+src/design-system/tokens/                      Aliases + CSS custom properties
   ↓
-src/styles/bootstrap.scss       Bootstrap partial imports
+src/design-system/bootstrap/                   Bootstrap variable overrides
   ↓
-src/styles/globals.scss         ps-* layout and app shell
+src/styles/bootstrap.scss                      Bootstrap partial imports
   ↓
-src/ui/controls/                Reusable component factories
+src/styles/globals.scss                        ps-* layout and app shell
   ↓
-src/ui/components/              Shell composition
+src/ui/controls/                               Reusable component factories
+  ↓
+src/ui/components/                             Shell composition
 ```
 
 ---
 
 ## Figma Workflow
 
-1. Design in Figma using AI Native Design System libraries
-2. Export or sync variables to `ai-native-design-system/foundation/`
-3. Mirror changes in `src/design-system/tokens/`
-4. Update Bootstrap overrides if theme variables change
-5. Run `npm run build` and visual verification
-6. Document in CHANGELOG.md
+**Recommended — paste a link in Cursor (no JSON export):**
 
-Token export automation and CI sync checks are planned — manual sync is current workflow.
+1. Copy your Figma file URL
+2. Paste in chat: *"Pull my Figma tokens from [URL]"*
+3. Cursor reads variables via Figma MCP → imports → syncs SCSS
+
+**Optional — CLI (Figma Enterprise + access token):**
+
+```bash
+FIGMA_ACCESS_TOKEN=figd_... npm run tokens:pull -- "https://www.figma.com/design/FILEKEY/..."
+```
+
+```bash
+npm run tokens:import   # apply figma.snapshot.json
+npm run tokens:sync     # regenerate SCSS
+npm run tokens:verify   # CI check
+```
+
+See [src/design-system/tokens/figma/README.md](./src/design-system/tokens/figma/README.md).
 
 ---
 
@@ -376,10 +391,10 @@ Relative rem units throughout. Browser zoom supported.
 ### Future Evolution
 
 - CSS custom properties as primary runtime theming layer
-- Figma Variables → token export automation
 - Product-grade knob components with MIDI learn UI
 - Theme variants (light mode) via token swap
 - Component Storybook or visual regression tests
+- Direct Figma MCP pull when file key is configured
 
 ---
 

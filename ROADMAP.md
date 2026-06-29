@@ -120,8 +120,6 @@ Includes:
 
 ### Deferred (future platform work)
 
-- [ ] Figma token export automation
-- [ ] Token synchronization CI check
 - [ ] iOS Safari / Android Chrome device testing checklist
 - [ ] Density scales (engine-controlled)
 
@@ -137,8 +135,9 @@ Includes:
 - [x] SCSS semantic tokens, Bootstrap mapping, styles pipeline, token catalog
 - [x] Figma workflow documented in `DESIGN_SYSTEM.md`
 - [x] CSS custom properties layer
-- [ ] Token export automation (deferred)
-- [ ] Token synchronization CI check (deferred)
+- [x] Figma JSON export (`src/design-system/tokens/figma/tokens.json`)
+- [x] Token sync script (`npm run tokens:sync`)
+- [x] Token verification CI check (`npm run tokens:verify`)
 
 ### 3.3 Bootstrap Theme — 100%
 

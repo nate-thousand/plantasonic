@@ -43,6 +43,10 @@ jobs:
         working-directory: plantasonic
         run: npm run format:check
 
+      - name: Verify Figma tokens
+        working-directory: plantasonic
+        run: npm run tokens:verify
+
       - name: Build
         working-directory: plantasonic
         run: npm run build

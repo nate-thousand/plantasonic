@@ -1,13 +1,6 @@
 /**
- * Motion duration tokens.
+ * Motion duration tokens — documentation.
  *
- * Source: ai-native-design-system/foundation/motion/MOTION.md
+ * Values: src/design-system/tokens/figma/tokens.json
+ * Source spec: ai-native-design-system/foundation/motion/MOTION.md
  */
-
-$ds-transition-fast: 150ms;
-$ds-transition-base: 250ms;
-$ds-transition-slow: 400ms;
-
-$ds-ease-out: cubic-bezier(0, 0, 0.2, 1);
-$ds-ease-in: cubic-bezier(0.4, 0, 1, 1);
-$ds-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);

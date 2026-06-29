@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Figma token integration:** W3C Design Tokens JSON export, sync script, generated SCSS, CI verification
+- **Figma MCP pull:** paste a Figma link in Cursor — no manual JSON export (`tokens:pull`, `tokens:import`)
+- **Figma `.tokens.json` import:** drop native Figma export files (`tokens:import-json`) — Theme 1 green palette applied
+- `npm run tokens:sync`, `tokens:verify`, `tokens:export` — Figma Variables → SCSS pipeline
 - **Phase 3 completion:** AI Native Design System integration
 - Comprehensive Bootstrap 5.0.2 theming — buttons, forms, cards, nav, modals, dropdowns, tooltips, progress, alerts
 - Token modules: shadows, motion durations, CSS custom properties

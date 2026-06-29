@@ -1,42 +1,13 @@
 /**
- * Semantic color tokens.
+ * Semantic color tokens — aliases and documentation.
  *
- * Source: ai-native-design-system/foundation/colors/COLORS.md
- * Product values: Plantasonic dark instrument theme (app-specific surface palette).
+ * Values: src/design-system/tokens/figma/tokens.json (Figma Variables export)
+ * Source spec: ai-native-design-system/foundation/colors/COLORS.md
  *
  * Do not edit Bootstrap variables here — map in bootstrap/_overrides.scss.
  */
 
-// Brand / action (maps to color/primary, color/secondary, color/accent)
-$ds-color-primary: #2d6a4f;
-$ds-color-secondary: #40916c;
-$ds-color-accent: #95d5b2;
-
-// Surfaces (maps to color/surface/*)
-$ds-color-surface-default: #0d1117;
-$ds-color-surface-raised: #161b22;
-$ds-color-surface-sunken: #010409;
-$ds-color-surface-overlay: #21262d;
-
-// Text (maps to color/text/*)
-$ds-color-text-primary: #e6edf3;
-$ds-color-text-secondary: #8b949e;
-$ds-color-text-muted: #6e7681;
-$ds-color-text-link: $ds-color-accent;
-
-// Borders (maps to color/border/*)
-$ds-color-border-default: #30363d;
-$ds-color-border-subtle: #30363d;
-$ds-color-border-strong: #484f58;
-$ds-color-border-focus: $ds-color-accent;
-
-// Status (maps to color/status/* — Bootstrap theme colors)
-$ds-color-success: #198754;
-$ds-color-warning: #ffc107;
-$ds-color-error: #dc3545;
-$ds-color-info: #0dcaf0;
-
-// Plantasonic aliases (used by app shell — prefer $ds-* in new code)
+// Plantasonic aliases (app shell — prefer $ds-* in new code)
 $ps-brand-primary: $ds-color-primary;
 $ps-brand-secondary: $ds-color-secondary;
 $ps-brand-accent: $ds-color-accent;

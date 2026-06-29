@@ -1,15 +1,6 @@
 /**
  * Layout tokens — Plantasonic app shell dimensions.
  *
- * Source: ai-native-design-system/patterns/page-layouts/PAGE_LAYOUTS.md (app shell guidance)
- * Product-specific: instrument layout, not defined in the global design system.
+ * Values: src/design-system/tokens/figma/tokens.json (product.* collection)
+ * Source spec: ai-native-design-system/patterns/page-layouts/PAGE_LAYOUTS.md
  */
-
-$ps-nav-height: 3.5rem;
-$ps-dock-height: 4.5rem;
-$ps-sidebar-width: 18rem;
-
-// Border radius (from ai-native-design-system/foundation/radius/RADIUS.md)
-$ds-radius-sm: 0.25rem;
-$ds-radius-default: 0.375rem;
-$ds-radius-lg: 0.5rem;

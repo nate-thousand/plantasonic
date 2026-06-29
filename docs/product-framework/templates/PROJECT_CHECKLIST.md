@@ -27,7 +27,7 @@ Adapted from `ai-product-framework/templates/PROJECT_CHECKLIST.md` for Plantason
 - [x] Tokens imported from ai-native-design-system semantics
 - [x] Bootstrap overrides mapped
 - [x] Design system docs referenced (`docs/design-system/`)
-- [ ] Figma token sync automated (future)
+- [x] Figma token sync (`npm run tokens:sync`, `tokens:verify`)
 
 ## Runtime (Phase 3)
 
