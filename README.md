@@ -4,7 +4,7 @@ A browser-based generative audiovisual instrument that combines the **Plantasia 
 
 **Current release:** v0.2.3
 
-**Production:** https://plantasonic.vercel.app
+**Production:** https://www.plantasonic.xyz
 
 **Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It is also the **first consumer** of [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.x — the public Application Shell, tokens, and Bootstrap theme come from that package, not local copies.
 
