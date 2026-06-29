@@ -119,4 +119,22 @@ The design system governs **application chrome** — navigation, controls, and l
 
 ## Interaction Controls
 
-Performance sliders use `data-ps-control="<name>"` attributes for mouse and touch module binding. Input settings (MIDI, keyboard, touch toggles) live in the sidebar **Input** panel. See [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md).
+Performance sliders use `data-ps-control="<name>"` attributes for mouse and touch module binding. Input settings (MIDI, keyboard, touch toggles) live in the sidebar **Input** panel and the settings overlay. See [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md).
+
+## Application Experience (Phase 9)
+
+Layout classes in `globals.scss`:
+
+| Class | Purpose |
+| ----- | ------- |
+| `ps-app--performance` | Minimal chrome for live performance |
+| `ps-app--fullscreen` | Fullscreen layout adjustments |
+| `ps-overlay-host` | Modal overlay container |
+| `ps-preset-card` | Preset browser card |
+| `ps-error-banner` | User-facing error state |
+
+Motion uses GSAP through `src/ui/motion/motionController.ts`. Respects `prefers-reduced-motion` and user settings (`data-ps-reduced-motion`, `data-ps-motion-off`).
+
+Touch targets: minimum 2.75rem on dock buttons, nav actions, and preset cards. Safe-area padding on nav and dock via `env(safe-area-inset-*)`.
+
+See [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md).

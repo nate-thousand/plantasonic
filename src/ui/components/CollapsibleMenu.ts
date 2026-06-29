@@ -62,10 +62,13 @@ export function createCollapsibleMenu(options: CollapsibleMenuOptions = {}): HTM
         </label>
         <label class="ps-settings-row">
           <span>Octave</span>
-          <input type="number" id="ps-setting-octave" min="0" max="8" value="4" class="form-control form-control-sm" />
+          <input type="number" id="ps-setting-octave" min="0" max="8" value="4" class="form-control form-control-sm" aria-label="Default octave" />
         </label>
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="ps-midi-learn-reset">
+        <button type="button" class="btn btn-outline-secondary btn-sm ps-sidebar__btn" id="ps-midi-learn-reset">
           Reset MIDI Learn
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm ps-sidebar__btn" id="ps-sidebar-settings-btn">
+          All Settings…
         </button>
       </div>
     </div>

@@ -53,6 +53,7 @@ export function createAppShell(options: AppShellOptions = {}): AppShell {
 
   const onFullscreenChange = (): void => {
     const isFullscreen = document.fullscreenElement === root;
+    root.classList.toggle('ps-app--fullscreen', isFullscreen);
     setNavStatus(isFullscreen ? 'Fullscreen' : 'Ready');
     const dims = getStageDimensions();
     options.onResize?.(dims.width, dims.height);

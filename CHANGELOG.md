@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 9:** Application experience layer
+- Preset browser overlay — visual cards, search, tag filters, favorites, recently used
+- Settings overlay — Input, Motion, Accessibility tabs
+- Performance mode — distraction-free layout with keyboard shortcut (`P`)
+- GSAP motion controller — overlay, sidebar, preset, and control feedback animations
+- Error banner — user-facing messages for audio, MIDI, and engine failures
+- `AppSettingsStore` — motion preferences, favorites, recent presets (localStorage)
+- `docs/USER_EXPERIENCE.md` — UX principles, navigation, responsive, motion, accessibility
+
+### Changed
+
+- Control dock preset `<select>` replaced with browse button + preset name display
+- Top nav expanded with Presets, Settings, and Perform actions
+- Responsive shell styles — safe areas, touch targets, mobile/tablet/landscape breakpoints
+- Reduced motion support via settings and `prefers-reduced-motion`
+
+### Added
+
 - **Phase 8:** Unified interaction layer (`src/interaction/`)
 - Input modules: MIDI, keyboard, mouse, touch
 - `InteractionManager` + `InputRouter` — all input normalizes to runtime events

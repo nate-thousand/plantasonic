@@ -161,7 +161,26 @@ User adjusts control slider
 
 ### Input Layers
 
-MIDI, keyboard, and touch modules will translate hardware input into runtime events (`input:noteOn`, `input:noteOff`) without knowing about engine internals.
+MIDI, keyboard, mouse, and touch modules translate hardware input into runtime events through the interaction layer. See [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md).
+
+### Application Experience
+
+Phase 9 adds the product-facing experience layer:
+
+```text
+UI Shell (AppShell, TopNav, Stage, ControlDock)
+  ↓
+AppExperience (overlays, performance mode, shortcuts)
+  ↓
+InteractionManager → Runtime
+```
+
+- **Preset browser** reads `listPresetWorlds()` — no duplicated preset data
+- **Settings** — `SettingsStore` (input) + `AppSettingsStore` (motion, favorites)
+- **Motion** — GSAP via `motionController.ts` with reduced-motion support
+- **Error banner** — maps runtime errors to user-facing guidance
+
+See [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md).
 
 ### Rendering Backends
 
@@ -209,10 +228,13 @@ See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) and [docs/INTEGRATION_P
 main.ts
   └── app/
         ├── interaction/   (input modules → runtime dispatch)
-        ├── ui/              (dispatches via interaction layer)
+        ├── ui/
+        │     ├── experience/   (overlays, performance mode, motion)
+        │     └── components/   (shell, preset browser, settings)
         ├── runtime/         (depends on adapter interfaces only)
         ├── audio/           (adapter interface)
-        └── visuals/         (adapter interface)
+        ├── visuals/         (adapter interface)
+        └── services/        (settings persistence)
 
 interaction/
   ├── interactionManager.ts

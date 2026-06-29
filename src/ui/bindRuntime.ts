@@ -9,12 +9,14 @@ import { bindControlDock, bindControlSliders } from './components/ControlDock.ts
 import { bindInteractionSettings } from './components/InteractionSettings.ts';
 import { updateStageStatus } from './components/Stage.ts';
 import { setNavStatus } from './components/TopNav.ts';
+import { createAppExperience } from './experience/appExperience.ts';
 
 /** Connects interaction layer and runtime state to the application shell. */
-export function bindRuntimeToShell(interaction: InteractionManager, _shell: AppShell): () => void {
+export function bindRuntimeToShell(interaction: InteractionManager, shell: AppShell): () => void {
   const unbindDock = bindControlDock(interaction);
   const unbindSliders = bindControlSliders(interaction);
   const unbindSettings = bindInteractionSettings(interaction);
+  const experience = createAppExperience({ root: shell.root, interaction });
 
   const unsubscribe = interaction.subscribe((state) => {
     setNavStatus(state.isPlaying ? 'Playing' : 'Ready');
@@ -25,6 +27,7 @@ export function bindRuntimeToShell(interaction: InteractionManager, _shell: AppS
     unbindDock();
     unbindSliders();
     unbindSettings();
+    experience.destroy();
     unsubscribe();
   };
 }

@@ -24,7 +24,7 @@ Plantasonic Runtime         →  integration layer (state, events, adapters)
 Plantasonic App             →  user experience
 ```
 
-**Integration status:** Phases 1–8 complete — both engines live, unified preset worlds, unified interaction layer.
+**Integration status:** Phases 1–9 complete — both engines live, unified preset worlds, interaction layer, and polished application experience.
 
 | Layer                   | Location in Plantasonic                                   |
 | ----------------------- | --------------------------------------------------------- |
@@ -33,6 +33,8 @@ Plantasonic App             →  user experience
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
 | ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Runtime                 | `src/runtime/` — functional API + adapter wiring          |
+| Interaction             | `src/interaction/` — unified input routing                  |
+| App Experience          | `src/ui/experience/`, `docs/USER_EXPERIENCE.md`             |
 | App                     | `src/app/`, `src/ui/`, `src/presets/` (world registry)    |
 
 See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md) for the phased build plan.
@@ -79,13 +81,15 @@ plantasonic/
 │   ├── runtime/       State, events, orchestration
 │   ├── audio/         Sound engine adapter
 │   ├── visuals/       ASCII engine adapter
-│   ├── ui/            Components, layouts, controls
+│   ├── ui/            Components, layouts, controls, experience layer
 │   ├── presets/       Preset manifest and worlds
-│   ├── midi/          Web MIDI input (future)
-│   ├── keyboard/      Keyboard mapping (future)
-│   ├── touch/         Touch gestures (future)
-│   ├── recorder/      Session recording (future)
-│   ├── services/      Cross-cutting services (future)
+│   ├── interaction/   Unified input routing (MIDI, keyboard, mouse, touch)
+│   ├── midi/          Web MIDI input module
+│   ├── keyboard/      Keyboard mapping module
+│   ├── touch/         Touch gesture module
+│   ├── mouse/         Mouse fine-adjust module
+│   ├── automation/    Automation hook interface
+│   ├── services/      Settings persistence (interaction + app)
 │   ├── utils/         Shared utilities
 │   ├── design-system/ Design tokens (from ai-native-design-system)
 │   └── styles/        Bootstrap compilation entry
@@ -156,7 +160,8 @@ npm run preview
 
 ```bash
 npm run lint          # ESLint
-npm run verify:runtime # Phase 3 runtime + mock adapter checks
+npm run verify:runtime # Runtime + mock adapter checks
+npm run verify:interaction # Interaction layer checks
 npm run format:check  # Prettier check
 npm run format        # Prettier write
 ```
@@ -189,6 +194,7 @@ The runtime API is stable — swap adapter implementations only. See [RUNTIME.md
 | [docs/ASCII_VISUAL_ENGINE_INTEGRATION.md](./docs/ASCII_VISUAL_ENGINE_INTEGRATION.md) | Phase 6 ASCII engine integration |
 | [docs/PRESETS.md](./docs/PRESETS.md) | Phase 7 unified preset worlds |
 | [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md) | Phase 8 interaction architecture |
+| [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md) | Phase 9 application experience |
 | [docs/product-framework/README.md](./docs/product-framework/README.md) | AI Product Framework integration    |
 | [docs/design-system/README.md](./docs/design-system/README.md)         | AI Native Design System integration |
 | [HANDOFF.md](./HANDOFF.md)                                             | Current session handoff             |
