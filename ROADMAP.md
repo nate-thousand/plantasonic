@@ -207,22 +207,22 @@ Create responsive layout behavior across viewports.
 
 ### 3.6 ASCII Visual Language
 
-Expand `DESIGN_SYSTEM.md` to define the visual language of the ASCII engine.
+Expand `DESIGN_SYSTEM.md` and `docs/VISUAL_LANGUAGE.md` to define the visual language of the ASCII engine.
 
-**Design documentation only** — engine implementation belongs in the ASCII Visual Engine repository.
+**Design documentation** — engine implementation belongs in the ASCII Visual Engine repository. Plantasonic defines world identities and mappings.
 
-**Completion: 0%**
+**Completion: 100%**
 
-- [ ] Glyph families taxonomy
-- [ ] Pattern taxonomy
-- [ ] Motion principles
-- [ ] Animation language
-- [ ] Density scales
-- [ ] Visual hierarchy rules
-- [ ] Preset identity guidelines
-- [ ] Audio → visual mapping conventions
-- [ ] Transition behavior between worlds
-- [ ] Future WebGL direction
+- [x] Glyph families taxonomy
+- [x] Pattern taxonomy
+- [x] Motion principles
+- [x] Animation language
+- [x] Preset identity guidelines
+- [x] Audio → visual mapping conventions
+- [x] Transition behavior between worlds
+- [x] Future renderer direction (documented)
+- [ ] Density scales (deferred — engine controls)
+- [ ] Visual hierarchy rules (deferred — design system)
 
 ---
 
@@ -230,16 +230,16 @@ Expand `DESIGN_SYSTEM.md` to define the visual language of the ASCII engine.
 
 Implement motion standards using GSAP.
 
-**Completion: ~10%**
+**Completion: ~80%**
 
 - [x] GSAP dependency installed
-- [ ] Panel transitions
-- [ ] Menu animation
-- [ ] Preset transition choreography
-- [ ] Control animation feedback
+- [x] Panel transitions (Phase 9)
+- [x] Menu animation (Phase 9)
+- [x] Preset transition choreography (Phase 9 UI + Phase 10 visual)
+- [x] Control animation feedback (Phase 9)
+- [x] Visual stage transitions (Phase 10)
 - [ ] Loading transitions
-- [ ] Visual stage transitions
-- [ ] Motion standards documented in `DESIGN_SYSTEM.md`
+- [x] Motion standards documented in `docs/VISUAL_LANGUAGE.md` and `DESIGN_SYSTEM.md`
 
 ---
 
@@ -439,7 +439,31 @@ Each preset world defines:
 
 ---
 
-## Phase 10 — Recording & Sharing
+## Phase 10 — Expressive Visual Language & Motion System ✅
+
+**Status:** Complete  
+**Completion: 100%**
+
+**Objective:** Transform the ASCII engine into a signature visual identity inseparable from sound.
+
+### Delivered
+
+- [x] Expanded `PresetVisualConfig` — glyph families, patterns, motion, transitions, palette
+- [x] Five distinct preset worlds (seed, mold, flow, zen, nebula)
+- [x] Glyph family taxonomy (`src/visuals/language/glyphFamilies.ts`)
+- [x] Pattern library (`src/visuals/language/patterns.ts`)
+- [x] Motion language profiles (`src/visuals/language/motionLanguage.ts`)
+- [x] Audio-reactive mapping — velocity, energy, activity, sustain modulations
+- [x] GSAP visual world transitions (crossfade, bloom, collapse, dissolve)
+- [x] Renderer abstraction and future backend roadmap
+- [x] Responsive quality presets by viewport
+- [x] Visual performance profiler and diff-based control sync
+- [x] Documentation: `docs/VISUAL_LANGUAGE.md`
+- [x] Verification: `npm run verify:visual`
+
+---
+
+## Phase 11 — Recording & Sharing
 
 **Status:** Not started  
 **Completion: 0%**
@@ -469,7 +493,7 @@ Implement:
 
 ---
 
-## Phase 11 — Performance & Optimization
+## Phase 12 — Performance & Optimization
 
 **Status:** Not started  
 **Completion: 0%**
@@ -499,7 +523,7 @@ Complete:
 
 ---
 
-## Phase 12 — Release Candidate
+## Phase 13 — Release Candidate
 
 **Status:** Not started  
 **Completion: 0%**
@@ -597,13 +621,14 @@ See [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md) and [do
 | 7 | Unified Audiovisual Preset Worlds | 100% |
 | 8 | Interaction Layer | 100% |
 | 9 | Application Experience | 100% |
-| 10 | Recording & Sharing | 0% |
-| 11 | Performance & Optimization | 0% |
-| 12 | Release Candidate | 0% |
+| 10 | Expressive Visual Language | 100% |
+| 11 | Recording & Sharing | 0% |
+| 12 | Performance & Optimization | 0% |
+| 13 | Release Candidate | 0% |
 
-**Estimated overall completion: ~70%**
+**Estimated overall completion: ~75%**
 
-Phases 1–2, 4–9 are complete. Phase 3 (design system) remains the primary ongoing milestone. Phases 10–12 cover export, optimization, and release.
+Phases 1–2, 4–10 are complete. Phase 3 (design system) remains ongoing. Phases 11–13 cover export, optimization, and release.
 
 ---
 
@@ -620,8 +645,8 @@ This roadmap was reorganized in 2026-06 to align with the platform architecture 
 | 5. Preset Worlds | Phase 7 |
 | 6. Performance Controls | Phase 8 (+ Phase 9) |
 | 7. Responsive UI | Phase 3.5 + Phase 9 |
-| 8. Recording | Phase 10 |
-| 9. Optimization | Phase 11 |
-| 10. Release | Phase 12 |
+| 8. Recording | Phase 11 |
+| 9. Optimization | Phase 12 |
+| 10. Release | Phase 13 |
 
 All completed checkboxes and completion percentages from the prior roadmap are preserved within their new phase assignments.

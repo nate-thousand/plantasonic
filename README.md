@@ -24,7 +24,7 @@ Plantasonic Runtime         →  integration layer (state, events, adapters)
 Plantasonic App             →  user experience
 ```
 
-**Integration status:** Phases 1–9 complete — both engines live, unified preset worlds, interaction layer, and polished application experience.
+**Integration status:** Phases 1–10 complete — engines, preset worlds, interaction layer, application experience, and expressive visual language.
 
 | Layer                   | Location in Plantasonic                                   |
 | ----------------------- | --------------------------------------------------------- |
@@ -32,6 +32,7 @@ Plantasonic App             →  user experience
 | AI Native Design System | `src/design-system/`, `docs/design-system/`               |
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
 | ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
+| Visual Language         | `src/visuals/language/`, `docs/VISUAL_LANGUAGE.md`          |
 | Runtime                 | `src/runtime/` — functional API + adapter wiring          |
 | Interaction             | `src/interaction/` — unified input routing                  |
 | App Experience          | `src/ui/experience/`, `docs/USER_EXPERIENCE.md`             |
@@ -162,6 +163,7 @@ npm run preview
 npm run lint          # ESLint
 npm run verify:runtime # Runtime + mock adapter checks
 npm run verify:interaction # Interaction layer checks
+npm run verify:visual      # Visual language checks
 npm run format:check  # Prettier check
 npm run format        # Prettier write
 ```
@@ -195,6 +197,7 @@ The runtime API is stable — swap adapter implementations only. See [RUNTIME.md
 | [docs/PRESETS.md](./docs/PRESETS.md) | Phase 7 unified preset worlds |
 | [docs/INTERACTION_LAYER.md](./docs/INTERACTION_LAYER.md) | Phase 8 interaction architecture |
 | [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md) | Phase 9 application experience |
+| [docs/VISUAL_LANGUAGE.md](./docs/VISUAL_LANGUAGE.md) | Phase 10 visual language and motion |
 | [docs/product-framework/README.md](./docs/product-framework/README.md) | AI Product Framework integration    |
 | [docs/design-system/README.md](./docs/design-system/README.md)         | AI Native Design System integration |
 | [HANDOFF.md](./HANDOFF.md)                                             | Current session handoff             |

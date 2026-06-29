@@ -35,9 +35,9 @@ export class MockAsciiAdapter implements AsciiAdapter {
     console.info(`${LOG_PREFIX} resize`, { width, height });
   }
 
-  async loadPreset(presetId: PresetId): Promise<void> {
+  async loadPreset(presetId: PresetId, visual?: import('@/presets/types.ts').PresetVisualConfig): Promise<void> {
     await Promise.resolve();
-    console.info(`${LOG_PREFIX} loadPreset`, presetId);
+    console.info(`${LOG_PREFIX} loadPreset`, presetId, visual?.motion);
   }
 
   setParameter(path: ParameterPath, value: ParameterValue): void {

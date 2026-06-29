@@ -11,7 +11,18 @@ export const seedWorld: PresetWorld = {
   tags: ['organic', 'calm'],
   version: '1.0.0',
   sound: { presetId: 'plantasonic' },
-  visual: { presetId: 'glyphOrganicBloom' },
+  visual: {
+    presetId: 'glyphOrganicBloom',
+    glyphFamilies: ['organic', 'growth'],
+    patterns: ['growth', 'bloom', 'roots'],
+    motion: 'growth',
+    transition: 'bloom',
+    renderer: 'canvas',
+    palette: 'warm green',
+    animationCurve: 'easeOut',
+    particleBehavior: 'drift',
+    engineControls: { petals: 0.6, symmetry: 0.3 },
+  },
   defaults: {
     tempo: 72,
     controls: {

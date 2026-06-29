@@ -11,7 +11,18 @@ export const moldWorld: PresetWorld = {
   tags: ['dark', 'chaotic'],
   version: '1.0.0',
   sound: { presetId: 'vine' },
-  visual: { presetId: 'glyphCorruptedBroadcast' },
+  visual: {
+    presetId: 'glyphCorruptedBroadcast',
+    glyphFamilies: ['corruption', 'noise'],
+    patterns: ['corruption', 'collapse', 'wave'],
+    motion: 'instability',
+    transition: 'collapse',
+    renderer: 'canvas',
+    palette: 'sick green static',
+    animationCurve: 'spring',
+    particleBehavior: 'burst',
+    engineControls: { scanlineAmount: 0.5, glitchAmount: 0.6 },
+  },
   defaults: {
     tempo: 84,
     controls: {

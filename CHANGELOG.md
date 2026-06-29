@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Phase 10:** Expressive visual language and motion system
+- Expanded `PresetVisualConfig` — glyph families, patterns, motion profiles, transitions, palette
+- Three new preset worlds: Flow World, Zen World, Nebula World
+- Visual language modules — glyph taxonomy, pattern library, motion language, audio-reactive mapping
+- GSAP visual world transitions (crossfade, bloom, collapse, dissolve)
+- Renderer abstraction with future backend roadmap (WebGL, PixiJS, Three.js, terminal, SVG)
+- Responsive engine quality presets by viewport
+- `VisualProfiler` — diff-based control sync for performance
+- `docs/VISUAL_LANGUAGE.md`
+- `npm run verify:visual`
+
+### Changed
+
+- `PlantasiaAsciiAdapter` — performance metrics modulate engine controls; preset transitions on load
+- Seed World and Mold World — full visual identity configuration
+- Runtime passes visual config to adapter on preset load
+
+### Added
+
 - **Phase 9:** Application experience layer
 - Preset browser overlay — visual cards, search, tag filters, favorites, recently used
 - Settings overlay — Input, Motion, Accessibility tabs

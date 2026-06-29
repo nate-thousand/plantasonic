@@ -175,12 +175,26 @@ AppExperience (overlays, performance mode, shortcuts)
 InteractionManager → Runtime
 ```
 
-- **Preset browser** reads `listPresetWorlds()` — no duplicated preset data
-- **Settings** — `SettingsStore` (input) + `AppSettingsStore` (motion, favorites)
-- **Motion** — GSAP via `motionController.ts` with reduced-motion support
-- **Error banner** — maps runtime errors to user-facing guidance
-
 See [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md).
+
+### Visual Language
+
+Phase 10 defines expressive visual identity per preset world:
+
+```text
+PresetWorld.visual (glyph families, patterns, motion, transitions)
+  ↓
+PlantasiaAsciiAdapter (audio-reactive mapping, GSAP transitions)
+  ↓
+ascii-visual-engine (canvas render loop)
+```
+
+- **Five distinct worlds** — seed, mold, flow, zen, nebula
+- **Audio-reactive mapping** — velocity, energy, activity modulate engine controls
+- **GSAP transitions** — world changes crossfade on stage canvas (not render loop)
+- **Renderer abstraction** — canvas live; WebGL/Pixi/Three/terminal/SVG planned
+
+See [docs/VISUAL_LANGUAGE.md](./docs/VISUAL_LANGUAGE.md).
 
 ### Rendering Backends
 

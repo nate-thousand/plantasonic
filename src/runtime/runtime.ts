@@ -117,7 +117,7 @@ export class Runtime {
       throw err;
     }
 
-    await this.asciiAdapter.loadPreset(world.visual.presetId);
+    await this.asciiAdapter.loadPreset(world.visual.presetId, world.visual);
 
     const { controls, tempo } = mergeWorldDefaults(world, soundResult.controls);
 

@@ -12,6 +12,7 @@
     "lint:fix": "eslint src --fix",
     "verify:runtime": "npx tsx scripts/verify-runtime.ts",
     "verify:interaction": "npx tsx scripts/verify-interaction.ts",
+    "verify:visual": "npx tsx scripts/verify-visual-language.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

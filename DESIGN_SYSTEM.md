@@ -138,3 +138,18 @@ Motion uses GSAP through `src/ui/motion/motionController.ts`. Respects `prefers-
 Touch targets: minimum 2.75rem on dock buttons, nav actions, and preset cards. Safe-area padding on nav and dock via `env(safe-area-inset-*)`.
 
 See [docs/USER_EXPERIENCE.md](./docs/USER_EXPERIENCE.md).
+
+## Visual Language (Phase 10)
+
+Visual identity lives in preset world modules and the visual language layer:
+
+| Module | Purpose |
+| ------ | ------- |
+| `src/visuals/language/` | Glyph families, patterns, motion profiles, audio-reactive mapping |
+| `src/visuals/transitions/` | GSAP world transitions (not render loop) |
+| `src/visuals/renderer/` | Renderer abstraction and responsive quality |
+| `src/visuals/visualIdentity.ts` | Applies identity to engine on preset load |
+
+Preset worlds define `visual: PresetVisualConfig` with glyph families, patterns, motion, and transition style. The adapter modulates engine controls from runtime performance metrics.
+
+See [docs/VISUAL_LANGUAGE.md](./docs/VISUAL_LANGUAGE.md).

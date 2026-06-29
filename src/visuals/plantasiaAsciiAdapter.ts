@@ -4,28 +4,24 @@
  */
 
 import { AsciiEngine } from 'ascii-visual-engine';
+import type { PresetVisualConfig } from '@/presets/types.ts';
 import type { ParameterPath, ParameterValue, PresetId } from '@/runtime/types.ts';
 import type { ControlName, RuntimeState } from '@/runtime/types.ts';
-import { DEFAULT_CONTROLS } from '@/runtime/types.ts';
+import { createInitialRuntimeState } from '@/runtime/types.ts';
 import { eventBus } from '@/runtime/events.ts';
 import type { AsciiAdapter } from './asciiAdapter.ts';
-import { runtimeControlToAsciiControl, tempoToAsciiSpeed } from './visualControlMapping.ts';
+import {
+  diffEngineControls,
+  pitchToHorizontalPosition,
+  pitchToVerticalPosition,
+  resolveEngineControls,
+} from './language/audioReactiveMapping.ts';
+import { resolveQualityForViewport } from './renderer/rendererAbstraction.ts';
+import { transitionVisualPreset } from './transitions/visualTransition.ts';
+import { VisualProfiler } from './performance/visualProfiler.ts';
+import { applyVisualIdentity } from './visualIdentity.ts';
 
 const LOG_PREFIX = '[PlantasiaAscii]';
-
-type ControlCache = Record<ControlName, number>;
-
-function createControlCache(controls: RuntimeState['controls'] = DEFAULT_CONTROLS): ControlCache {
-  return { ...controls };
-}
-
-function noteToVisualPosition(note: number): { x: number; y: number } {
-  const pitchClass = note % 12;
-  return {
-    x: pitchClass / 11,
-    y: 0.35 + ((Math.floor(note / 12) - 4) / 8) * 0.3,
-  };
-}
 
 /** Adapters that receive full runtime state snapshots. */
 export interface StateSyncAsciiAdapter extends AsciiAdapter {
@@ -39,11 +35,12 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
   private engine: AsciiEngine | null = null;
   private canvas: HTMLCanvasElement | null = null;
   private placeholder: HTMLElement | null = null;
-  private controlCache = createControlCache();
-  private tempoCache = 72;
-  private lastPresetId: PresetId | null = null;
+  private engineControlCache: Record<string, number> = {};
+  private lastWorldId: PresetId | null = null;
   private lastActiveNotes = new Set<number>();
   private lastVelocity = 0.75;
+  private lastState: RuntimeState = createInitialRuntimeState();
+  private readonly profiler = new VisualProfiler();
 
   init(mount?: HTMLElement): Promise<void> {
     try {
@@ -75,6 +72,7 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
         autoStart: false,
       });
       this.engine.disableKeyboardInput();
+      this.applyResponsiveQuality(this.engine, width, height);
 
       console.info(`${LOG_PREFIX} engine created`, { width, height });
       return Promise.resolve();
@@ -118,23 +116,38 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
     const engine = this.engine;
     if (!engine || width <= 0 || height <= 0) return;
     try {
+      this.applyResponsiveQuality(engine, width, height);
       engine.resize(width, height);
     } catch (error) {
       this.reportError('resize', error, { width, height });
     }
   }
 
-  loadPreset(presetId: PresetId): Promise<void> {
+  async loadPreset(enginePresetId: PresetId, visual?: PresetVisualConfig): Promise<void> {
     const engine = this.requireEngine();
 
+    const apply = (): void => {
+      engine.setPresetById(enginePresetId);
+      if (visual) {
+        applyVisualIdentity(engine, visual);
+      }
+      this.engineControlCache = {};
+      console.info(`${LOG_PREFIX} loadPreset`, { enginePresetId, motion: visual?.motion });
+    };
+
     try {
-      engine.setPresetById(presetId);
-      this.lastPresetId = presetId;
-      console.info(`${LOG_PREFIX} loadPreset`, { presetId });
+      const target = this.canvas ?? this.placeholder;
+      if (target && visual) {
+        await transitionVisualPreset(target, apply, {
+          style: visual.transition,
+          curve: visual.animationCurve,
+        });
+      } else {
+        apply();
+      }
     } catch (error) {
-      this.reportError('loadPreset', error, { presetId });
+      this.reportError('loadPreset', error, { enginePresetId });
     }
-    return Promise.resolve();
   }
 
   setParameter(path: ParameterPath, value: ParameterValue): void {
@@ -153,16 +166,20 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
       }
 
       if (path === 'tempo') {
-        this.applyTempo(engine, value);
+        this.syncEngineControls(
+          engine,
+          resolveEngineControls(this.buildPartialState({ tempo: value })),
+        );
         return;
       }
 
       const controlMatch = /^controls\.(\w+)$/.exec(path);
       if (controlMatch?.[1]) {
         const name = controlMatch[1] as ControlName;
-        if (name in DEFAULT_CONTROLS) {
-          this.applyControl(engine, name, value);
-        }
+        this.syncEngineControls(
+          engine,
+          resolveEngineControls(this.buildPartialState({ controls: { [name]: value } })),
+        );
       }
     } catch (error) {
       this.reportError('setParameter', error, { path, value });
@@ -173,22 +190,23 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
     const engine = this.engine;
     if (!engine) return;
 
-    for (const name of Object.keys(DEFAULT_CONTROLS) as ControlName[]) {
-      const value = state.controls[name];
-      if (this.controlCache[name] !== value) {
-        this.applyControl(engine, name, value);
-      }
-    }
+    const start = performance.now();
 
-    if (this.tempoCache !== state.tempo) {
-      this.applyTempo(engine, state.tempo);
-    }
-
-    if (state.preset !== this.lastPresetId && state.preset !== null) {
-      this.lastPresetId = state.preset;
+    if (state.preset !== this.lastWorldId) {
+      this.lastWorldId = state.preset;
     }
 
     this.lastVelocity = state.performance.velocity;
+    this.lastState = {
+      ...state,
+      controls: { ...state.controls },
+      activeNotes: [...state.activeNotes],
+      performance: { ...state.performance },
+    };
+
+    const resolved = resolveEngineControls(state);
+    const changed = diffEngineControls(this.engineControlCache, resolved);
+    this.syncEngineControls(engine, changed);
 
     const currentNotes = new Set(state.activeNotes);
     for (const note of state.activeNotes) {
@@ -202,9 +220,13 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
       }
     }
     this.lastActiveNotes = currentNotes;
+
+    const duration = performance.now() - start;
+    this.profiler.recordApplyState(duration, Object.keys(changed).length);
   }
 
   destroy(): Promise<void> {
+    this.profiler.logSummary();
     const engine = this.engine;
     if (engine) {
       try {
@@ -222,11 +244,12 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
     this.engine = null;
     this.canvas = null;
     this.placeholder = null;
-    this.controlCache = createControlCache();
-    this.tempoCache = 72;
-    this.lastPresetId = null;
+    this.engineControlCache = {};
+    this.lastWorldId = null;
     this.lastActiveNotes = new Set();
     this.lastVelocity = 0.75;
+    this.lastState = createInitialRuntimeState();
+    this.profiler.reset();
 
     return Promise.resolve();
   }
@@ -238,24 +261,45 @@ export class PlantasiaAsciiAdapter implements StateSyncAsciiAdapter {
     return this.engine;
   }
 
-  private applyControl(engine: AsciiEngine, name: ControlName, value: number): void {
-    const clamped = Math.min(1, Math.max(0, value));
-    if (this.controlCache[name] === clamped) return;
-    engine.setControl(runtimeControlToAsciiControl(name), clamped);
-    this.controlCache[name] = clamped;
-  }
-
-  private applyTempo(engine: AsciiEngine, bpm: number): void {
-    const tempo = Math.min(300, Math.max(20, Math.round(bpm)));
-    if (this.tempoCache === tempo) return;
-    engine.setControl('speed', tempoToAsciiSpeed(tempo));
-    this.tempoCache = tempo;
+  private syncEngineControls(engine: AsciiEngine, controls: Record<string, number>): void {
+    for (const [name, value] of Object.entries(controls)) {
+      const clamped = Math.min(1, Math.max(0, value));
+      engine.setControl(name, clamped);
+      this.engineControlCache[name] = clamped;
+    }
   }
 
   private triggerNoteOn(engine: AsciiEngine, note: number, velocity: number): void {
     const intensity = Math.min(1, Math.max(0, velocity));
-    const { x, y } = noteToVisualPosition(note);
-    engine.noteOn({ id: note, intensity, x, y });
+    engine.noteOn({
+      id: note,
+      intensity,
+      x: pitchToHorizontalPosition(note),
+      y: pitchToVerticalPosition(note),
+    });
+  }
+
+  private applyResponsiveQuality(engine: AsciiEngine, width: number, height: number): void {
+    try {
+      const quality = resolveQualityForViewport(width, height);
+      engine.setQualityPreset(quality);
+    } catch {
+      /* quality API optional */
+    }
+  }
+
+  /** Builds partial state for incremental setParameter updates. */
+  private buildPartialState(patch: {
+    tempo?: number;
+    controls?: Partial<RuntimeState['controls']>;
+  }): RuntimeState {
+    return {
+      ...this.lastState,
+      tempo: patch.tempo ?? this.lastState.tempo,
+      controls: { ...this.lastState.controls, ...patch.controls },
+      activeNotes: [...this.lastState.activeNotes],
+      performance: { ...this.lastState.performance },
+    };
   }
 
   private reportError(source: string, error: unknown, context?: Record<string, unknown>): void {

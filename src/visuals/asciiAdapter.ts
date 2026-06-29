@@ -5,6 +5,7 @@
  */
 
 import type { ParameterPath, ParameterValue, PresetId } from '@/runtime/types.ts';
+import type { PresetVisualConfig } from '@/presets/types.ts';
 
 /** Contract implemented by the Plantasia ASCII Engine (external package). */
 export interface AsciiEngineContract {
@@ -36,8 +37,8 @@ export interface AsciiAdapter {
   /** Resizes the render surface. */
   resize(width: number, height: number): void;
 
-  /** Loads a visual preset by identifier. */
-  loadPreset(presetId: PresetId): Promise<void>;
+  /** Loads a visual preset by engine identifier with optional identity config. */
+  loadPreset(presetId: PresetId, visual?: PresetVisualConfig): Promise<void>;
 
   /** Sets a visual engine parameter. */
   setParameter(path: ParameterPath, value: ParameterValue): void;
@@ -71,7 +72,7 @@ export class NullAsciiAdapter implements AsciiAdapter {
     /* Engine integration point */
   }
 
-  async loadPreset(_presetId: PresetId): Promise<void> {
+  async loadPreset(_presetId: PresetId, _visual?: PresetVisualConfig): Promise<void> {
     /* Engine integration point */
   }
 

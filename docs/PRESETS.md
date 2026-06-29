@@ -35,11 +35,25 @@ interface PresetWorld {
   tags: readonly string[];
   version: string;
   sound: { presetId: string };   // plantasia-sound-engine bundled preset
-  visual: { presetId: string };  // ascii-visual-engine bundled preset
+  visual: PresetVisualConfig;    // engine preset + visual identity (Phase 10)
   defaults: {
     controls?: Partial<ControlValues>;
     tempo?: number;
   };
+}
+
+interface PresetVisualConfig {
+  presetId: string;
+  glyphFamilies: readonly GlyphFamily[];
+  patterns: readonly VisualPattern[];
+  motion: MotionProfile;
+  transition: VisualTransition;
+  renderer: RendererId;
+  palette: string;
+  animationCurve: AnimationCurve;
+  particleBehavior: ParticleBehavior;
+  engineControls?: Readonly<Record<string, number>>;
+  quality?: 'ultra' | 'high' | 'medium' | 'low' | 'batterySaver';
 }
 ```
 
@@ -58,8 +72,13 @@ src/presets/
 └── worlds/
     ├── index.ts       PRESET_WORLDS array (registration order = UI order)
     ├── seedWorld.ts
-    └── moldWorld.ts
+    ├── moldWorld.ts
+    ├── flowWorld.ts
+    ├── zenWorld.ts
+    └── nebulaWorld.ts
 ```
+
+See [VISUAL_LANGUAGE.md](./VISUAL_LANGUAGE.md) for glyph families, patterns, and motion profiles.
 
 ---
 
@@ -77,7 +96,17 @@ export const myWorld: PresetWorld = {
   tags: ['experimental'],
   version: '1.0.0',
   sound: { presetId: 'plantasonic' },
-  visual: { presetId: 'organic' },
+  visual: {
+    presetId: 'glyphOrganicBloom',
+    glyphFamilies: ['organic', 'growth'],
+    patterns: ['growth', 'bloom'],
+    motion: 'growth',
+    transition: 'bloom',
+    renderer: 'canvas',
+    palette: 'warm green',
+    animationCurve: 'easeOut',
+    particleBehavior: 'drift',
+  },
   defaults: {
     tempo: 90,
     controls: { bloom: 0.5, mold: 0.4, density: 0.6, chaos: 0.3, brightness: 0.5 },
