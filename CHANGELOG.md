@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] — 2026-06-28
+
+### Fixed
+
+- **Shell layout** — remove duplicate DS dock/inspector chrome; apply `no-dock` + `inspector-hidden` modifiers
+- **Instrument workspace** — full-height layout, no workspace padding, edge-to-edge shell (no card border)
+- **Bootstrap styling** — import design-system `bootstrap-components` and `bootstrap-utilities` layers
+- **`.ps-app` grid** — remove legacy nav row that reserved empty space above the stage
+- Depends on `plantasonic-design-system` v1.2.2
+
 ## [0.2.3] — 2026-06-28
 
 ### Fixed

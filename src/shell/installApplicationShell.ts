@@ -9,6 +9,16 @@ import { injectInstrumentStatus } from './injectInstrumentStatus.ts';
 
 const WORKSPACE_ID = 'ps-instrument-root';
 
+/** Ensures shell layout modifiers match instrument config (works with older DS builds). */
+function tuneInstrumentShell(root: HTMLElement): void {
+  const shell = root.querySelector<HTMLElement>('[data-ps-shell]');
+  if (!shell) return;
+  shell.classList.add('ps-shell--no-dock', 'ps-shell--inspector-hidden');
+  root.querySelector('[data-ps-inspector-toggle]')?.remove();
+  root.querySelector('.ps-shell__inspector')?.remove();
+  root.querySelector('.ps-shell__dock')?.remove();
+}
+
 export interface ApplicationShellHost {
   root: HTMLElement;
   workspace: HTMLElement;
@@ -26,6 +36,7 @@ export function installApplicationShell(container: HTMLElement): ApplicationShel
 
   bindApplicationShell(shellConfig);
   injectInstrumentStatus(container);
+  tuneInstrumentShell(container);
 
   const workspace = container.querySelector<HTMLElement>(`#${WORKSPACE_ID}`);
   if (!workspace) {

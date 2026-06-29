@@ -2,7 +2,7 @@
 
 A browser-based generative audiovisual instrument that combines the **Plantasia Sound Engine** and **ASCII Visual Engine** through a shared runtime.
 
-**Current release:** v0.2.3
+**Current release:** v0.2.4
 
 **Production:** https://www.plantasonic.xyz
 
