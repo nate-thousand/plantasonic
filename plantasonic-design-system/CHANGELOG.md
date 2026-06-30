@@ -7,14 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- **Application shell showcase** — shell demos no longer hijack showcase theme or global keyboard shortcuts on every route; added `SHOWCASE_SHELL` config (single workspace, no persisted state); improved shell surface contrast and nav active states.
+## [1.0.1] — 2026-06-30
 
 ### Added
 
-- **Vanilla HTML component demo** — `demo/` directory with sidebar navigation, theme switching, foundations, platform components, and all Bootstrap categories. Run `npm run demo:dev` (port 5173 when showcase is not running; use `cd demo && npm run dev` directly).
-- **Figma token import** — `npm run tokens:import-figma` reads `tokens/figma-source/` exports and regenerates foundation + theme token files. Synced from Plantasonic Figma file (Helvetica/DM Mono, semantic Theme 1/2).
+- **AI First integration** — documentation for AI-generated UI workflow (Figma → MCP → tokens → v0 → Cursor → application).
+- **[AI Design Guide](./docs/AI_DESIGN_GUIDE.md)** — integrating v0 output, token replacement rules, component/token/theme rules, acceptable and unacceptable patterns.
+- **[V0 Guidelines](./docs/V0_GUIDELINES.md)** — v0 prompt structure, token usage, layout, accessibility, responsive, motion, dark and retro themes.
+- **[Prompt Library](./docs/PROMPTS/README.md)** — reusable starter prompts: dashboard, audio app, game UI, settings panel, inspector, modal, toolbar, sidebar, mobile layout, retro terminal.
+- **Vanilla HTML component demo** — `demo/` directory with sidebar navigation, theme switching, foundations, platform components, and all Bootstrap categories. Run `npm run demo:dev`.
+- **Figma token import** — `npm run tokens:import-figma` reads `tokens/figma-source/` exports and regenerates foundation + theme token files.
+
+### Fixed
+
+- **Application shell showcase** — shell demos no longer hijack showcase theme or global keyboard shortcuts on every route; added `SHOWCASE_SHELL` config (single workspace, no persisted state); improved shell surface contrast and nav active states.
 
 ## [1.0.0] — 2026-06-29
 

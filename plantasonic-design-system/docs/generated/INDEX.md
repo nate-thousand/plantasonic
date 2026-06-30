@@ -59,3 +59,9 @@ Generated index. Run `npm run docs` to refresh generated pages.
 - [Vision and Scope](../VISION_AND_SCOPE.md)
 - [Design Principles](../DESIGN_PRINCIPLES.md)
 - [Brand Guidelines](../BRAND_GUIDELINES.md)
+
+## AI-first UI
+
+- [AI Design Guide](../AI_DESIGN_GUIDE.md)
+- [V0 Guidelines](../V0_GUIDELINES.md)
+- [Prompt Library](../PROMPTS/README.md)

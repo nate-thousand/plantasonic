@@ -7,10 +7,12 @@ Instructions for AI agents building or modifying UI in Plantasonic ecosystem app
 ## Before You Generate UI
 
 1. Read `docs/VISION_AND_SCOPE.md` — purpose, boundaries, decision filter
-2. Read `docs/DESIGN_PRINCIPLES.md` — token-driven, Bootstrap, accessibility rules
-3. Read `docs/COMPONENT_MAPPING.md` — use Bootstrap classes, not custom parallel systems
-4. Read `docs/TOKEN_ARCHITECTURE.md` — understand `--ds-*` and `--ps-*` naming
-5. If building Plantasonic shell UI, read `docs/BRAND_GUIDELINES.md`
+2. Read `docs/AI_DESIGN_GUIDE.md` — AI-first workflow, token rules, v0 integration
+3. Read `docs/DESIGN_PRINCIPLES.md` — token-driven, Bootstrap, accessibility rules
+4. Read `docs/COMPONENT_MAPPING.md` — use Bootstrap classes, not custom parallel systems
+5. Read `docs/TOKEN_ARCHITECTURE.md` — understand `--ds-*` and `--ps-*` naming
+6. For v0 output, read `docs/V0_GUIDELINES.md` and pick a prompt from `docs/PROMPTS/`
+7. If building Plantasonic shell UI, read `docs/BRAND_GUIDELINES.md`
 
 ---
 
@@ -167,6 +169,9 @@ Before delivering UI:
 
 ## Related Files
 
+- [../docs/AI_DESIGN_GUIDE.md](../docs/AI_DESIGN_GUIDE.md)
+- [../docs/V0_GUIDELINES.md](../docs/V0_GUIDELINES.md)
+- [../docs/PROMPTS/README.md](../docs/PROMPTS/README.md)
 - [../docs/VISION_AND_SCOPE.md](../docs/VISION_AND_SCOPE.md)
 - [../docs/DESIGN_PRINCIPLES.md](../docs/DESIGN_PRINCIPLES.md)
 - [../docs/COMPONENT_MAPPING.md](../docs/COMPONENT_MAPPING.md)

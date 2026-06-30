@@ -1,6 +1,6 @@
 {
   "name": "plantasonic-design-system",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Centralized design tokens, CSS variables, Bootstrap theme, CLI, and starter templates for the Plantasonic product ecosystem",
   "author": "Nate Thousand",
   "license": "MIT",

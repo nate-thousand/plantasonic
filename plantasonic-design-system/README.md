@@ -2,7 +2,7 @@
 
 Centralized design tokens, CSS variables, Bootstrap theme, Application Shell, CLI, and starter templates for the [Plantasonic](https://github.com/nate-thousand/plantasonic) product ecosystem.
 
-**Current release:** v1.0.0
+**Current release:** v1.0.1
 
 **Showcase (production):** https://plantasonic-design-system.vercel.app
 
@@ -26,6 +26,47 @@ Plantasonic is a generative audiovisual instrument. This design system is the vi
 - **Documentation** — vision, brand guidelines, design principles, token architecture, component mapping
 
 Engine aesthetics (ASCII visuals, audio) live in separate repositories. This package covers application chrome only.
+
+---
+
+## AI First Design Workflow
+
+The Plantasonic Design System is the **canonical source of truth** for AI-generated interfaces — v0, Cursor, and future development tools consume tokens, components, and guidance from this repository.
+
+```text
+Figma
+  ↓
+Figma MCP
+  ↓
+Design Tokens
+  ↓
+Plantasonic Design System
+  ↓
+v0
+  ↓
+Cursor
+  ↓
+Application
+```
+
+| Step | Action |
+| --- | --- |
+| **Figma** | Designers define components, layouts, and semantic roles |
+| **Figma MCP** | Sync exports via `npm run tokens:import-figma` |
+| **Design Tokens** | Edit `tokens/*.tokens.json`; run `npm run build` |
+| **Design System** | Tokens, Bootstrap theme, components, `generated/ai/` context |
+| **v0** | Generate UI from [Prompt Library](./docs/PROMPTS/README.md) + [V0 Guidelines](./docs/V0_GUIDELINES.md) |
+| **Cursor** | Integrate output, replace hardcoded values, validate compliance |
+| **Application** | Ship UI that passes token audit and matches the showcase |
+
+**Start here for AI UI work:**
+
+- [AI Design Guide](./docs/AI_DESIGN_GUIDE.md) — integration workflow, token rules, theme rules
+- [V0 Guidelines](./docs/V0_GUIDELINES.md) — prompt structure, accessibility, responsive, motion
+- [Prompt Library](./docs/PROMPTS/README.md) — reusable prompts for dashboard, audio app, inspector, modal, and more
+- [Apply Design System](./prompts/APPLY_DESIGN_SYSTEM.md) — Cursor agent instructions
+
+Machine-readable context for AI tools: `generated/ai/index.json` — regenerate with `npm run ai:context`.
 
 ---
 
@@ -414,7 +455,8 @@ plantasonic-design-system/
 ├── scss/bootstrap-utilities.scss   Utility class overrides
 ├── scripts/                 Token build pipeline
 ├── showcase/                Design system showcase app (Vite)
-├── docs/                    Brand, principles, architecture
+├── docs/                    Brand, principles, architecture, AI guides
+├── docs/PROMPTS/            Reusable v0/Cursor prompt library
 ├── prompts/                 AI agent instructions
 └── package.json
 ```
@@ -499,7 +541,7 @@ Also link `css/variables.css` for runtime theming. `css-theme-bridge.scss` re-ex
 
 ### AI-assisted development
 
-Use [prompts/APPLY_DESIGN_SYSTEM.md](./prompts/APPLY_DESIGN_SYSTEM.md) as agent instructions when building UI.
+Use the [AI First Design Workflow](#ai-first-design-workflow) above. Agent instructions: [prompts/APPLY_DESIGN_SYSTEM.md](./prompts/APPLY_DESIGN_SYSTEM.md).
 
 ---
 
@@ -545,7 +587,10 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 | [DESIGN_PRINCIPLES.md](./docs/DESIGN_PRINCIPLES.md) | Implementation rules — tokens, motion, accessibility |
 | [TOKEN_ARCHITECTURE.md](./docs/TOKEN_ARCHITECTURE.md) | Naming, layers, theme switching |
 | [COMPONENT_MAPPING.md](./docs/COMPONENT_MAPPING.md) | Bootstrap class mapping |
-| [APPLY_DESIGN_SYSTEM.md](./prompts/APPLY_DESIGN_SYSTEM.md) | AI agent instructions |
+| [AI_DESIGN_GUIDE.md](./docs/AI_DESIGN_GUIDE.md) | **AI UI integration** — v0 → Cursor workflow, token rules, themes |
+| [V0_GUIDELINES.md](./docs/V0_GUIDELINES.md) | v0 prompt structure, accessibility, motion, dark/retro themes |
+| [PROMPTS/](./docs/PROMPTS/README.md) | Reusable AI prompt library (dashboard, audio app, inspector, …) |
+| [APPLY_DESIGN_SYSTEM.md](./prompts/APPLY_DESIGN_SYSTEM.md) | Cursor agent instructions |
 | [AI_ARCHITECTURE.md](./docs/platform/AI_ARCHITECTURE.md) | AI-native platform — registry, SDK, validation, generators |
 | [METADATA_SPECIFICATION.md](./docs/platform/METADATA_SPECIFICATION.md) | Machine-readable metadata contract |
 
