@@ -146,9 +146,6 @@ export const TOKEN_METADATA = [
     "supportedThemes": [
       "dark",
       "light"
-    ],
-    "aliases": [
-      "color.text.link"
     ]
   },
   {
@@ -164,7 +161,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#070f0a",
-      "light": "#ffffff"
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -187,7 +184,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#070f0a",
-      "light": "#ffffff"
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -195,9 +192,6 @@ export const TOKEN_METADATA = [
     "supportedThemes": [
       "dark",
       "light"
-    ],
-    "aliases": [
-      "color.surface.default"
     ]
   },
   {
@@ -213,7 +207,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#000000",
-      "light": "#f5f7f6"
+      "light": "#000000"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -235,8 +229,8 @@ export const TOKEN_METADATA = [
     "path": "color.surface.nav",
     "valueType": "color",
     "values": {
-      "dark": "#101c15",
-      "light": "#ffffff"
+      "dark": "#070f0a",
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -258,8 +252,8 @@ export const TOKEN_METADATA = [
     "path": "color.surface.dock",
     "valueType": "color",
     "values": {
-      "dark": "#101c15",
-      "light": "#ffffff"
+      "dark": "#070f0a",
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -282,7 +276,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#333333",
-      "light": "#f0f2f1"
+      "light": "#070f0a"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -292,7 +286,6 @@ export const TOKEN_METADATA = [
       "light"
     ],
     "aliases": [
-      "color.surface.overlay",
       "product.slider-track"
     ]
   },
@@ -308,8 +301,8 @@ export const TOKEN_METADATA = [
     "path": "color.surface.card",
     "valueType": "color",
     "values": {
-      "dark": "#101c15",
-      "light": "#ffffff"
+      "dark": "#070f0a",
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -332,7 +325,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#1a1a1a",
-      "light": "#ffffff"
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -355,7 +348,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#182b20",
-      "light": "#ffffff"
+      "light": "#4dff89"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -378,7 +371,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#050a07",
-      "light": "#eef1ef"
+      "light": "#070f0a"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -401,7 +394,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#333333",
-      "light": "#f0f2f1"
+      "light": "#070f0a"
     },
     "usage": "Background fills for app chrome, cards, panels, and stages.",
     "origin": "theme.dark",
@@ -424,7 +417,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#e5e5e5",
-      "light": "#070f0a"
+      "light": "#000000"
     },
     "usage": "Foreground text colors by emphasis and context.",
     "origin": "theme.dark",
@@ -447,7 +440,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#999999",
-      "light": "#4d4d4d"
+      "light": "#070f0a"
     },
     "usage": "Foreground text colors by emphasis and context.",
     "origin": "theme.dark",
@@ -470,7 +463,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#808080",
-      "light": "#808080"
+      "light": "#4d4d4d"
     },
     "usage": "Foreground text colors by emphasis and context.",
     "origin": "theme.dark",
@@ -516,7 +509,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#4dff89",
-      "light": "#4dff89"
+      "light": "#070f0a"
     },
     "usage": "Foreground text colors by emphasis and context.",
     "origin": "theme.dark",
@@ -539,7 +532,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#e5e5e5",
-      "light": "#ffffff"
+      "light": "#4dff89"
     },
     "usage": "Foreground text colors by emphasis and context.",
     "origin": "theme.dark",
@@ -631,7 +624,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.14)",
-      "light": "rgba(7, 15, 10, 0.14)"
+      "light": "#070f0a"
     },
     "usage": "Hairlines, dividers, and interactive outlines.",
     "origin": "theme.dark",
@@ -658,7 +651,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.08)",
-      "light": "rgba(7, 15, 10, 0.08)"
+      "light": "#070f0a"
     },
     "usage": "Hairlines, dividers, and interactive outlines.",
     "origin": "theme.dark",
@@ -681,7 +674,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#ffffff",
-      "light": "#070f0a"
+      "light": "#4dff89"
     },
     "usage": "Hairlines, dividers, and interactive outlines.",
     "origin": "theme.dark",
@@ -848,7 +841,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(7, 15, 10, 0.85)",
-      "light": "rgba(255, 255, 255, 0.85)"
+      "light": "rgba(77, 255, 137, 0.85)"
     },
     "usage": "Scrims, backdrops, and glass overlays.",
     "origin": "theme.dark",
@@ -871,7 +864,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.45)",
-      "light": "rgba(7, 15, 10, 0.45)"
+      "light": "#070f0a"
     },
     "usage": "Scrims, backdrops, and glass overlays.",
     "origin": "theme.dark",
@@ -1032,7 +1025,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.15)",
-      "light": "rgba(7, 15, 10, 0.15)"
+      "light": "#070f0a"
     },
     "usage": "Success / warning / error / info feedback colors.",
     "origin": "theme.dark",
@@ -1054,8 +1047,8 @@ export const TOKEN_METADATA = [
     "path": "font.family.sans",
     "valueType": "fontFamily",
     "values": {
-      "dark": "Inter, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
-      "light": "Inter, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"
+      "dark": "Helvetica, Arial, sans-serif",
+      "light": "Helvetica, Arial, sans-serif"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1077,8 +1070,8 @@ export const TOKEN_METADATA = [
     "path": "font.family.mono",
     "valueType": "fontFamily",
     "values": {
-      "dark": "\"JetBrains Mono\", ui-monospace, \"Cascadia Code\", monospace",
-      "light": "\"JetBrains Mono\", ui-monospace, \"Cascadia Code\", monospace"
+      "dark": "\"DM Mono\", ui-monospace, monospace",
+      "light": "\"DM Mono\", ui-monospace, monospace"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1146,8 +1139,8 @@ export const TOKEN_METADATA = [
     "path": "font.size.h1",
     "valueType": "dimension",
     "values": {
-      "dark": "2rem",
-      "light": "2rem"
+      "dark": "3rem",
+      "light": "3rem"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1169,8 +1162,8 @@ export const TOKEN_METADATA = [
     "path": "font.size.h2",
     "valueType": "dimension",
     "values": {
-      "dark": "1.5rem",
-      "light": "1.5rem"
+      "dark": "2rem",
+      "light": "2rem"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1192,8 +1185,8 @@ export const TOKEN_METADATA = [
     "path": "font.size.h3",
     "valueType": "dimension",
     "values": {
-      "dark": "1.25rem",
-      "light": "1.25rem"
+      "dark": "1.5rem",
+      "light": "1.5rem"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1330,8 +1323,8 @@ export const TOKEN_METADATA = [
     "path": "font.size.overline",
     "valueType": "dimension",
     "values": {
-      "dark": "0.6875rem",
-      "light": "0.6875rem"
+      "dark": "0.625rem",
+      "light": "0.625rem"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1468,8 +1461,8 @@ export const TOKEN_METADATA = [
     "path": "font.weight.headings",
     "valueType": "fontWeight",
     "values": {
-      "dark": "600",
-      "light": "600"
+      "dark": "700",
+      "light": "700"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1491,8 +1484,8 @@ export const TOKEN_METADATA = [
     "path": "font.weight.label",
     "valueType": "fontWeight",
     "values": {
-      "dark": "600",
-      "light": "600"
+      "dark": "700",
+      "light": "700"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -1514,8 +1507,8 @@ export const TOKEN_METADATA = [
     "path": "font.weight.mono",
     "valueType": "fontWeight",
     "values": {
-      "dark": "500",
-      "light": "500"
+      "dark": "300",
+      "light": "300"
     },
     "usage": "Font families, sizes, weights, line-height, and tracking.",
     "origin": "foundation",
@@ -2046,8 +2039,8 @@ export const TOKEN_METADATA = [
     "path": "space.999",
     "valueType": "dimension",
     "values": {
-      "dark": "62.4375rem",
-      "light": "62.4375rem"
+      "dark": "999px",
+      "light": "999px"
     },
     "usage": "Design token.",
     "origin": "foundation",
@@ -2237,7 +2230,7 @@ export const TOKEN_METADATA = [
     "valueType": "shadow",
     "values": {
       "dark": "0 4px 12px rgba(0, 255, 87, 0.08)",
-      "light": "0 4px 12px rgba(0, 255, 87, 0.12)"
+      "light": "0 4px 12px rgba(7, 15, 10, 0.12)"
     },
     "usage": "Elevation, focus rings, and glows.",
     "origin": "theme.dark",
@@ -2260,7 +2253,7 @@ export const TOKEN_METADATA = [
     "valueType": "shadow",
     "values": {
       "dark": "0 8px 24px rgba(0, 255, 87, 0.10)",
-      "light": "0 8px 24px rgba(0, 255, 87, 0.14)"
+      "light": "0 8px 24px rgba(7, 15, 10, 0.14)"
     },
     "usage": "Elevation, focus rings, and glows.",
     "origin": "theme.dark",
@@ -2283,7 +2276,7 @@ export const TOKEN_METADATA = [
     "valueType": "shadow",
     "values": {
       "dark": "0 16px 48px rgba(0, 255, 87, 0.12)",
-      "light": "0 16px 48px rgba(0, 255, 87, 0.16)"
+      "light": "0 16px 48px rgba(7, 15, 10, 0.16)"
     },
     "usage": "Elevation, focus rings, and glows.",
     "origin": "theme.dark",
@@ -2306,7 +2299,7 @@ export const TOKEN_METADATA = [
     "valueType": "shadow",
     "values": {
       "dark": "0 0 0 0.2rem rgba(77, 255, 137, 0.35)",
-      "light": "0 0 0 0.2rem rgba(77, 255, 137, 0.35)"
+      "light": "0 0 0 0.2rem #070f0a"
     },
     "usage": "Elevation, focus rings, and glows.",
     "origin": "theme.dark",
@@ -2329,7 +2322,7 @@ export const TOKEN_METADATA = [
     "valueType": "shadow",
     "values": {
       "dark": "0 0 24px rgba(77, 255, 137, 0.35)",
-      "light": "0 0 24px rgba(77, 255, 137, 0.35)"
+      "light": "0 0 24px rgba(7, 15, 10, 0.25)"
     },
     "usage": "Elevation, focus rings, and glows.",
     "origin": "theme.dark",
@@ -3118,7 +3111,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.14)",
-      "light": "rgba(7, 15, 10, 0.14)"
+      "light": "#070f0a"
     },
     "usage": "Product chrome dimensions (nav, dock, sidebar, touch targets).",
     "origin": "theme.dark",
@@ -3164,7 +3157,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "#333333",
-      "light": "#f0f2f1"
+      "light": "#070f0a"
     },
     "usage": "Product chrome dimensions (nav, dock, sidebar, touch targets).",
     "origin": "theme.dark",
@@ -3210,7 +3203,7 @@ export const TOKEN_METADATA = [
     "valueType": "color",
     "values": {
       "dark": "rgba(255, 255, 255, 0.14)",
-      "light": "rgba(7, 15, 10, 0.14)"
+      "light": "#070f0a"
     },
     "usage": "Product chrome dimensions (nav, dock, sidebar, touch targets).",
     "origin": "theme.dark",

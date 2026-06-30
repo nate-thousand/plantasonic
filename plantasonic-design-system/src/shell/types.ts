@@ -213,7 +213,7 @@ export const EXAMPLE_SHELL: ApplicationShellConfig = {
   theme: 'dark',
   persistState: true,
   regions: DEFAULT_REGIONS,
-  workspace: 'split',
+  workspace: 'single',
   navigation: {
     title: 'Plantasonic Studio',
     breadcrumbs: [
@@ -262,4 +262,13 @@ export const EXAMPLE_SHELL: ApplicationShellConfig = {
     { id: 'stage', path: '/stage', label: 'Stage' },
     { id: 'mixer', path: '/mixer', label: 'Mixer' },
   ],
+};
+
+/** Showcase / docs demo — no persisted state, single workspace, inspector hidden. */
+export const SHOWCASE_SHELL: ApplicationShellConfig = {
+  ...EXAMPLE_SHELL,
+  id: 'showcase-shell-demo',
+  persistState: false,
+  workspace: 'single',
+  regions: { ...DEFAULT_REGIONS, inspector: false },
 };

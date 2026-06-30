@@ -8,4 +8,7 @@ npm-debug.log*
 .env
 .env.*
 .cache/
+.figma-import/
+demo/dist/
+demo/node_modules/
 .vercel

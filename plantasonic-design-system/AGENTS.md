@@ -39,6 +39,7 @@ npm run generate:ecosystem-context # ecosystem AI context export
 npm run validate:examples  # 7 reference example specs
 npm run audit:platform     # API surface + platform audit
 npm run showcase:dev       # visual reference at :5173
+npm run tokens:import-figma # sync tokens from tokens/figma-source/
 node cli/index.mjs create generative-art my-study --no-install
 node cli/index.mjs spec "Generative art study" --name "Study"
 ```

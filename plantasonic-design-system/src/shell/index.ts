@@ -98,7 +98,7 @@ export type {
   WorkspaceMode,
 } from './types';
 
-export { EXAMPLE_SHELL, DEFAULT_REGIONS } from './types';
+export { EXAMPLE_SHELL, SHOWCASE_SHELL, DEFAULT_REGIONS } from './types';
 export { mergeRoutesIntoNavigation, collectRouteSearchItems } from './routes';
 export { CommandRegistry, globalCommandRegistry } from './command-registry';
 export { OverlayManager, globalOverlayManager } from './overlay-manager';
@@ -112,4 +112,4 @@ export {
   DEFAULT_WINDOW_STATE,
 } from './window-state';
 export { renderPanelStack } from './render';
-export { bindApplicationShell, registerShellCommands } from './bind-shell';
+export { bindApplicationShell, registerShellCommands, type BindShellOptions } from './bind-shell';

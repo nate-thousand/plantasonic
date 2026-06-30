@@ -425,8 +425,13 @@ function initGlobalKeyboard(_config: ApplicationShellConfig): void {
       if (e.key !== 'Escape') return;
     }
     if (e.key === '/' && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+      const searchInput =
+        document.activeElement?.closest('[data-ps-app-shell-demo], [data-ps-demo-shell], [data-ps-app-shell]')
+          ?.querySelector<HTMLInputElement>('[data-ps-search-input]') ??
+        document.querySelector<HTMLInputElement>('[data-ps-search-input]');
+      if (!searchInput) return;
       e.preventDefault();
-      document.querySelector<HTMLInputElement>('[data-ps-search-input]')?.focus();
+      searchInput.focus();
       return;
     }
     if (e.key === 'Escape') {
@@ -448,14 +453,27 @@ function initGlobalKeyboard(_config: ApplicationShellConfig): void {
   });
 }
 
+export type BindShellOptions = {
+  /** When false, do not call initShellTheme — host app owns data-theme. */
+  manageTheme?: boolean;
+  /** When false, skip document-level ⌘K, /, F shortcuts. */
+  globalKeyboard?: boolean;
+};
+
 /** Bind shell interactions. Call after renderApplicationShell(). Safe to call on route changes. */
-export function bindApplicationShell(config: Partial<ApplicationShellConfig> = {}): void {
+export function bindApplicationShell(
+  config: Partial<ApplicationShellConfig> = {},
+  options: BindShellOptions = {},
+): void {
   const merged = mergeShellConfig(config);
   activeConfig = merged;
+  const { manageTheme = true, globalKeyboard = true } = options;
 
-  initShellTheme(merged.theme ?? loadWindowState(merged.id ?? 'default').theme);
+  if (manageTheme) {
+    initShellTheme(merged.theme ?? loadWindowState(merged.id ?? 'default').theme);
+  }
   registerShellCommands(buildCommands(merged));
-  initGlobalKeyboard(merged);
+  if (globalKeyboard) initGlobalKeyboard(merged);
   bindDemoControls(merged);
 
   document.querySelectorAll<HTMLElement>('[data-ps-app-shell][data-shell-id]').forEach((root) => {

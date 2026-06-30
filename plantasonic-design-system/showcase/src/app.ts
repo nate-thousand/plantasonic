@@ -1,4 +1,4 @@
-import { bindApplicationShell, EXAMPLE_SHELL } from '@ds/shell';
+import { bindApplicationShell, SHOWCASE_SHELL } from '@ds/shell';
 import { animate, type MotionPreset } from '@ds/motion';
 import { BUILD_TIME, CSS_VAR_MAP, DS_VERSION, GIT_COMMIT, BOOTSTRAP_VERSION, NAV, NAV_GROUPS } from './data/catalog';
 import { inspectElement, renderInspector } from './lib/inspector';
@@ -129,8 +129,13 @@ export function mountApp(root: HTMLElement): void {
     themePreview();
     initBootstrapWidgets(content);
     bindMotionDemos(content);
-    bindApplicationShell(EXAMPLE_SHELL);
+    bindShellDemos(content);
     syncDevPageStats(viewport);
+  }
+
+  function bindShellDemos(container: HTMLElement): void {
+    if (!container.querySelector('[data-ps-app-shell-demo], [data-ps-demo-shell]')) return;
+    bindApplicationShell(SHOWCASE_SHELL, { manageTheme: false, globalKeyboard: false });
   }
 
   window.addEventListener('hashchange', () => navigate(location.hash.replace('#', '') || 'overview'));

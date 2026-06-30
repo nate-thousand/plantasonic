@@ -11,6 +11,7 @@
   "scripts": {
     "tokens:validate": "node scripts/validate-tokens.mjs",
     "tokens:build-css": "node scripts/build-css.mjs",
+    "tokens:import-figma": "node scripts/import-figma-tokens.mjs",
     "tokens:build-bootstrap": "node scripts/build-bootstrap.mjs",
     "tokens:watch": "node --watch scripts/build-css.mjs",
     "generate": "node scripts/generate-all.mjs",
@@ -39,6 +40,10 @@
     "showcase:build": "npm run build --prefix showcase",
     "showcase:preview": "npm run preview --prefix showcase",
     "showcase": "npm run showcase:dev",
+    "demo:dev": "npm run dev --prefix demo",
+    "demo:build": "npm run build --prefix demo",
+    "demo:preview": "npm run preview --prefix demo",
+    "demo": "npm run demo:dev",
     "lint": "node scripts/quality-check.mjs",
     "format": "node -e \"console.log('No formatter configured — use editor defaults')\""
   },

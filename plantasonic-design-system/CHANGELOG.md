@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Application shell showcase** — shell demos no longer hijack showcase theme or global keyboard shortcuts on every route; added `SHOWCASE_SHELL` config (single workspace, no persisted state); improved shell surface contrast and nav active states.
+
+### Added
+
+- **Vanilla HTML component demo** — `demo/` directory with sidebar navigation, theme switching, foundations, platform components, and all Bootstrap categories. Run `npm run demo:dev` (port 5173 when showcase is not running; use `cd demo && npm run dev` directly).
+- **Figma token import** — `npm run tokens:import-figma` reads `tokens/figma-source/` exports and regenerates foundation + theme token files. Synced from Plantasonic Figma file (Helvetica/DM Mono, semantic Theme 1/2).
+
 ## [1.0.0] — 2026-06-29
 
 ### Version 1.0 — Production release

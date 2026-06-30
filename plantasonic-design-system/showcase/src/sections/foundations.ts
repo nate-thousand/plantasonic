@@ -70,7 +70,7 @@ export function renderTypography(): string {
   ];
 
   return `
-    ${sectionHeader('Typography', 'Inter for UI chrome, JetBrains Mono for technical values.')}
+    ${sectionHeader('Typography', 'Helvetica for UI chrome, DM Mono for technical values.')}
     ${docBlock({
       purpose: 'Readable instrument UI with technical monospace accents.',
       usage: 'Apply type scale via CSS variables. Headings use weight 600.',

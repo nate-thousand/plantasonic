@@ -307,6 +307,17 @@ npm run showcase:preview
 
 Open `http://localhost:5173` after running `showcase:dev`.
 
+### Vanilla HTML demo
+
+A lighter **copy-paste reference** for foundations, platform components, and Bootstrap — no TypeScript:
+
+```bash
+cd demo && npm install
+npm run demo:dev    # from repository root
+```
+
+See [`demo/README.md`](./demo/README.md).
+
 ### What the showcase includes
 
 **Milestone 4 — Application Shell Framework (complete):**

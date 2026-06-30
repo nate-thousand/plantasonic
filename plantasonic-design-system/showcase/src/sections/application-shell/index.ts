@@ -187,7 +187,7 @@ export function renderShellResponsive(): string {
       usage: 'Automatic via application-shell.scss breakpoints (992px, 1600px)',
       responsive: ['Tablet: side docks hidden', 'Ultra-wide: wider inspector', 'Mobile: compact chrome'],
     },
-    demoAppShell(EXAMPLE_SHELL),
+    demoAppShell(),
   );
 }
 

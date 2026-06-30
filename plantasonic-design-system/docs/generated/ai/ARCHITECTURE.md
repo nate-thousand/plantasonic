@@ -5,7 +5,7 @@
   "name": "plantasonic-design-system",
   "sdkVersion": "1.5.0",
   "metadataSpecVersion": "1.0.0",
-  "generatedAt": "2026-06-29T22:30:00.016Z",
+  "generatedAt": "2026-06-30T00:38:58.905Z",
   "summary": {
     "component": 12,
     "primitive": 17,

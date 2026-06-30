@@ -127,14 +127,14 @@
 .ps-shell__main {
   grid-area: main;
   overflow: auto;
-  background: var(--ds-color-surface-app);
+  background: var(--ds-color-surface-stage);
   position: relative;
 }
 
 .ps-shell__inspector {
   grid-area: inspector;
   background: var(--ds-color-surface-raised);
-  border-left: 1px solid var(--ds-color-border-subtle);
+  border-left: 1px solid var(--ds-color-border-interactive);
   overflow-y: auto;
   padding: var(--ds-space-3);
   box-shadow: var(--ps-shadow-sidebar);
@@ -149,7 +149,7 @@
   gap: var(--ds-space-3);
   padding: 0 var(--ds-space-3);
   background: var(--ds-color-surface-dock);
-  border-top: 1px solid var(--ds-color-border-default);
+  border-top: 1px solid var(--ds-color-border-subtle);
   min-height: var(--ps-dock-height);
 }
 
@@ -210,6 +210,7 @@
     background: var(--ds-color-surface-overlay);
     color: var(--ds-color-text-accent);
     font-weight: var(--ds-font-weight-label);
+    box-shadow: inset 3px 0 0 var(--ds-color-primary);
   }
 
   &--nested {
@@ -302,9 +303,10 @@
 
 .ps-topbar-title {
   font-size: var(--ds-font-size-body);
-  font-weight: var(--ds-font-weight-label);
+  font-weight: var(--ds-font-weight-headings);
   color: var(--ds-color-text-primary);
   margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .ps-topbar-actions {

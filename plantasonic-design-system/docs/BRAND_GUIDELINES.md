@@ -42,9 +42,9 @@ Do not use primary green for body text at large sizes — it is reserved for int
 
 | Role | Font | Tone |
 | ---- | ---- | ---- |
-| UI chrome | Inter | Clear, neutral, readable |
-| Status / tempo / values | JetBrains Mono | Technical, precise |
-| Headings | Inter 600 | Confident, not shouty |
+| UI chrome | Helvetica | Clear, neutral, readable |
+| Status / tempo / values | DM Mono | Technical, precise |
+| Headings | Helvetica Bold (700) | Confident, not shouty |
 
 Use uppercase sparingly. Labels and overlines may use letter-spacing (`0.08em`) for instrument-panel feel.
 

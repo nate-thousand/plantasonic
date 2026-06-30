@@ -122,13 +122,19 @@ See [COMPONENT_MAPPING.md](./COMPONENT_MAPPING.md) for component-level mapping.
 
 ## Figma Sync
 
-Tokens originate from Figma Variables (Mode 1 = foundation, Theme 1 = dark, Theme 2 = light). When updating from Figma:
+Tokens originate from Figma Variables (foundation/Mode 1, semantic Theme 1 = dark, Theme 2 = light).
 
-1. Export `.tokens.json` files from Figma
-2. Update the corresponding files in `tokens/`
-3. Regenerate `css/variables.css` (manual or via build script)
-4. Verify `scss/bootstrap-theme.scss` resolved values match
-5. Update CHANGELOG.md
+1. Export variable collections from Figma as W3C `.tokens.json` zip files
+2. Place exports in `tokens/figma-source/`:
+   - `foundation/Mode 1.tokens.json`
+   - `Theme 1.tokens.json`
+   - `Theme 2.tokens.json`
+3. Run `npm run tokens:import-figma`
+4. Run `npm run build`
+5. Verify showcase in both themes
+6. Update CHANGELOG.md
+
+Manual edits to `tokens/*.tokens.json` are overwritten by import — edit Figma or adjust `scripts/import-figma-tokens.mjs` mapping.
 
 ---
 
