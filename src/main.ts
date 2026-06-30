@@ -2,7 +2,7 @@ import 'plantasonic-design-system/css/variables.css';
 import { initShellTheme } from 'plantasonic-design-system/shell';
 import '@/styles/index.scss';
 import { bootstrapDocumentTheme } from '@/services/appSettingsStore.ts';
-import { createPlantasonicPlatformApp } from '@/platform-consumer/bootstrap.ts';
+import { mountAppRouter } from '@/platform-reference/router.ts';
 
 function renderBootError(container: HTMLElement, error: unknown): void {
   const detail = error instanceof Error ? error.message : String(error);
@@ -24,7 +24,9 @@ if (!container) {
   throw new Error('Application root element #app not found');
 }
 
-createPlantasonicPlatformApp(container).catch((error: unknown) => {
+try {
+  mountAppRouter(container);
+} catch (error: unknown) {
   console.error('[Plantasonic] boot failed:', error);
   renderBootError(container, error);
-});
+}

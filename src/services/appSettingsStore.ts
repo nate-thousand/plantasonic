@@ -23,18 +23,42 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   recentPresets: [],
 };
 
-/** Applies persisted theme before first paint to avoid flash. */
-export function bootstrapDocumentTheme(): void {
+function readStoredSettings(): Partial<AppSettings> | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const parsed = JSON.parse(raw) as Partial<AppSettings>;
-    if (parsed.theme === 'light' || parsed.theme === 'dark') {
-      document.documentElement.dataset.theme = parsed.theme;
-    }
+    if (!raw) return null;
+    return JSON.parse(raw) as Partial<AppSettings>;
   } catch {
-    /* ignore invalid storage */
+    return null;
   }
+}
+
+/** Applies persisted theme before first paint to avoid flash. */
+export function bootstrapDocumentTheme(): void {
+  const parsed = readStoredSettings();
+  if (parsed?.theme === 'light' || parsed?.theme === 'dark') {
+    document.documentElement.dataset.theme = parsed.theme;
+  }
+}
+
+export function getStoredTheme(): 'dark' | 'light' | null {
+  const parsed = readStoredSettings();
+  if (parsed?.theme === 'light' || parsed?.theme === 'dark') return parsed.theme;
+  return null;
+}
+
+export function setStoredTheme(theme: 'dark' | 'light'): void {
+  const current = readStoredSettings() ?? {};
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...DEFAULT_APP_SETTINGS, ...current, theme }),
+    );
+  } catch {
+    /* storage unavailable */
+  }
+  document.documentElement.dataset.theme = theme;
+  setShellTheme(theme);
 }
 
 type AppSettingsListener = (settings: Readonly<AppSettings>) => void;

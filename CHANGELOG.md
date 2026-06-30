@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-06-30
+
+### Added
+
+- **Platform reference application** — hash-routed overview with sections for Design System, Theme System, engines, AI Workflow, Templates, Components, Developer Tools, Settings, and Documentation
+- `src/platform-reference/` — catalog, section renderers, router with lazy instrument boot on `#instrument`
+- [docs/REFERENCE_APP.md](./docs/REFERENCE_APP.md) — reference application mission and demo philosophy
+- Theme system demonstration — Default (active), Signal 9, Plantasia, Future Theme (supported/planned slots)
+- AI workflow diagram — Figma → Figma MCP → Design System → v0 → Cursor → GitHub → Vercel → Application
+- Platform Overview landing — default route `#overview` explains what applications inherit
+
+### Changed
+
+- **Application purpose** — official showcase for the Plantasonic AI First Application Platform (engines unchanged)
+- **README** — repositioned as reference application documentation
+- **Landing experience** — Platform Overview replaces direct instrument boot; Live Instrument at `#instrument`
+- **Branding** — platform equation and reference purpose copy throughout UI
+- **docs/PLATFORM.md** — dual-mode routing and updated engine integration table
+- **validate:app** — checks lazy instrument bootstrap in router.ts
+
+### Unchanged
+
+- Engine behavior and architecture — no engine rewrites
+- Instrument functionality — full demo via `mountInstrumentApp()` on instrument route
+- Thin platform consumer architecture
+
 ## [0.3.0] — 2026-06-29
 
 ### Added

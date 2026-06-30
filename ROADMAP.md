@@ -2,7 +2,9 @@
 
 Milestone-based development plan with completion tracking. Percentages reflect current project state.
 
-Plantasonic is both a **production audiovisual application** and the **reference implementation** for a repeatable AI-assisted product development system. This roadmap mirrors that platform architecture and preserves delivery history as phases evolve.
+Plantasonic is the **official reference application** for the Plantasonic AI First Application Platform — and a production audiovisual instrument built on `@plantasonic/platform`. This roadmap mirrors platform architecture and preserves delivery history as phases evolve.
+
+**Platform equation:** Plantasonic = AI First Application Platform
 
 **Creative north star:** All future work must align with [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md). Plantasonic is a living ecosystem instrument — not a DAW, not a feature checklist.
 
@@ -648,10 +650,31 @@ See [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md) and [do
 | 12 | Performance & Optimization | 0% |
 | 13 | Release Candidate | 60% |
 | 14 | Platform SDK Migration | 100% |
+| 15 | Platform Reference Application | 100% |
 
-**Estimated overall completion: ~90%**
+**Estimated overall completion: ~92%**
 
-Phases 1–10 and 14 are complete. Phases 11–13 cover export, optimization, and release.
+Phases 1–10, 14, and 15 are complete. Phases 11–13 cover export, optimization, and release.
+
+---
+
+## Phase 15 — Platform Reference Application ✅
+
+**Status:** Complete  
+**Completion: 100%**
+
+**Objective:** Transform Plantasonic XYZ into the official reference application for the AI First Application Platform.
+
+### Delivered
+
+- [x] Hash-routed platform overview with logical sections (Design System, Theme System, engines, AI Workflow, Templates, Components, Developer Tools, Settings, Documentation)
+- [x] Default landing on Platform Overview — not direct instrument boot
+- [x] Lazy instrument route (`#instrument`) — engines unchanged
+- [x] Theme system demonstration (Default, Signal 9, Plantasia, Future Theme slots)
+- [x] AI workflow documentation (Figma → MCP → DS → v0 → Cursor → GitHub → Vercel → App)
+- [x] `docs/REFERENCE_APP.md`, updated README, PLATFORM.md, HANDOFF.md
+- [x] v0.4.0 release
+
 
 ---
 

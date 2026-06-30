@@ -42,11 +42,18 @@ for (const dir of forbiddenDirs) {
 }
 
 const mainTs = readFileSync(path.join(srcRoot, 'main.ts'), 'utf8');
-if (!mainTs.includes('createPlantasonicPlatformApp')) {
-  failures.push('main.ts must bootstrap via createPlantasonicPlatformApp()');
-}
 if (mainTs.includes('createPlantasonicApp')) {
   failures.push('main.ts must not use legacy createPlantasonicApp()');
+}
+
+const bootTs = readFileSync(path.join(srcRoot, 'platform-consumer/bootstrap.ts'), 'utf8');
+if (!bootTs.includes('createPlantasonicPlatformApp')) {
+  failures.push('bootstrap.ts must export createPlantasonicPlatformApp()');
+}
+
+const routerTs = readFileSync(path.join(srcRoot, 'platform-reference/router.ts'), 'utf8');
+if (!routerTs.includes('createPlantasonicPlatformApp')) {
+  failures.push('router.ts must lazy-load createPlantasonicPlatformApp() for instrument route');
 }
 
 const packageJson = JSON.parse(readFileSync(path.join(appRoot, 'package.json'), 'utf8'));

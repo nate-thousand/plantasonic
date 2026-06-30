@@ -1,8 +1,8 @@
 {
   "name": "plantasonic",
   "private": true,
-  "version": "0.3.0",
-  "description": "A browser-based generative audiovisual instrument",
+  "version": "0.4.0",
+  "description": "Official reference application for the Plantasonic AI First Application Platform.",
   "type": "module",
   "workspaces": [
     "plantasonic-design-system"
