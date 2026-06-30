@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Resolved strict-null TypeScript errors in platform reference section rendering.
+- Clarified repository boundaries: Plantasonic Platform is the reusable foundation, `plantasonic-xyz` is the separate reference/demo app, and `signal-9-live` is the separate product app.
+
 ## [0.4.0] — 2026-06-30
 
 ### Added

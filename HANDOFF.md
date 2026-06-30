@@ -7,6 +7,12 @@
 
 ## What was done
 
+### Repository boundary
+
+- Plantasonic Platform is the reusable AI First Application Platform foundation.
+- `plantasonic-xyz` is the separate official reference/demo application.
+- `signal-9-live` is the separate product application.
+
 ### Platform reference application
 
 - [x] Repositioned Plantasonic XYZ as the **official reference application** for the AI First Application Platform

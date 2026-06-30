@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Plantasonic is a browser-based generative audiovisual instrument. As of v0.3.0 it is a **thin creative application** built on `@plantasonic/platform` — not a self-contained runtime.
+Plantasonic XYZ is a browser-based generative audiovisual instrument and the separate reference/demo application for the Plantasonic Platform. As of v0.3.0 it is a **thin creative application** built on `@plantasonic/platform` — not a self-contained runtime.
+
+Plantasonic Platform is the reusable AI First Application Platform foundation. `signal-9-live` is a separate product application that consumes the Platform independently.
 
 **Creative north star:** [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md)
 

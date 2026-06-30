@@ -2,9 +2,9 @@
 
 Milestone-based development plan with completion tracking. Percentages reflect current project state.
 
-Plantasonic is the **official reference application** for the Plantasonic AI First Application Platform — and a production audiovisual instrument built on `@plantasonic/platform`. This roadmap mirrors platform architecture and preserves delivery history as phases evolve.
+Plantasonic XYZ is the separate **official reference/demo application** for the Plantasonic Platform — the reusable AI First Application Platform — and a production audiovisual instrument built on `@plantasonic/platform`. This roadmap mirrors platform architecture and preserves delivery history as phases evolve.
 
-**Platform equation:** Plantasonic = AI First Application Platform
+**Platform equation:** Plantasonic Platform = reusable AI First Application Platform. `plantasonic-xyz` = separate reference/demo app. `signal-9-live` = separate product app.
 
 **Creative north star:** All future work must align with [docs/CREATIVE_VISION.md](./docs/CREATIVE_VISION.md). Plantasonic is a living ecosystem instrument — not a DAW, not a feature checklist.
 
@@ -603,7 +603,7 @@ Review and update, when applicable:
 
 ## Product Philosophy
 
-Plantasonic is the first application built on a reusable product platform:
+Plantasonic XYZ is the reference/demo application built on the reusable Plantasonic Platform:
 
 ```text
 AI Product Framework
@@ -619,7 +619,7 @@ Plantasonic Application
 Deployment
 ```
 
-Future products should reuse this architecture by replacing only:
+Product applications such as `signal-9-live` should reuse this architecture by replacing only:
 
 - Product-specific runtime configuration
 - Engine integrations (adapters)
@@ -663,7 +663,7 @@ Phases 1–10, 14, and 15 are complete. Phases 11–13 cover export, optimizatio
 **Status:** Complete  
 **Completion: 100%**
 
-**Objective:** Transform Plantasonic XYZ into the official reference application for the AI First Application Platform.
+**Objective:** Transform Plantasonic XYZ into the official separate reference/demo application for the AI First Application Platform.
 
 ### Delivered
 

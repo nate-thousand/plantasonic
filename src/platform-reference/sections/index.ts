@@ -286,19 +286,21 @@ function renderSettings(): string {
 }
 
 function renderDocumentation(): string {
+  const docs: ReadonlyArray<readonly [string, string]> = [
+    ['README.md', 'Project overview and quick start'],
+    ['docs/REFERENCE_APP.md', 'Reference application philosophy'],
+    ['docs/CREATIVE_VISION.md', 'Creative north star'],
+    ['docs/PLATFORM.md', 'Platform manifest'],
+    ['ARCHITECTURE.md', 'System design'],
+    ['ROADMAP.md', 'Development milestones'],
+    ['CHANGELOG.md', 'Release history'],
+    ['docs/REPO_BOUNDARIES.md', 'Ecosystem ownership map'],
+  ];
+
   return `
     ${sectionHeader('Documentation', 'Authoritative docs for the platform and this reference application.')}
     <div class="row g-2">
-      ${[
-        ['README.md', 'Project overview and quick start'],
-        ['docs/REFERENCE_APP.md', 'Reference application philosophy'],
-        ['docs/CREATIVE_VISION.md', 'Creative north star'],
-        ['docs/PLATFORM.md', 'Platform manifest'],
-        ['ARCHITECTURE.md', 'System design'],
-        ['ROADMAP.md', 'Development milestones'],
-        ['CHANGELOG.md', 'Release history'],
-        ['docs/REPO_BOUNDARIES.md', 'Ecosystem ownership map'],
-      ]
+      ${docs
         .map(
           ([file, desc]) => `
         <div class="col-md-6">
@@ -348,6 +350,6 @@ export const SECTIONS: Record<string, SectionRenderer> = {
 };
 
 export function renderSection(id: string): string {
-  const fn = SECTIONS[id] ?? SECTIONS.overview;
+  const fn = SECTIONS[id] ?? renderOverview;
   return fn();
 }

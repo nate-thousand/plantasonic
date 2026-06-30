@@ -1,8 +1,8 @@
 # Plantasonic
 
-**Plantasonic = AI First Application Platform**
+**Plantasonic Platform = reusable AI First Application Platform**
 
-The official **reference application** for the Plantasonic AI First Application Platform — and a living generative audiovisual instrument powered by **@plantasonic/platform**.
+`plantasonic-xyz` is the separate official **reference/demo application** for the Plantasonic Platform — and a living generative audiovisual instrument powered by **@plantasonic/platform**.
 
 **Current release:** v0.4.0
 
@@ -79,6 +79,7 @@ Open http://localhost:5173 — Platform Overview loads by default. Use `#instrum
 | [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) | Design tokens, shell, showcase |
 | [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Sound synthesis |
 | [ascii-visual-engine](https://github.com/nate-thousand/ascii-visual-engine) | ASCII rendering |
+| `signal-9-live` | Separate product application built on the Platform |
 
 ## Documentation
 
