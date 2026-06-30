@@ -111,6 +111,11 @@
       "style": "./scss/instrument.scss",
       "default": "./scss/instrument.scss"
     },
+    "./scss/creative-workspace.scss": {
+      "sass": "./scss/creative-workspace.scss",
+      "style": "./scss/creative-workspace.scss",
+      "default": "./scss/creative-workspace.scss"
+    },
     "./scss/navigation-framework.scss": {
       "sass": "./scss/navigation-framework.scss",
       "style": "./scss/navigation-framework.scss",
@@ -140,6 +145,10 @@
     "./instrument": {
       "types": "./src/instrument/index.ts",
       "default": "./src/instrument/index.ts"
+    },
+    "./creative-workspace": {
+      "types": "./src/creative-workspace/index.ts",
+      "default": "./src/creative-workspace/index.ts"
     },
     "./app": {
       "types": "./src/app/index.ts",

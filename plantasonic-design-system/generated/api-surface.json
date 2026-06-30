@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-06-30T00:38:59.190Z",
+  "generatedAt": "2026-06-30T03:02:05.656Z",
   "status": "1.0-ready",
   "public": [
     {
@@ -64,6 +64,11 @@
       "category": "scss"
     },
     {
+      "path": "./scss/creative-workspace.scss",
+      "stability": "stable",
+      "category": "scss"
+    },
+    {
       "path": "./shell",
       "stability": "stable",
       "category": "runtime"
@@ -85,6 +90,11 @@
     },
     {
       "path": "./instrument",
+      "stability": "stable",
+      "category": "runtime"
+    },
+    {
+      "path": "./creative-workspace",
       "stability": "stable",
       "category": "runtime"
     },

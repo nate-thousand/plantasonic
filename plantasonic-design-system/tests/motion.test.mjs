@@ -8,10 +8,10 @@ const ROOT = new URL('..', import.meta.url).pathname;
 describe('motion system — tokens', () => {
   it('adds motion duration + easing tokens additively (existing tokens preserved)', () => {
     const foundation = JSON.parse(readFileSync(join(ROOT, 'tokens/foundation.tokens.json'), 'utf8'));
-    // Existing values unchanged
-    assert.equal(foundation.transition.fast.$value, '150ms');
+    // Foundation duration scale (transition aliases duration.*; base kept at 250ms for motion SDK)
+    assert.equal(foundation.transition.fast.$value, '{duration.fast}');
     assert.equal(foundation.transition.base.$value, '250ms');
-    assert.equal(foundation.transition.slow.$value, '400ms');
+    assert.equal(foundation.transition.slow.$value, '{duration.slow}');
     // New additive tokens
     assert.ok(foundation.transition.instant);
     assert.ok(foundation.transition.slower);

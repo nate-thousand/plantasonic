@@ -57,6 +57,10 @@ function main(): void {
     'package.json must depend on plantasonic-design-system',
   );
   assert(
+    packageJson.dependencies?.['@plantasonic/platform'],
+    'package.json must depend on @plantasonic/platform',
+  );
+  assert(
     packageJson.workspaces?.includes('plantasonic-design-system'),
     'package.json must list plantasonic-design-system workspace',
   );
@@ -67,30 +71,31 @@ function main(): void {
     'main.ts must import design system CSS variables',
   );
   assert(mainTs.includes('initShellTheme'), 'main.ts must initialize design system theme');
+  assert(
+    mainTs.includes('createPlantasonicPlatformApp'),
+    'main.ts must bootstrap via platform consumer',
+  );
+  assert(!mainTs.includes('createPlantasonicApp'), 'main.ts must not use legacy app bootstrap');
 
   const indexScss = readFileSync('src/styles/index.scss', 'utf8');
-  assert(indexScss.includes('./app-layout.scss'), 'index.scss must import app layout styles');
+  assert(
+    indexScss.includes('application-shell.scss'),
+    'index.scss must import application shell styles',
+  );
+  assert(indexScss.includes('./platform-instrument.scss'), 'index.scss must import platform instrument styles');
   assert(!indexScss.includes('navigation-framework'), 'index.scss must not import legacy nav shell');
+  assert(!indexScss.includes('./app-layout.scss'), 'index.scss must not import legacy app layout');
 
-  const appTs = readFileSync('src/app/app.ts', 'utf8');
-  assert(appTs.includes('renderAppLayout'), 'app must render minimal DS layout');
-  assert(appTs.includes('createRuntime'), 'app must wire runtime engines');
-  assert(appTs.includes('bindAppUi'), 'app must bind UI to interaction layer');
-  assert(!appTs.includes('renderApplicationShell'), 'app must not use legacy full shell');
-  assert(existsSync('src/ui'), 'minimal UI layer must exist');
+  const bootstrapTs = readFileSync('src/platform-consumer/bootstrap.ts', 'utf8');
+  assert(
+    bootstrapTs.includes('mountInstrumentApp'),
+    'platform consumer must mount via @plantasonic/platform-demo',
+  );
+  assert(existsSync('src/platform-consumer/appContent.ts'), 'platform consumer content must exist');
+  assert(existsSync('src/platform-consumer/content/presetBundles.ts'), 'preset bundles must exist');
   assert(!existsSync('src/shell'), 'legacy local shell removed');
-
-  const platformServices = readFileSync('src/platform/services.ts', 'utf8');
-  assert(
-    platformServices.includes('plantasonic-design-system/platform/services'),
-    'platform services must import from design system',
-  );
-
-  const platformEngines = readFileSync('src/platform/engines.ts', 'utf8');
-  assert(
-    platformEngines.includes('plantasonic-design-system/platform/engines'),
-    'platform engines must import installEngine from design system',
-  );
+  assert(!existsSync('src/runtime'), 'legacy runtime removed');
+  assert(!existsSync('src/ui'), 'legacy UI removed');
 
   const srcFiles = walk('src');
   const forbidden = [
@@ -100,6 +105,9 @@ function main(): void {
     'from \'@/design-system/tokens',
     'platform-services.ts',
     'engine-catalog.ts',
+    'renderAppLayout',
+    'bindAppUi',
+    'createRuntime',
   ];
   for (const file of srcFiles) {
     const rel = file.replace(/\\/g, '/');
@@ -109,7 +117,7 @@ function main(): void {
         throw new Error(`Removed local platform mirror still present: ${rel}`);
       }
       if (content.includes(needle)) {
-        throw new Error(`Forbidden design-system duplication in ${rel}: ${needle}`);
+        throw new Error(`Forbidden legacy infrastructure in ${rel}: ${needle}`);
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T00:38:58.795Z",
+  "generatedAt": "2026-06-30T03:02:05.303Z",
   "sdkVersion": "1.5.0",
   "metadataSpecVersion": "1.0.0",
   "themes": [
@@ -12,7 +12,7 @@
       "category": "theme",
       "status": "stable",
       "selector": "[data-theme=\"dark\"]",
-      "tokenCount": 157,
+      "tokenCount": 329,
       "supportedThemes": [
         "dark"
       ]
@@ -26,7 +26,7 @@
       "category": "theme",
       "status": "beta",
       "selector": "[data-theme=\"light\"]",
-      "tokenCount": 157,
+      "tokenCount": 329,
       "supportedThemes": [
         "light"
       ]

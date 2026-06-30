@@ -7,25 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-06-29
+
 ### Added
 
-- **Platform client layer** — `platform.json` manifest, `src/platform/` (engines, services), `docs/PLATFORM.md`, `docs/AI_CONTEXT.json`; runtime resolves adapters via `installEngine()` instead of hardcoded imports; `npm run verify:platform`
+- **Platform SDK migration** — Plantasonic is now a thin creative application on `@plantasonic/platform`
+- `src/platform-consumer/` — app config, shell config, branding, preset bundles, plugins
+- `mountInstrumentApp()` bootstrap via `@plantasonic/platform-demo/instrument-app`
+- Platform dependencies: `@plantasonic/platform`, `@plantasonic/platform-types`, `@plantasonic/platform-demo`
+- `npm run validate:app` — asserts thin-app architecture with no legacy infrastructure
+- `src/presets/controls.ts` — creative control vocabulary decoupled from runtime
+- `src/platform-consumer/content/mappings.ts` — documented world → platform parameter mappings
 
 ### Changed
 
-- **Design system v1.0 alignment** — import DS `primitives`, `components`, `motion`, and `instrument` SCSS layers; platform client consumes `createPlatformServices` and `installEngine` from `plantasonic-design-system/platform/*` (removed local mirrors); Vite/tsconfig aliases for browser-safe DS modules
-- **Stage-first chrome** — design-system sidebar now renders as a calm icon rail (desktop) that expands to a labelled flyout on hover/keyboard focus, overlaying rather than reflowing the stage
-- **Single navigation model** — removed the triplicated category navigation (sidebar + transport rail + palette all opened Sound/Visuals/Environment). The sidebar rail and inspector tabs are now canonical; the transport keeps a single **Controls** toggle that opens/closes the inspector
-- **Minimal top bar** — hide the inert profile placeholder; topbar surface matches the app background for a calmer frame
-- **Focus mode** — honors the documented intent (keeps transport essentials: Play/Stop/Exit) instead of hiding the whole bar; the rest of the transport recedes and restores on hover
-
-### Fixed
-
-- **Calm error notice** — the error banner is now a centered, glassy toast (not a full-width red bar). Expected pre-gesture audio errors are suppressed until the first interaction, soft errors auto-dismiss, and a transient error no longer pins the live status pill to "Error" on cold load
+- **Bootstrap** — `main.ts` uses `createPlantasonicPlatformApp()` instead of legacy `createPlantasonicApp()`
+- **Preset worlds** — converted to platform `PresetBundle[]` via `worldToBundle.ts`
+- **CI** — checks out `plantasonic-platform`, runs platform-focused verification
+- **Documentation** — README, ARCHITECTURE, ROADMAP updated for platform architecture
+- **Build** — `vite build` (platform packages resolved via sibling repo + Vite aliases)
 
 ### Removed
 
-- Legacy focus-mode CSS referencing deleted `.ps-chrome`/dock-drawer elements
+- Legacy runtime (`src/runtime/`), UI shell (`src/ui/`), interaction layer (`src/interaction/`)
+- Local engine adapters (`src/audio/`, `src/visuals/plantasiaAsciiAdapter.ts`)
+- Local MIDI/keyboard/mouse/touch routing (`src/midi/`, `src/keyboard/`, etc.)
+- Transitional platform client mirror (`src/platform/`)
+- Local preset registry orchestration and legacy verify scripts
+- `gsap` dependency (visual transitions now owned by platform/visual engine)
+- Duplicated app layout styles (`src/styles/app-layout.scss`)
+
+### Infrastructure now owned by platform
+
+- Application lifecycle and event bus
+- Design System instrument shell rendering
+- Sound and visual engine adapters
+- Audio-reactive bridge
+- Preset bundle registry
+- Performance controls (MIDI, keyboard)
+- Plugin manager
+- Project state persistence (save/load/export/import)
 
 ## [0.2.4] — 2026-06-28
 

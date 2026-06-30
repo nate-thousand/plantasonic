@@ -5,15 +5,15 @@
   "name": "plantasonic-design-system",
   "sdkVersion": "1.5.0",
   "metadataSpecVersion": "1.0.0",
-  "generatedAt": "2026-06-30T00:38:58.905Z",
+  "generatedAt": "2026-06-30T03:02:05.403Z",
   "summary": {
     "component": 12,
     "primitive": 17,
     "layout": 9,
     "pattern": 12,
-    "token": 141,
+    "token": 260,
     "theme": 2,
-    "total": 193
+    "total": 312
   },
   "categories": {
     "component": [
@@ -40,6 +40,12 @@
     "token": [
       "borders",
       "brand",
+      "creative-surfaces",
+      "foundation-brand",
+      "foundation-effects",
+      "foundation-layout",
+      "foundation-spacing-(px-scale)",
+      "foundation-typography-scale",
       "misc",
       "motion",
       "overlays",

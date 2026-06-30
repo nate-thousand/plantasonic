@@ -1,40 +1,37 @@
 # Workspace Guide
 
-The **Creative Workspace** opens multiple projects with shared engines, assets, and cross-project search.
+Two workspace concepts live in the Design System:
 
-## Load a workspace
+## Creative Workspace (UI layouts)
 
-```typescript
-import { loadWorkspace, generateSpecification, validateWorkspace } from 'plantasonic-design-system/studio';
+Reusable layout presets between the Application Shell and application content —
+instrument, visualizer, installation, presentation, and studio workspaces with
+floating overlays.
 
-const ws = loadWorkspace('main', 'Main Studio', [
-  generateSpecification({ name: 'Flower Study', category: 'generative-art' }),
-  generateSpecification({ name: 'Pad Lab', brief: 'music instrument' }),
-]);
-
-validateWorkspace(ws);
-```
-
-## Switch projects
+**Start here:** [Creative Workspace Guide](./CREATIVE_WORKSPACE_GUIDE.md)
 
 ```typescript
-import { workspaceManager } from 'plantasonic-design-system/studio';
-
-workspaceManager.switchProject('main', 'pad-lab');
+import { renderCreativeWorkspace } from 'plantasonic-design-system/creative-workspace';
 ```
 
-## Command palette
+## Studio Workspace (portfolio)
+
+Multi-project portfolio orchestration — load, switch, and validate projects in a
+creative studio.
+
+**See:** [Studio Workspace Guide](./STUDIO_WORKSPACE_GUIDE.md)
 
 ```typescript
-import { workspaceCommands } from 'plantasonic-design-system/studio';
-
-workspaceCommands(ws); // switch:*, validate
+import { loadWorkspace } from 'plantasonic-design-system/studio';
 ```
 
-## From project.json files
+## Instrument regions
+
+Low-level region renderers (`renderStage`, `renderTransportRegion`, …) used by
+both the instrument shell and Creative Workspace:
 
 ```typescript
-import { loadWorkspaceFromFiles } from 'plantasonic-design-system/studio';
-
-loadWorkspaceFromFiles('main', 'Studio', [json1, json2]);
+import { REGION_NAMES, renderStage } from 'plantasonic-design-system/instrument';
 ```
+
+See [Creative Application Guide](./CREATIVE_APPLICATION_GUIDE.md).

@@ -2,7 +2,7 @@
   "id": "plantasonic",
   "name": "Plantasonic",
   "type": "music-instrument",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Browser-based generative audiovisual instrument — a living digital ecosystem.",
   "layout": "instrument",
   "engines": ["engine.sound", "engine.visual", "engine.midi"],
@@ -16,6 +16,9 @@
   "services": ["logging", "settings", "autosave", "notifications"],
   "dependencies": {
     "plantasonic-design-system": "1.0.0",
+    "@plantasonic/platform": "file:../plantasonic-platform/packages/sdk",
+    "@plantasonic/platform-types": "file:../plantasonic-platform/packages/shared-types",
+    "@plantasonic/platform-demo": "file:../plantasonic-platform/apps/demo",
     "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
     "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0"
   },

@@ -1,5 +1,5 @@
 /**
- * Integration verification — minimal DS UI + runtime engines.
+ * Integration verification — platform instrument shell + preset worlds.
  */
 
 import { Window } from 'happy-dom';
@@ -15,7 +15,7 @@ function click(el: Element | null): void {
 
 async function main(): Promise<void> {
   const window = new Window({
-    url: 'http://localhost:5179/',
+    url: 'http://localhost:5173/',
     width: 1280,
     height: 800,
   });
@@ -47,6 +47,16 @@ async function main(): Promise<void> {
   globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) =>
     setTimeout(() => cb(Date.now()), 16) as unknown as number) as typeof requestAnimationFrame;
   globalThis.cancelAnimationFrame = ((id: number) => clearTimeout(id)) as typeof cancelAnimationFrame;
+
+  if (!globalThis.ResizeObserver) {
+    class StubResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    }
+    // @ts-expect-error stub
+    globalThis.ResizeObserver = StubResizeObserver;
+  }
 
   if (!globalThis.AudioContext) {
     class StubAudioContext {
@@ -97,10 +107,11 @@ async function main(): Promise<void> {
     return el;
   }) as typeof document.createElement;
 
-  const { createPlantasonicApp } = await import('../src/app/app.ts');
-  const { MockSoundAdapter } = await import('./mocks/mockSoundAdapter.ts');
-  const { createRuntime } = await import('../src/runtime/createRuntime.ts');
+  const { createPlantasonicPlatformApp } = await import('../src/platform-consumer/bootstrap.ts');
   const { PRESET_WORLDS } = await import('../src/presets/worlds/index.ts');
+  const { PLANTASONIC_PRESET_BUNDLES } = await import(
+    '../src/platform-consumer/content/presetBundles.ts'
+  );
 
   const appRoot = document.createElement('div');
   appRoot.id = 'app';
@@ -108,51 +119,36 @@ async function main(): Promise<void> {
   appRoot.style.height = '800px';
   document.body.appendChild(appRoot);
 
-  const stage = appRoot.querySelector('#ps-stage');
-  if (stage) {
-    stage.getBoundingClientRect = () =>
-      ({
-        width: 800,
-        height: 700,
-        top: 0,
-        left: 0,
-        right: 800,
-        bottom: 700,
-        x: 0,
-        y: 0,
-        toJSON: () => ({}),
-      }) as DOMRect;
-  }
+  const app = await createPlantasonicPlatformApp(appRoot);
 
-  const app = await createPlantasonicApp(appRoot);
+  assert(!!document.querySelector('[data-ps-region="stage"]'), 'Stage region missing');
+  assert(!!document.querySelector('[data-ps-region="transport"]'), 'Transport region missing');
+  assert(!!document.querySelector('[data-ps-region="browser"]'), 'Preset browser region missing');
+  assert(!!document.querySelector('[data-ps-transport-bar]'), 'Design System transport bar missing');
+  assert(!!document.querySelector('[data-demo-event-log]'), 'Platform event log missing');
+  assert(!!document.querySelector('[data-demo-project-save]'), 'Project save control missing');
+  assert(!!document.querySelector('[data-demo-project-load]'), 'Project load control missing');
+  assert(!document.querySelector('#ps-preset-select'), 'Legacy preset select must not render');
+  assert(!document.querySelector('.ps-instrument-ui'), 'Legacy instrument UI must not render');
 
-  assert(!!document.querySelector('#ps-stage'), 'Stage missing');
-  assert(!!document.querySelector('[data-ps-transport-bar]'), 'Transport bar missing');
-  assert(!!document.querySelector('#ps-preset-select'), 'Preset select missing');
-  assert(!!document.querySelector('[data-ps-midi-toggle]'), 'MIDI toggle missing');
-  assert(!!document.querySelector('#ps-status'), 'Status area missing');
-  assert(!!document.querySelector('.ps-stage__canvas'), 'Visualizer canvas missing');
-  assert(!document.querySelector('[data-ps-app-shell]'), 'Legacy application shell must not render');
+  const playButton = document.querySelector('[data-ps-transport="play"]');
+  if (playButton) click(playButton);
+  await new Promise((r) => setTimeout(r, 200));
 
-  click(document.querySelector('[data-ps-transport="play"]'));
-  await new Promise((r) => setTimeout(r, 150));
+  const bundleButtons = document.querySelectorAll('[data-demo-bundle]');
+  assert(bundleButtons.length >= PRESET_WORLDS.length, 'Preset bundle buttons must list all worlds');
 
-  const runtime = createRuntime({ soundAdapter: new MockSoundAdapter() });
-  await runtime.init({ container: document.querySelector('#ps-stage')! });
-  await runtime.setPreset('mold-world');
-  assert(runtime.getState().preset === 'mold-world', 'Preset loading must work');
+  assert(
+    PLANTASONIC_PRESET_BUNDLES.length === PRESET_WORLDS.length,
+    'All worlds must convert to PresetBundle entries',
+  );
 
-  const presetSelect = document.querySelector<HTMLSelectElement>('#ps-preset-select');
-  if (presetSelect) presetSelect.value = 'flow-world';
-  presetSelect?.dispatchEvent(new Event('change', { bubbles: true }));
-  await new Promise((r) => setTimeout(r, 100));
-
-  await app.destroy();
+  app.stop();
   await window.close();
 
-  console.info('[verify-integration] All integration checks passed.', {
+  console.info('[verify-integration] Platform integration checks passed.', {
     worlds: PRESET_WORLDS.length,
-    layout: 'minimal-ds-instrument-ui',
+    layout: 'platform-instrument-shell',
   });
 }
 

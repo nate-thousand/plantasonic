@@ -9,7 +9,7 @@ import {
   validateAllPresets,
   type PlantasiaPreset,
 } from 'plantasia-sound-engine';
-import type { ControlValues } from '@/runtime/types.ts';
+import type { ControlValues } from './controls.ts';
 import { mergeWorldDefaults } from './registry.ts';
 import type { PresetWorld } from './types.ts';
 import { PRESET_WORLDS } from './worlds/index.ts';

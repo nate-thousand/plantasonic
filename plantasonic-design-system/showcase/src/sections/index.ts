@@ -35,6 +35,11 @@ import {
   renderCreativeTransport,
   renderInstrumentShellSection,
 } from './creative';
+import {
+  renderCreativeWorkspaceInstrument,
+  renderCreativeWorkspaceOverview,
+  renderCreativeWorkspacePresets,
+} from './creative-workspace';
 import { renderDeveloper } from './developer';
 import {
   renderAccessibility,
@@ -87,6 +92,9 @@ export const SECTIONS: Record<string, SectionRenderer> = {
   components: renderComponents,
   'motion-system': renderMotionSystem,
   'instrument-shell': renderInstrumentShellSection,
+  'creative-workspace': renderCreativeWorkspaceOverview,
+  'creative-workspace-instrument': renderCreativeWorkspaceInstrument,
+  'creative-workspace-presets': renderCreativeWorkspacePresets,
   'creative-regions': renderCreativeRegions,
   'creative-transport': renderCreativeTransport,
   'creative-canvas': renderCreativeCanvas,

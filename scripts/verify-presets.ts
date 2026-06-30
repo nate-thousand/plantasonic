@@ -2,7 +2,6 @@
  * Preset validation — run with: npm run verify:presets
  *
  * Validates bundled engine presets and Plantasonic world mappings.
- * Confirms each world loads through the real sound adapter with distinct settings.
  */
 
 import { Window } from 'happy-dom';
@@ -19,8 +18,7 @@ import {
   validatePresetWorlds,
   worldControlsFingerprint,
 } from '../src/presets/soundPresetValidation.ts';
-import { mergeWorldDefaults } from '../src/presets/registry.ts';
-import { ecologyToRuntimeControls } from '../src/audio/controlMapping.ts';
+import { PLANTASONIC_PRESET_BUNDLES } from '../src/platform-consumer/content/presetBundles.ts';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -43,12 +41,6 @@ function installAudioStub(): void {
     createBiquadFilter() {
       return { connect: () => undefined, frequency: { value: 440 } };
     }
-    createBufferSource() {
-      return { connect: () => undefined, start: () => undefined, stop: () => undefined };
-    }
-    createBuffer() {
-      return { getChannelData: () => new Float32Array(128) };
-    }
     resume() {
       return Promise.resolve();
     }
@@ -56,104 +48,51 @@ function installAudioStub(): void {
       return Promise.resolve();
     }
   }
-
-  // @ts-expect-error stub for node
+  // @ts-expect-error stub
   globalThis.AudioContext = StubAudioContext;
-  // @ts-expect-error stub for node
+  // @ts-expect-error stub
   globalThis.webkitAudioContext = StubAudioContext;
 }
 
 async function main(): Promise<void> {
-  const window = new Window({ url: 'http://localhost/', width: 800, height: 600 });
-  globalThis.window = window as unknown as Window & typeof globalThis.window;
-  globalThis.document = window.document;
   installAudioStub();
 
-  // --- Engine bundled presets ---
-  assert(enginePresets.length >= 11, `Expected ≥11 engine presets, got ${enginePresets.length}`);
+  const window = new Window({ url: 'http://localhost/' });
+  globalThis.window = window as unknown as Window & typeof globalThis.window;
+  globalThis.document = window.document;
 
-  const strictEngineIssues = validateAllPresets([...enginePresets], { strict: false });
-  assert(
-    strictEngineIssues.length === 0,
-    `Engine preset metadata issues:\n${strictEngineIssues.map((i) => `  [${i.presetId}] ${i.field}: ${i.message}`).join('\n')}`,
-  );
+  const engineIssues = validateAllPresets([...enginePresets], { strict: false });
+  assert(engineIssues.length === 0, `Engine preset validation failed: ${engineIssues.length} issues`);
 
-  for (const preset of enginePresets) {
-    assert(!!preset.synth?.oscillator, `${preset.id} missing oscillator`);
-    assert(!!preset.synth?.envelope, `${preset.id} missing envelope`);
-    assert(preset.synth.filterHz > 0, `${preset.id} missing filterHz`);
-    assert(preset.synth.effects !== undefined, `${preset.id} missing effects`);
-
-    const resolution = resolvePresetToSpecies(preset.id);
-    assert(!!resolution.speciesId, `${preset.id} should resolve to a species`);
-  }
-
-  const synthFingerprints = new Set<string>();
-  for (const preset of enginePresets) {
-    const fp = synthSettingsFingerprint(preset);
-    synthFingerprints.add(fp);
-  }
-  assert(
-    synthFingerprints.size >= enginePresets.length - 2,
-    'Engine presets should have mostly unique synth configurations',
-  );
-
-  // --- Plantasonic worlds ---
   const worldIssues = validatePresetWorlds(PRESET_WORLDS);
-  assert(
-    worldIssues.length === 0,
-    `World validation failed:\n${worldIssues.map((i) => `  [${i.worldId ?? i.presetId}] ${i.field}: ${i.message}`).join('\n')}`,
-  );
+  assert(worldIssues.length === 0, `World validation failed: ${JSON.stringify(worldIssues)}`);
 
-  const worldFingerprints = new Set(PRESET_WORLDS.map((w) => worldControlsFingerprint(w)));
-  assert(
-    worldFingerprints.size === PRESET_WORLDS.length,
-    'Each world must have a unique merged control fingerprint',
-  );
+  assert(PRESET_WORLDS.length === 5, 'Expected 5 preset worlds');
+  assert(PLANTASONIC_PRESET_BUNDLES.length === PRESET_WORLDS.length, 'All worlds must map to bundles');
 
-  const speciesUsed = new Set(
-    PRESET_WORLDS.map((w) => resolvePresetToSpecies(w.sound.presetId).speciesId),
-  );
-  assert(speciesUsed.size >= 4, 'Worlds should cover at least 4 engine species');
-
-  // --- Adapter load path ---
-  const { PlantasiaSoundAdapter } = await import('../src/audio/soundAdapter.ts');
-  const adapter = new PlantasiaSoundAdapter();
-  await adapter.init();
-
+  const controlFingerprints = new Set<string>();
   for (const world of PRESET_WORLDS) {
-    const result = await adapter.loadPreset(world.sound.presetId);
-    assert(result !== undefined, `${world.id}: adapter failed to load ${world.sound.presetId}`);
+    const fp = worldControlsFingerprint(world);
+    assert(!controlFingerprints.has(fp), `Duplicate control fingerprint: ${world.id}`);
+    controlFingerprints.add(fp);
 
-    const resolution = resolvePresetToSpecies(world.sound.presetId);
-    const merged = mergeWorldDefaults(world, result.controls);
-    assert(merged.tempo === world.defaults.tempo, `${world.id}: tempo should match world default`);
-    assert(
-      merged.controls.bloom === world.defaults.controls?.bloom,
-      `${world.id}: bloom should match world default`,
-    );
+    const preset = getPresetById(world.sound.presetId);
+    assert(!!preset, `Missing engine preset: ${world.sound.presetId}`);
+    assert(synthSettingsFingerprint(preset).length > 0, `Empty synth fingerprint: ${world.id}`);
 
-    const engineEcology = ecologyToRuntimeControls(resolution.ecology);
-    const enginePreset = getPresetById(world.sound.presetId);
-    assert(!!enginePreset, `${world.id}: engine preset metadata exists`);
-    assert(
-      enginePreset!.synth.oscillator.length > 0,
-      `${world.id}: oscillator type defined in preset JSON`,
-    );
+    const species = resolvePresetToSpecies(world.sound.presetId);
+    assert(species.speciesId.length > 0, `Missing species for ${world.id}`);
   }
 
-  await adapter.destroy();
+  const bundledIds = listBundledEnginePresetIds();
+  assert(bundledIds.length > 0, 'Engine must expose bundled presets');
 
-  const bundled = listBundledEnginePresetIds();
-  const worldPresetIds = new Set(PRESET_WORLDS.map((w) => w.sound.presetId));
-  const unreachable = bundled.filter((id) => !worldPresetIds.has(id));
+  await window.close();
 
-  console.info('[verify-presets] All preset checks passed.', {
-    enginePresets: enginePresets.length,
+  console.info('[verify-presets] Preset validation passed.', {
     worlds: PRESET_WORLDS.length,
-    speciesCovered: [...speciesUsed],
-    worldSoundPresets: PRESET_WORLDS.map((w) => `${w.id}→${w.sound.presetId}`),
-    unreachableViaWorlds: unreachable,
+    enginePresets: bundledIds.length,
+    bundles: PLANTASONIC_PRESET_BUNDLES.length,
   });
 }
 

@@ -507,6 +507,33 @@ Complete:
 
 ---
 
+---
+
+## Phase 14 — Platform SDK Migration ✅
+
+**Status:** Complete  
+**Completion: 100%**
+
+**Objective:** Migrate Plantasonic from a self-contained runtime to a thin creative application on `@plantasonic/platform`.
+
+### Delivered (v0.3.0)
+
+- [x] Add `@plantasonic/platform`, `@plantasonic/platform-types`, `@plantasonic/platform-demo` dependencies
+- [x] Replace local runtime, UI shell, interaction layer, and adapters with platform orchestration
+- [x] Bootstrap via `mountInstrumentApp()` and `src/platform-consumer/`
+- [x] Convert five preset worlds to platform `PresetBundle[]`
+- [x] Remove duplicated infrastructure (runtime, MIDI routing, local adapters, local platform mirror)
+- [x] Platform-focused CI and verification scripts
+- [x] Update README, ARCHITECTURE, CHANGELOG
+
+### Remaining creative work
+
+- [ ] Re-introduce world-specific visual identity (glyph transitions) via platform plugins
+- [ ] Settings overlay and favorites using platform project persistence
+- [ ] Preset browser cards with world identity metadata
+
+---
+
 ## Phase 13 — Release Candidate
 
 **Status:** In progress  
@@ -619,11 +646,12 @@ See [docs/REPEATABLE_APP_TEMPLATE.md](./docs/REPEATABLE_APP_TEMPLATE.md) and [do
 | 10 | Expressive Visual Language | 100% |
 | 11 | Recording & Sharing | 0% |
 | 12 | Performance & Optimization | 0% |
-| 13 | Release Candidate | 0% |
+| 13 | Release Candidate | 60% |
+| 14 | Platform SDK Migration | 100% |
 
-**Estimated overall completion: ~88%**
+**Estimated overall completion: ~90%**
 
-Phases 1–3, 4–10 are complete. Phases 11–13 cover export, optimization, and release.
+Phases 1–10 and 14 are complete. Phases 11–13 cover export, optimization, and release.
 
 ---
 

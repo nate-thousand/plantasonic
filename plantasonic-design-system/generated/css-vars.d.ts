@@ -42,6 +42,9 @@ export type DsCssVar =
   | '--ds-color-overlay-glass'
   | '--ds-color-overlay-focus-outline'
   | '--ds-color-favorite'
+  | '--ds-color-brand-primary-500'
+  | '--ds-color-brand-primary-700'
+  | '--ds-color-brand-primary-900'
   | '--ds-color-success'
   | '--ds-color-warning'
   | '--ds-color-error'
@@ -91,8 +94,19 @@ export type DsCssVar =
   | '--ds-space-60'
   | '--ds-space-68'
   | '--ds-space-72'
+  | '--ds-space-80'
+  | '--ds-space-96'
+  | '--ds-space-128'
+  | '--ds-space-16'
+  | '--ds-space-24'
+  | '--ds-space-32'
+  | '--ds-space-48'
+  | '--ds-space-64'
   | '--ds-space-999'
   | '--ds-radius-xs'
+  | '--ds-radius-none'
+  | '--ds-radius-md'
+  | '--ds-radius-full'
   | '--ds-radius-sm'
   | '--ds-radius-default'
   | '--ds-radius-lg'
@@ -144,7 +158,112 @@ export type DsCssVar =
   | '--ps-performance-chrome-opacity'
   | '--ps-shadow-overlay'
   | '--ps-shadow-sidebar'
-  | '--ps-shadow-panel';
+  | '--ps-shadow-panel'
+  | '--ds-font-size-xs'
+  | '--ds-font-size-sm'
+  | '--ds-font-size-md'
+  | '--ds-font-size-lg'
+  | '--ds-font-size-xl'
+  | '--ds-font-size-2xl'
+  | '--ds-font-size-3xl'
+  | '--ds-font-size-4xl'
+  | '--ds-line-height-tight-scale'
+  | '--ds-line-height-normal'
+  | '--ds-line-height-relaxed-scale'
+  | '--ds-line-height-loose'
+  | '--ds-letter-spacing-tighter'
+  | '--ds-letter-spacing-tight'
+  | '--ds-letter-spacing-normal'
+  | '--ds-letter-spacing-wide'
+  | '--ds-letter-spacing-wider'
+  | '--ds-size-xs'
+  | '--ds-size-sm'
+  | '--ds-size-md'
+  | '--ds-size-lg'
+  | '--ds-size-xl'
+  | '--ds-size-xxl'
+  | '--ds-opacity-0'
+  | '--ds-opacity-50'
+  | '--ds-opacity-100'
+  | '--ds-border-width-hairline'
+  | '--ds-border-width-thin'
+  | '--ds-border-width-medium'
+  | '--ds-border-width-thick'
+  | '--ds-stroke-subtle'
+  | '--ds-stroke-default'
+  | '--ds-stroke-strong'
+  | '--ds-stroke-emphasis'
+  | '--ds-shadow-xs'
+  | '--ds-shadow-xl'
+  | '--ds-shadow-glow'
+  | '--ds-shadow-neon'
+  | '--ds-blur-sm'
+  | '--ds-blur-md'
+  | '--ds-blur-lg'
+  | '--ds-z-floating'
+  | '--ds-z-overlay'
+  | '--ds-z-modal'
+  | '--ds-duration-fast'
+  | '--ds-duration-normal'
+  | '--ds-easing-standard'
+  | '--ds-easing-emphasized'
+  | '--ds-motion-hover-duration'
+  | '--ds-motion-hover-easing'
+  | '--ds-icon-size-md'
+  | '--ds-icon-size-lg'
+  | '--ds-breakpoint-tablet'
+  | '--ds-breakpoint-desktop'
+  | '--ds-grid-gutter'
+  | '--ds-grid-max-width'
+  | '--ds-layout-header-height'
+  | '--ds-layout-sidebar-width'
+  | '--ds-layout-inspector-width'
+  | '--ds-layout-stage-padding'
+  | '--ps-creative-stage-background'
+  | '--ps-creative-stage-border'
+  | '--ps-creative-stage-shadow'
+  | '--ps-creative-stage-padding'
+  | '--ps-creative-hud-text'
+  | '--ps-creative-hud-opacity'
+  | '--ps-creative-transport-background'
+  | '--ps-creative-transport-border'
+  | '--ps-creative-transport-shadow'
+  | '--ps-creative-visualizer-background'
+  | '--ps-creative-visualizer-border'
+  | '--ps-creative-visualizer-shadow'
+  | '--ps-creative-ascii-foreground'
+  | '--ps-creative-ascii-background'
+  | '--ps-creative-ascii-glow'
+  | '--ps-creative-waveform-line'
+  | '--ps-creative-waveform-fill'
+  | '--ps-creative-waveform-background'
+  | '--ps-creative-midi-active'
+  | '--ps-creative-midi-idle'
+  | '--ps-creative-midi-learn'
+  | '--ps-creative-performance-chrome-opacity'
+  | '--ps-creative-performance-background'
+  | '--ps-creative-instrument-gutter'
+  | '--ps-creative-instrument-background'
+  | '--ps-creative-preset-browser-background'
+  | '--ps-creative-preset-browser-border'
+  | '--ps-creative-preset-browser-active-border'
+  | '--ps-creative-preset-browser-radius'
+  | '--ps-creative-inspector-background'
+  | '--ps-creative-inspector-border'
+  | '--ps-creative-inspector-shadow'
+  | '--ps-creative-overlay-backdrop'
+  | '--ps-creative-overlay-shadow'
+  | '--ps-creative-overlay-radius'
+  | '--ps-creative-glass-background'
+  | '--ps-creative-glass-blur'
+  | '--ps-creative-glow-shadow'
+  | '--ps-creative-glow-accent'
+  | '--ps-creative-focus-ring-color'
+  | '--ps-creative-focus-ring-width'
+  | '--ps-creative-focus-ring-shadow'
+  | '--ps-creative-selection-background'
+  | '--ps-creative-selection-border'
+  | '--ps-creative-selection-text';
 
 export const dsCssVars = {
   'color.primary.default': '--ds-color-primary',
@@ -185,6 +304,9 @@ export const dsCssVars = {
   'color.overlay.glass': '--ds-color-overlay-glass',
   'color.overlay.focus-outline': '--ds-color-overlay-focus-outline',
   'color.decorative.favorite': '--ds-color-favorite',
+  'color.brand.primary.500': '--ds-color-brand-primary-500',
+  'color.brand.primary.700': '--ds-color-brand-primary-700',
+  'color.brand.primary.900': '--ds-color-brand-primary-900',
   'color.status.success': '--ds-color-success',
   'color.status.warning': '--ds-color-warning',
   'color.status.error': '--ds-color-error',
@@ -234,8 +356,19 @@ export const dsCssVars = {
   'space.60': '--ds-space-60',
   'space.68': '--ds-space-68',
   'space.72': '--ds-space-72',
+  'space.80': '--ds-space-80',
+  'space.96': '--ds-space-96',
+  'space.128': '--ds-space-128',
+  'space.16': '--ds-space-16',
+  'space.24': '--ds-space-24',
+  'space.32': '--ds-space-32',
+  'space.48': '--ds-space-48',
+  'space.64': '--ds-space-64',
   'space.999': '--ds-space-999',
   'radius.xs': '--ds-radius-xs',
+  'radius.none': '--ds-radius-none',
+  'radius.md': '--ds-radius-md',
+  'radius.full': '--ds-radius-full',
   'radius.sm': '--ds-radius-sm',
   'radius.default': '--ds-radius-default',
   'radius.lg': '--ds-radius-lg',
@@ -288,6 +421,111 @@ export const dsCssVars = {
   'product.shadow-overlay': '--ps-shadow-overlay',
   'product.shadow-sidebar': '--ps-shadow-sidebar',
   'product.shadow-panel': '--ps-shadow-panel',
+  'fontSize.xs': '--ds-font-size-xs',
+  'fontSize.sm': '--ds-font-size-sm',
+  'fontSize.md': '--ds-font-size-md',
+  'fontSize.lg': '--ds-font-size-lg',
+  'fontSize.xl': '--ds-font-size-xl',
+  'fontSize.2xl': '--ds-font-size-2xl',
+  'fontSize.3xl': '--ds-font-size-3xl',
+  'fontSize.4xl': '--ds-font-size-4xl',
+  'lineHeight.tight': '--ds-line-height-tight-scale',
+  'lineHeight.normal': '--ds-line-height-normal',
+  'lineHeight.relaxed': '--ds-line-height-relaxed-scale',
+  'lineHeight.loose': '--ds-line-height-loose',
+  'letterSpacing.tighter': '--ds-letter-spacing-tighter',
+  'letterSpacing.tight': '--ds-letter-spacing-tight',
+  'letterSpacing.normal': '--ds-letter-spacing-normal',
+  'letterSpacing.wide': '--ds-letter-spacing-wide',
+  'letterSpacing.wider': '--ds-letter-spacing-wider',
+  'size.xs': '--ds-size-xs',
+  'size.sm': '--ds-size-sm',
+  'size.md': '--ds-size-md',
+  'size.lg': '--ds-size-lg',
+  'size.xl': '--ds-size-xl',
+  'size.xxl': '--ds-size-xxl',
+  'opacity.0': '--ds-opacity-0',
+  'opacity.50': '--ds-opacity-50',
+  'opacity.100': '--ds-opacity-100',
+  'borderWidth.hairline': '--ds-border-width-hairline',
+  'borderWidth.thin': '--ds-border-width-thin',
+  'borderWidth.medium': '--ds-border-width-medium',
+  'borderWidth.thick': '--ds-border-width-thick',
+  'stroke.subtle': '--ds-stroke-subtle',
+  'stroke.default': '--ds-stroke-default',
+  'stroke.strong': '--ds-stroke-strong',
+  'stroke.emphasis': '--ds-stroke-emphasis',
+  'shadow.xs': '--ds-shadow-xs',
+  'shadow.xl': '--ds-shadow-xl',
+  'shadow.glow': '--ds-shadow-glow',
+  'shadow.neon': '--ds-shadow-neon',
+  'blur.sm': '--ds-blur-sm',
+  'blur.md': '--ds-blur-md',
+  'blur.lg': '--ds-blur-lg',
+  'zIndex.floating': '--ds-z-floating',
+  'zIndex.overlay': '--ds-z-overlay',
+  'zIndex.modal': '--ds-z-modal',
+  'duration.fast': '--ds-duration-fast',
+  'duration.normal': '--ds-duration-normal',
+  'easing.standard': '--ds-easing-standard',
+  'easing.emphasized': '--ds-easing-emphasized',
+  'motion.hover.duration': '--ds-motion-hover-duration',
+  'motion.hover.easing': '--ds-motion-hover-easing',
+  'iconSize.md': '--ds-icon-size-md',
+  'iconSize.lg': '--ds-icon-size-lg',
+  'breakpoint.tablet': '--ds-breakpoint-tablet',
+  'breakpoint.desktop': '--ds-breakpoint-desktop',
+  'grid.gutter': '--ds-grid-gutter',
+  'grid.maxWidth': '--ds-grid-max-width',
+  'layout.headerHeight': '--ds-layout-header-height',
+  'layout.sidebarWidth': '--ds-layout-sidebar-width',
+  'layout.inspectorWidth': '--ds-layout-inspector-width',
+  'layout.stagePadding': '--ds-layout-stage-padding',
+  'creative.stage.background': '--ps-creative-stage-background',
+  'creative.stage.border': '--ps-creative-stage-border',
+  'creative.stage.shadow': '--ps-creative-stage-shadow',
+  'creative.stage.padding': '--ps-creative-stage-padding',
+  'creative.hud.text': '--ps-creative-hud-text',
+  'creative.hud.opacity': '--ps-creative-hud-opacity',
+  'creative.transport.background': '--ps-creative-transport-background',
+  'creative.transport.border': '--ps-creative-transport-border',
+  'creative.transport.shadow': '--ps-creative-transport-shadow',
+  'creative.visualizer.background': '--ps-creative-visualizer-background',
+  'creative.visualizer.border': '--ps-creative-visualizer-border',
+  'creative.visualizer.shadow': '--ps-creative-visualizer-shadow',
+  'creative.ascii.foreground': '--ps-creative-ascii-foreground',
+  'creative.ascii.background': '--ps-creative-ascii-background',
+  'creative.ascii.glow': '--ps-creative-ascii-glow',
+  'creative.waveform.line': '--ps-creative-waveform-line',
+  'creative.waveform.fill': '--ps-creative-waveform-fill',
+  'creative.waveform.background': '--ps-creative-waveform-background',
+  'creative.midi.active': '--ps-creative-midi-active',
+  'creative.midi.idle': '--ps-creative-midi-idle',
+  'creative.midi.learn': '--ps-creative-midi-learn',
+  'creative.performance.chrome-opacity': '--ps-creative-performance-chrome-opacity',
+  'creative.performance.background': '--ps-creative-performance-background',
+  'creative.instrument.gutter': '--ps-creative-instrument-gutter',
+  'creative.instrument.background': '--ps-creative-instrument-background',
+  'creative.presetBrowser.background': '--ps-creative-preset-browser-background',
+  'creative.presetBrowser.border': '--ps-creative-preset-browser-border',
+  'creative.presetBrowser.active-border': '--ps-creative-preset-browser-active-border',
+  'creative.presetBrowser.radius': '--ps-creative-preset-browser-radius',
+  'creative.inspector.background': '--ps-creative-inspector-background',
+  'creative.inspector.border': '--ps-creative-inspector-border',
+  'creative.inspector.shadow': '--ps-creative-inspector-shadow',
+  'creative.overlay.backdrop': '--ps-creative-overlay-backdrop',
+  'creative.overlay.shadow': '--ps-creative-overlay-shadow',
+  'creative.overlay.radius': '--ps-creative-overlay-radius',
+  'creative.glass.background': '--ps-creative-glass-background',
+  'creative.glass.blur': '--ps-creative-glass-blur',
+  'creative.glow.shadow': '--ps-creative-glow-shadow',
+  'creative.glow.accent': '--ps-creative-glow-accent',
+  'creative.focusRing.color': '--ps-creative-focus-ring-color',
+  'creative.focusRing.width': '--ps-creative-focus-ring-width',
+  'creative.focusRing.shadow': '--ps-creative-focus-ring-shadow',
+  'creative.selection.background': '--ps-creative-selection-background',
+  'creative.selection.border': '--ps-creative-selection-border',
+  'creative.selection.text': '--ps-creative-selection-text',
 } as const;
 
 export type DsTokenPath = keyof typeof dsCssVars;

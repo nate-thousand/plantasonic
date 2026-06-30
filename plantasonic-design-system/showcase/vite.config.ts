@@ -33,6 +33,7 @@ export default defineConfig({
       { find: '@ds/primitives', replacement: path.resolve(__dirname, '../src/primitives/index.ts') },
       { find: '@ds/motion', replacement: path.resolve(__dirname, '../src/motion/index.ts') },
       { find: '@ds/instrument', replacement: path.resolve(__dirname, '../src/instrument/index.ts') },
+      { find: '@ds/creative-workspace', replacement: path.resolve(__dirname, '../src/creative-workspace/index.ts') },
       { find: '@ds/app', replacement: path.resolve(__dirname, '../src/app/index.ts') },
       { find: '@ds', replacement: path.resolve(__dirname, '..') },
     ],

@@ -52,7 +52,7 @@ describe('AI layer — knowledge graph & impact', () => {
   it('builds a graph with nodes and edges', async () => {
     const { getKnowledgeGraph } = await import('../src/ai/index.ts');
     const kg = getKnowledgeGraph();
-    assert.equal(kg.nodes.length, 193);
+    assert.equal(kg.nodes.length, 312);
     assert.ok(kg.edges.length > 0);
     for (const e of kg.edges) {
       assert.ok(kg.nodes.some((n) => n.id === e.from));
@@ -178,6 +178,6 @@ describe('AI layer — generated context export', () => {
       assert.ok(existsSync(join(dir, f)), `missing generated/ai/${f}`);
     }
     const index = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8'));
-    assert.equal(index.summary.total, 193);
+    assert.equal(index.summary.total, 312);
   });
 });

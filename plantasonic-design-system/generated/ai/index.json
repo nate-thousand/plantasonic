@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T00:38:58.795Z",
+  "generatedAt": "2026-06-30T03:02:05.303Z",
   "sdkVersion": "1.5.0",
   "metadataSpecVersion": "1.0.0",
   "description": "Plantasonic Design System — AI context manifest. Machine-readable source of truth.",
@@ -8,9 +8,9 @@
     "primitive": 17,
     "layout": 9,
     "pattern": 12,
-    "token": 141,
+    "token": 260,
     "theme": 2,
-    "total": 193
+    "total": 312
   },
   "files": [
     "components.json",

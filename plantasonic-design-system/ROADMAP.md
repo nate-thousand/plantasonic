@@ -238,9 +238,18 @@ compatible: the standard navigation shell is unchanged.
 - Tokens + `scss/instrument.scss`; showcase "Creative Framework" sections; tests + quality gates
 - Docs: [Creative Application](./docs/platform/CREATIVE_APPLICATION_GUIDE.md), [Instrument Shell](./docs/platform/INSTRUMENT_SHELL_GUIDE.md), [Workspace](./docs/platform/WORKSPACE_GUIDE.md), [Panel](./docs/platform/PANEL_GUIDE.md), [Transport](./docs/platform/TRANSPORT_GUIDE.md), [Canvas](./docs/platform/CANVAS_GUIDE.md), [Presentation Mode](./docs/platform/PRESENTATION_MODE_GUIDE.md), [Touch Mode](./docs/platform/TOUCH_MODE_GUIDE.md), [Application Architecture](./docs/platform/APPLICATION_ARCHITECTURE_GUIDE.md)
 
+**Release B — Creative Workspace layer ✅ (v1.0.1, 2026-06-29)**
+
+- Creative Workspace — `plantasonic-design-system/creative-workspace`, `scss/creative-workspace.scss`
+- Five layout presets: instrument, visualizer, installation, presentation, studio
+- Instrument workspace regions: fullscreen stage, floating transport, floating inspector, preset browser, status HUD, optional command palette
+- Floating surface primitives + `bindCreativeWorkspace()` behavior wiring
+- Showcase Creative Workspace sections + layout diagrams
+- Docs: [Creative Workspace Guide](./docs/platform/CREATIVE_WORKSPACE_GUIDE.md), [Studio Workspace Guide](./docs/platform/STUDIO_WORKSPACE_GUIDE.md)
+
 **Planned releases**
 
-- Release B — Full floating engine (multi-monitor, auto-hide, magnetic snap) + workspace-preset manager (multiple saved layouts; presentation/dev/compact presets with UI)
+- Release C — Full floating engine (multi-monitor, auto-hide, magnetic snap) + workspace-preset manager (multiple saved layouts; presentation/dev/compact presets with UI)
 - Release C — Device input backends: Web MIDI, Gamepad API, pen pressure/tilt — as adapters on the Release A input API
 - Release D — Advanced inspector panels (automation, MIDI-learn, presets) + deeper output metrics (GPU/CPU sampling, recording/streaming integrations)
 - Release E — Shipped renderer adapters (Three.js, PixiJS, ASCII) on the canvas mount API

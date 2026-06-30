@@ -2,8 +2,8 @@
  * Preset world registry — single source of truth for audiovisual worlds.
  */
 
-import { DEFAULT_CONTROLS, type ControlValues } from '@/runtime/types.ts';
-import type { PresetId } from '@/runtime/types.ts';
+import { DEFAULT_CONTROLS, type ControlValues } from './controls.ts';
+import type { PresetId } from './controls.ts';
 import type { PresetManifest, PresetWorld, PresetWorldMeta } from './types.ts';
 import { PRESET_WORLDS } from './worlds/index.ts';
 

@@ -28,6 +28,9 @@ export const NAV_GROUPS = [
 
 export const CREATIVE_CATEGORIES = [
   { id: 'instrument-shell', label: 'Instrument Shell', complete: true },
+  { id: 'creative-workspace', label: 'Creative Workspace', complete: true },
+  { id: 'creative-workspace-instrument', label: 'Instrument Workspace', complete: true },
+  { id: 'creative-workspace-presets', label: 'Workspace Presets', complete: true },
   { id: 'creative-regions', label: 'Workspace Regions', complete: true },
   { id: 'creative-transport', label: 'Transport', complete: true },
   { id: 'creative-canvas', label: 'Canvas System', complete: true },

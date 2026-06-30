@@ -1,5 +1,5 @@
 /**
- * Platform client verification — manifest, engine packages, AI context.
+ * Platform client verification — manifest, engine packages, platform SDK wiring.
  * Run: npm run verify:platform
  */
 import { readFileSync } from 'node:fs';
@@ -34,6 +34,13 @@ function main(): void {
   );
   assert(dsPkg.version.startsWith('1.'), `design system must be v1.x (got ${dsPkg.version})`);
 
+  for (const dep of ['@plantasonic/platform', '@plantasonic/platform-types', '@plantasonic/platform-demo']) {
+    assert(
+      pkg.dependencies[dep]?.startsWith('file:'),
+      `package.json must link ${dep} to plantasonic-platform`,
+    );
+  }
+
   for (const engineId of manifest.engines) {
     const { package: npmName } = installEngine(engineId);
     if (npmName) {
@@ -44,10 +51,10 @@ function main(): void {
     }
   }
 
-  const platformServices = readFileSync(resolve(root, 'src/platform/services.ts'), 'utf8');
+  const bootstrapTs = readFileSync(resolve(root, 'src/platform-consumer/bootstrap.ts'), 'utf8');
   assert(
-    platformServices.includes('plantasonic-design-system/platform/services'),
-    'src/platform/services.ts must consume design system createPlatformServices',
+    bootstrapTs.includes('mountInstrumentApp'),
+    'platform consumer must mount via @plantasonic/platform-demo',
   );
 
   const context = buildProjectContext(manifest);

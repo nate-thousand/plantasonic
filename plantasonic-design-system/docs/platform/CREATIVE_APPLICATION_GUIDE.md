@@ -18,6 +18,7 @@ behavior, and input plumbing.
 | Import | Purpose |
 |---|---|
 | `plantasonic-design-system/instrument` | Regions, transport, canvas mounts, inspector + status registries, modes, floating, input |
+| `plantasonic-design-system/creative-workspace` | Layout presets (instrument, visualizer, installation, presentation, studio) |
 | `plantasonic-design-system/app` | `createApplication()` SDK |
 | `plantasonic-design-system/scss/instrument.scss` | Instrument shell + region styles (token-driven) |
 | `plantasonic-design-system/shell` | `renderApplicationShell({ variant: 'instrument' })` |
@@ -47,6 +48,7 @@ mountCanvas(document.getElementById('stage')!, canvas2dAdapter((g, ctx) => {
 
 ## Building blocks
 
+- **[Creative Workspace Guide](./CREATIVE_WORKSPACE_GUIDE.md)** — layout presets between shell and content.
 - **[Instrument Shell Guide](./INSTRUMENT_SHELL_GUIDE.md)** — the canvas-first shell variant.
 - **[Workspace Guide](./WORKSPACE_GUIDE.md)** — standardized regions and modes.
 - **[Panel Guide](./PANEL_GUIDE.md)** — inspector panels + floating panels.

@@ -2,7 +2,7 @@
  * Unified preset world types — one audiovisual identity per preset.
  */
 
-import type { ControlValues, PresetId } from '@/runtime/types.ts';
+import type { ControlValues, PresetId } from './controls.ts';
 import type {
   AnimationCurve,
   GlyphFamily,

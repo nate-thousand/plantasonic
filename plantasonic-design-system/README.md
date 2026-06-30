@@ -165,8 +165,43 @@ await app.mount(document.getElementById('root'));
 ```
 
 - [Creative Application Guide](./docs/platform/CREATIVE_APPLICATION_GUIDE.md) — start here
-- [Instrument Shell](./docs/platform/INSTRUMENT_SHELL_GUIDE.md) · [Workspace](./docs/platform/WORKSPACE_GUIDE.md) · [Panels](./docs/platform/PANEL_GUIDE.md) · [Transport](./docs/platform/TRANSPORT_GUIDE.md) · [Canvas](./docs/platform/CANVAS_GUIDE.md)
+- [Creative Workspace](./docs/platform/CREATIVE_WORKSPACE_GUIDE.md) · [Instrument Shell](./docs/platform/INSTRUMENT_SHELL_GUIDE.md) · [Workspace](./docs/platform/WORKSPACE_GUIDE.md) · [Panels](./docs/platform/PANEL_GUIDE.md) · [Transport](./docs/platform/TRANSPORT_GUIDE.md) · [Canvas](./docs/platform/CANVAS_GUIDE.md)
 - [Presentation Mode](./docs/platform/PRESENTATION_MODE_GUIDE.md) · [Touch Mode](./docs/platform/TOUCH_MODE_GUIDE.md) · [Application Architecture](./docs/platform/APPLICATION_ARCHITECTURE_GUIDE.md)
+
+### Creative Workspace (layout presets)
+
+Reusable layouts between the Application Shell and application content. The
+stage is always dominant; transport, inspector, browser, HUD, and command
+palette are floating overlays — not permanent dashboard panels.
+
+```typescript
+import { renderCreativeWorkspace, bindCreativeWorkspace } from 'plantasonic-design-system/creative-workspace';
+import { renderApplicationShell } from 'plantasonic-design-system/shell';
+import { renderTransport, renderCanvasMount } from 'plantasonic-design-system/instrument';
+
+const workspace = renderCreativeWorkspace({
+  preset: 'instrument',
+  stage: renderCanvasMount(),
+  transport: renderTransport({ state: { tempo: 120 } }),
+  inspector: '<div class="ps-inspector">…</div>',
+  presetBrowser: '<nav>…</nav>',
+  statusHud: '<span>FPS 60</span>',
+});
+
+document.getElementById('root')!.innerHTML = renderApplicationShell(
+  { variant: 'instrument', title: 'My App' },
+  workspace,
+);
+bindCreativeWorkspace(document.querySelector('.ps-creative-workspace'));
+```
+
+Presets: `instrument` · `visualizer` · `installation` · `presentation` · `studio`
+
+```scss
+@import 'plantasonic-design-system/scss/creative-workspace';
+```
+
+- [Creative Workspace Guide](./docs/platform/CREATIVE_WORKSPACE_GUIDE.md) — presets, floating surfaces, layout diagrams
 
 ### AI-Native Platform (Phase 13)
 

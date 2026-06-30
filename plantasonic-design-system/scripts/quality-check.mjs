@@ -142,6 +142,26 @@ if (!/renderNavigationFrame/.test(shellIndex) || !/variant === 'instrument'/.tes
 }
 if (creativeOk) console.log('✓ Creative Application Framework present (instrument shell, regions, transport, canvas, inspector, status, modes, floating, input, SDK)');
 
+// Creative Workspace layer — layout presets between shell and content
+const cwFiles = [
+  ['src/creative-workspace/layouts.ts', /export function renderCreativeWorkspace/],
+  ['src/creative-workspace/surfaces.ts', /export function renderFullscreenStage/],
+  ['src/creative-workspace/bind.ts', /export function bindCreativeWorkspace/],
+  ['src/creative-workspace/index.ts', /WORKSPACE_PRESETS/],
+  ['scss/creative-workspace.scss', /\.ps-creative-workspace/],
+  ['docs/platform/CREATIVE_WORKSPACE_GUIDE.md', /renderCreativeWorkspace/],
+];
+let cwOk = true;
+for (const [rel, pattern] of cwFiles) {
+  const content = readFileSync(join(ROOT, rel), 'utf8');
+  if (!pattern.test(content)) {
+    console.error(`✗ ${rel} missing expected creative-workspace content`);
+    ok = false;
+    cwOk = false;
+  }
+}
+if (cwOk) console.log('✓ Creative Workspace layer present (5 presets, floating surfaces, bindCreativeWorkspace)');
+
 // AI-native platform (Phase 13) — metadata, registry, SDK, generators, context export
 const aiFiles = [
   ['src/ai/metadata.ts', /export interface ComponentMetadata/],
@@ -224,8 +244,10 @@ const requiredExports = [
   './scss/components.scss',
   './scss/motion.scss',
   './instrument',
+  './creative-workspace',
   './app',
   './scss/instrument.scss',
+  './scss/creative-workspace.scss',
   './ai',
   './prototype',
   './platform',
@@ -241,7 +263,7 @@ if (missingExports.length) {
 }
 
 const showcaseSectionsDir = join(ROOT, 'showcase/src/sections');
-for (const section of ['primitives.ts', 'components.ts', 'motion-system.ts', 'creative.ts']) {
+for (const section of ['primitives.ts', 'components.ts', 'motion-system.ts', 'creative.ts', 'creative-workspace.ts']) {
   if (!readdirSync(showcaseSectionsDir).includes(section)) {
     console.error(`✗ Missing showcase section: ${section}`);
     ok = false;

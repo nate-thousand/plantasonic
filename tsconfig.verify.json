@@ -3,6 +3,13 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["src/*"],
+      "@plantasonic/platform": ["../plantasonic-platform/packages/sdk/src/index.ts"],
+      "@plantasonic/platform-types": [
+        "../plantasonic-platform/packages/shared-types/src/index.ts"
+      ],
+      "@plantasonic/platform-demo/instrument-app": [
+        "../plantasonic-platform/apps/demo/src/instrumentApp.ts"
+      ],
       "ascii-visual-engine": ["node_modules/ascii-visual-engine/src/index.ts"],
       "plantasonic-design-system/shell": ["plantasonic-design-system/src/shell/index.ts"],
       "plantasonic-design-system/motion": ["plantasonic-design-system/src/motion/index.ts"],

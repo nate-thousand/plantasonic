@@ -30,6 +30,7 @@ src/components  → scss/components.scss    Layer 1 — reusable UI components
 src/motion      → scss/motion.scss        Layer 3 — motion presets + tokens
 src/shell       → scss/application-shell  Application Shell (composes the above)
 src/instrument  → scss/instrument.scss    Creative Application Framework (instrument shell + regions)
+src/creative-workspace → scss/creative-workspace.scss  Creative Workspace layouts (between shell and content)
 src/app         → (uses /shell + /instrument)  createApplication() SDK
 ```
 
@@ -41,6 +42,7 @@ Public JS entrypoints (mirroring `./shell`):
 | `plantasonic-design-system/components` | 1 — [Component Library](./COMPONENT_LIBRARY.md) |
 | `plantasonic-design-system/motion` | 3 — [Motion System](./MOTION_SYSTEM.md) |
 | `plantasonic-design-system/instrument` | Creative Application Framework — [Creative Application Guide](./CREATIVE_APPLICATION_GUIDE.md) |
+| `plantasonic-design-system/creative-workspace` | Creative Workspace layouts — [Creative Workspace Guide](./CREATIVE_WORKSPACE_GUIDE.md) |
 | `plantasonic-design-system/app` | Application SDK — [Application Architecture](./APPLICATION_ARCHITECTURE_GUIDE.md) |
 | `plantasonic-design-system/ai` | AI-native registry, validation, generators — [AI Architecture](./AI_ARCHITECTURE.md) |
 | `plantasonic-design-system/prototype` | Prototype scaffolding — [Prototype Platform](./PROTOTYPE_PLATFORM_GUIDE.md) |
@@ -50,8 +52,11 @@ Public JS entrypoints (mirroring `./shell`):
 Components compose primitives and motion; the shell composes components. The
 **instrument** entrypoint adds a canvas-first shell variant plus regions,
 transport, canvas mounts, inspector/status registries, modes, floating, and a
-unified input layer; the **app** entrypoint (`createApplication()`) orchestrates
-the shell and these subsystems. The **ai**, **prototype**, **platform**, and
+unified input layer. The **creative-workspace** entrypoint adds reusable layout
+presets (instrument, visualizer, installation, presentation, studio) that sit
+between the shell and application content — stage-first with floating overlays.
+The **app** entrypoint (`createApplication()`) orchestrates the shell and these
+subsystems. The **ai**, **prototype**, **platform**, and
 **studio** entrypoints stack additive capabilities: machine-readable metadata,
 one-command scaffolding, shared ecosystem infrastructure, and full-lifecycle
 orchestration from `project.json`. `renderApplicationShell()` branches on
@@ -91,6 +96,9 @@ Public APIs are frozen as of `1.0.0`. Classification:
 | Internal | `src/shell/internal/`, `scripts/` |
 | Experimental | Metadata-only patterns, engine stubs without npm packages |
 
-No new architectural layers will be added in the 1.x series. Future platform work is **maintenance, performance, and documentation** — application development moves to consuming repos.
+No new architectural layers will be added in the 1.x series except additive
+layout layers that compose existing public APIs (e.g. Creative Workspace).
+Future platform work is **maintenance, performance, and documentation** —
+application development moves to consuming repos.
 
 See [Platform Audit Report](./PLATFORM_AUDIT_REPORT.md) and [Governance](./GOVERNANCE.md).
