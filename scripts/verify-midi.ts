@@ -22,6 +22,7 @@ function assert(condition: boolean, message: string): void {
 function createTestContext(
   dispatch: InteractionModuleContext['dispatch'],
   overrides: Partial<ReturnType<InteractionModuleContext['getSettings']>> = {},
+  isPlaying: () => boolean = () => true,
 ): InteractionModuleContext {
   return {
     dispatch,
@@ -38,6 +39,7 @@ function createTestContext(
       midiLearnMappings: createDefaultMidiLearnMappings(),
       ...overrides,
     }),
+    isPlaying,
     onSettingsChange: () => () => undefined,
     updateSettings: () => undefined,
   };
@@ -73,10 +75,14 @@ async function main(): Promise<void> {
 
   const router = new InputRouter(runtime);
   const dispatches: string[] = [];
-  const context = createTestContext((event) => {
-    dispatches.push(event.action.type);
-    router.route(event);
-  });
+  const context = createTestContext(
+    (event) => {
+      dispatches.push(event.action.type);
+      router.route(event);
+    },
+    {},
+    () => runtime.getState().isPlaying,
+  );
 
   const routerState: MidiMessageRouterState = {
     sustainPedal: false,
@@ -241,6 +247,24 @@ async function main(): Promise<void> {
   assert(
     Math.abs(runtime.getState().controls.mold - 64 / 127) < 0.01,
     'Learn applies CC value to engine on complete',
+  );
+
+  await runtime.stop();
+  const bloomBeforeIdleCc = runtime.getState().controls.bloom;
+  routeParsedMidiMessage(
+    { type: 'cc', channel: 1, cc: 1, value: 127 },
+    {
+      context: createTestContext((event) => router.route(event), {}, () => false),
+      channelFilter: 0,
+      velocityCurve: 'linear',
+      learnTarget: null,
+      completeLearn: () => null,
+      state: routerState,
+    },
+  );
+  assert(
+    runtime.getState().controls.bloom === bloomBeforeIdleCc,
+    'CC performance mapping ignored when transport stopped',
   );
 
   await runtime.destroy();

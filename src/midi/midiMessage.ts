@@ -54,7 +54,16 @@ export function parseMidiMessage(data: Uint8Array | readonly number[]): ParsedMi
 /** Maps 14-bit pitch bend (0–16383, center ≈8192) to a 0–1 brightness control. */
 export function pitchBendToBrightness(bend14: number): number {
   const clamped = Math.min(16383, Math.max(0, bend14));
-  return clamped / 16383;
+  const centered = clamped - 8192;
+  if (Math.abs(centered) < 256) {
+    return 0.5;
+  }
+  return (clamped / 16383);
+}
+
+/** CC/pitch-bend performance changes only apply while transport is running. */
+function shouldApplyPerformanceMidi(context: InteractionModuleContext): boolean {
+  return context.isPlaying();
 }
 
 export interface MidiMessageRouterState {
@@ -96,6 +105,7 @@ export function routeParsedMidiMessage(
       releaseMidiNote(context, message.note, state);
       break;
     case 'pitchBend':
+      if (!shouldApplyPerformanceMidi(context)) break;
       context.dispatch({
         action: {
           type: 'setControl',
@@ -145,6 +155,10 @@ function handleCcMessage(
     if (mapping) {
       applyCcMapping(context, mapping, value);
     }
+    return;
+  }
+
+  if (!shouldApplyPerformanceMidi(context)) {
     return;
   }
 

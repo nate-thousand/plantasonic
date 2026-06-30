@@ -3,7 +3,7 @@
  */
 
 import type { PresetLoadResult, StateSyncSoundAdapter } from '../../src/audio/soundAdapter.ts';
-import type { ParameterPath, ParameterValue, PresetId } from '../../src/runtime/types.ts';
+import type { ControlValues, ParameterPath, ParameterValue, PresetId } from '../../src/runtime/types.ts';
 import type { RuntimeState } from '../../src/runtime/types.ts';
 import { DEFAULT_CONTROLS } from '../../src/runtime/types.ts';
 
@@ -48,6 +48,14 @@ export class MockSoundAdapter implements StateSyncSoundAdapter {
   setParameter(path: ParameterPath, value: ParameterValue): void {
     this.setParameterCallCount += 1;
     console.info(`${LOG_PREFIX} setParameter`, { path, value });
+  }
+
+  syncPerformanceState(controls: ControlValues, tempo: number): void {
+    this.applyStateCallCount += 1;
+    if (this.lastState) {
+      this.lastState = { ...this.lastState, controls: { ...controls }, tempo };
+    }
+    console.info(`${LOG_PREFIX} syncPerformanceState`, { tempo, controls });
   }
 
   applyState(state: Readonly<RuntimeState>): void {

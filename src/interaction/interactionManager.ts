@@ -175,6 +175,7 @@ export class InteractionManager {
         this.dispatch(event);
       },
       getSettings: () => this.settings.getSettings(),
+      isPlaying: () => this.runtime.getState().isPlaying,
       onSettingsChange: (listener) =>
         this.settings.subscribe(() => {
           listener();

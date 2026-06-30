@@ -36,6 +36,8 @@ export interface DeviceConnectionState {
 export interface InteractionModuleContext {
   dispatch: (event: InteractionEvent) => void;
   getSettings: () => Readonly<InteractionSettingsSnapshot>;
+  /** True when generative transport is running (sound + visual engines started). */
+  isPlaying: () => boolean;
   onSettingsChange: (listener: () => void) => () => void;
   updateSettings: (patch: Partial<InteractionSettingsSnapshot>) => void;
 }

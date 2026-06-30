@@ -75,7 +75,7 @@ export function renderAppLayout(): string {
               ${presetOptions}
             </select>
           </label>
-          <button type="button" class="btn ds-c-btn ds-c-btn--ghost ds-c-btn--sm" id="ps-midi-toggle" data-ps-midi-toggle aria-pressed="true">MIDI</button>
+          <button type="button" class="btn ds-c-btn ds-c-btn--ghost ds-c-btn--sm" id="ps-midi-toggle" data-ps-midi-toggle aria-pressed="false">MIDI</button>
           <output id="ps-status" class="ps-app-bar__status" aria-live="polite">Ready</output>
           <button type="button" class="btn ds-c-btn ds-c-btn--subtle ds-c-btn--sm" id="ps-advanced-toggle" data-ps-advanced-toggle aria-expanded="false">Controls</button>
         </div>

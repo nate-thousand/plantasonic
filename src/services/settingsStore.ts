@@ -21,7 +21,7 @@ export interface InteractionSettings {
 }
 
 export const DEFAULT_INTERACTION_SETTINGS: InteractionSettings = {
-  midiEnabled: true,
+  midiEnabled: false,
   keyboardEnabled: true,
   touchEnabled: true,
   mouseSensitivity: 1,

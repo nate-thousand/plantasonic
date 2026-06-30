@@ -61,6 +61,8 @@ export interface SoundAdapter {
 /** Adapters that receive full runtime state snapshots. */
 export interface StateSyncSoundAdapter extends SoundAdapter {
   applyState(state: Readonly<RuntimeState>): void;
+  /** Push merged preset/world controls to the engine cache and active species. */
+  syncPerformanceState(controls: ControlValues, tempo: number): void;
 }
 
 type ControlCache = Record<ControlName, number>;
@@ -182,6 +184,19 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
     }
   }
 
+  syncPerformanceState(controls: ControlValues, tempo: number): void {
+    this.controlCache = createControlCache(controls);
+    this.tempoCache = clampTempo(tempo);
+
+    const engine = this.engine;
+    if (!engine) return;
+
+    engine.applyEcology(runtimeControlsToEcology(this.controlCache));
+    if (this.audioReady) {
+      this.applyTempo(engine, this.tempoCache);
+    }
+  }
+
   applyState(state: Readonly<RuntimeState>): void {
     const engine = this.engine;
     if (!engine) return;
@@ -193,8 +208,10 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
       }
     }
 
-    if (this.tempoCache !== state.tempo) {
+    if (this.tempoCache !== state.tempo && this.audioReady) {
       this.applyTempo(engine, state.tempo);
+    } else if (this.tempoCache !== state.tempo) {
+      this.tempoCache = clampTempo(state.tempo);
     }
   }
 
@@ -222,7 +239,9 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
 
   private syncEcologyToEngine(engine: PlantasiaEngine): void {
     engine.applyEcology(runtimeControlsToEcology(this.controlCache));
-    this.applyTempo(engine, this.tempoCache);
+    if (this.audioReady) {
+      this.applyTempo(engine, this.tempoCache);
+    }
   }
 
   private applyControl(engine: PlantasiaEngine, name: ControlName, value: number): void {
@@ -235,8 +254,9 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
   private applyTempo(engine: PlantasiaEngine, bpm: number): void {
     const tempo = clampTempo(bpm);
     if (this.tempoCache === tempo) return;
-    engine.setTempo(tempo);
     this.tempoCache = tempo;
+    if (!this.audioReady) return;
+    engine.setTempo(tempo);
   }
 
   private reportError(source: string, error: unknown, context?: Record<string, unknown>): void {
@@ -251,6 +271,10 @@ export class PlantasiaSoundAdapter implements StateSyncSoundAdapter {
  */
 export class NullSoundAdapter implements StateSyncSoundAdapter {
   applyState(_state: Readonly<RuntimeState>): void {
+    /* no-op */
+  }
+
+  syncPerformanceState(_controls: ControlValues, _tempo: number): void {
     /* no-op */
   }
 

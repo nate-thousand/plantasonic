@@ -3,7 +3,7 @@
  * The only layer permitted to communicate with both engine adapters.
  */
 
-import type { SoundAdapter } from '@/audio/soundAdapter.ts';
+import type { StateSyncSoundAdapter } from '@/audio/soundAdapter.ts';
 import type { AsciiAdapter } from '@/visuals/asciiAdapter.ts';
 import { mergeWorldDefaults, resolvePresetWorld } from '@/presets/registry.ts';
 import type {
@@ -24,12 +24,12 @@ export interface StateSyncAdapter {
 }
 
 export interface RuntimeDependencies {
-  soundAdapter: SoundAdapter & StateSyncAdapter;
+  soundAdapter: StateSyncSoundAdapter;
   asciiAdapter: AsciiAdapter & StateSyncAdapter;
 }
 
 export class Runtime {
-  private readonly soundAdapter: SoundAdapter & StateSyncAdapter;
+  private readonly soundAdapter: StateSyncSoundAdapter;
   private readonly asciiAdapter: AsciiAdapter & StateSyncAdapter;
   private readonly store = new StateStore();
   private initialized = false;
@@ -134,6 +134,8 @@ export class Runtime {
     }
 
     const { controls, tempo } = mergeWorldDefaults(world, soundResult.controls);
+
+    this.soundAdapter.syncPerformanceState(controls, tempo);
 
     this.store.commit({
       preset: world.id,
