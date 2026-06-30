@@ -6,7 +6,7 @@ A browser-based generative audiovisual instrument that combines the **Plantasia 
 
 **Production:** https://www.plantasonic.xyz
 
-**Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It is also the **first consumer** of [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.x — the public Application Shell, tokens, and Bootstrap theme come from that package, not local copies.
+**Plantasonic is both a working audiovisual instrument and the first proof of a repeatable AI-assisted product system.** It is also the **first consumer** of [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.0 — tokens, Bootstrap theme, and instrument chrome come from that package, not local copies.
 
 Plantasonic is responsible for user experience, runtime orchestration, state management, presets, performance controls, and product documentation. Engine logic, design tokens, and engineering workflow templates live in **separate repositories** — never duplicated inside this repo.
 
@@ -37,13 +37,13 @@ Plantasonic App             →  user experience
 | Layer | Location in Plantasonic |
 | ----- | ----------------------- |
 | AI Product Framework | `docs/product-framework/`, `.cursor/rules/`, `HANDOFF.md` |
-| Plantasonic Design System | `plantasonic-design-system` package → `src/shell/`, `src/styles/` — see [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) |
+| Plantasonic Design System | `plantasonic-design-system` package → `src/styles/` (tokens + instrument SCSS) — see [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) |
 | Sound Engine            | `src/audio/soundAdapter.ts` → `plantasia-sound-engine`    |
 | ASCII Visual Engine     | `src/visuals/plantasiaAsciiAdapter.ts` → `ascii-visual-engine` |
 | Visual Language         | `src/visuals/language/`, `docs/VISUAL_LANGUAGE.md`          |
 | Runtime                 | `src/runtime/` — functional API + adapter wiring          |
 | Interaction             | `src/interaction/` — unified input routing                  |
-| App Experience          | `src/ui/experience/`, `docs/USER_EXPERIENCE.md`, `docs/NAVIGATION.md` |
+| App Experience          | `src/ui/` (minimal instrument layout), `docs/USER_EXPERIENCE.md` |
 | App                     | `src/app/`, `src/ui/`, `src/presets/` (world registry)    |
 
 See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [docs/INTEGRATION_PLAN.md](./docs/INTEGRATION_PLAN.md) for the phased build plan.
@@ -53,7 +53,9 @@ See [docs/SYSTEM_OVERVIEW.md](./docs/SYSTEM_OVERVIEW.md) for layer detail and [d
 ```text
 User
   ↓
-UI Layer (Bootstrap shell, controls, layouts)
+UI Layer (minimal instrument bar + collapsible controls)
+  ↓
+Interaction Layer (MIDI, keyboard, mouse, touch)
   ↓
 Runtime (state, events, lifecycle)
   ↓
@@ -66,6 +68,41 @@ The **runtime is the only layer** permitted to communicate with both engines. UI
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full system design.
 
+## User Interface (2026-06)
+
+The app UI was rebuilt as a **minimal Plantasonic Design System instrument** — a fullscreen visualizer with a compact bottom control bar. Complexity is hidden by default.
+
+### Removed
+
+- Full application shell (`src/shell/` — sidebar nav, command palette, top bar, focus mode)
+- Legacy UI layer (`AppShell`, `ControlDock`, `InspectorPanel`, `PresetBrowser`, settings overlays, 30+ control components)
+- App-specific theme duplicates (`globals.scss`, `instrument-shell.scss`, hardcoded colors)
+
+### Added
+
+- `src/ui/layout/renderAppLayout.ts` — DS class names + token-driven layout markup
+- `src/ui/bindAppUi.ts` — wires transport, preset, MIDI, status, and advanced panel to `InteractionManager`
+- `src/styles/app-layout.scss` — layout-only styles using `--ds-*` tokens
+
+### Layout
+
+| Region | Purpose |
+| ------ | ------- |
+| `#ps-stage` | Fullscreen ASCII visualizer canvas |
+| Bottom bar | Play/stop transport, preset select, MIDI toggle, status line, Controls toggle |
+| Advanced panel | Collapsed by default — tempo + bloom/mold/density/chaos/brightness sliders |
+
+### Preserved functionality
+
+Runtime orchestration, sound engine, ASCII visual engine, preset worlds, play/stop, MIDI enable, keyboard/mouse/touch input, and engine status — all unchanged behind the interaction layer.
+
+### Polish still needed
+
+- Settings overlay (theme, input preferences) — removed with legacy shell; theme toggle remains via document bootstrap only
+- Preset browser cards, performance mode, onboarding
+- Light theme validation on instrument bar
+- Pause transport (play toggles start/stop only)
+
 ## Related Repositories
 
 Plantasonic is the product app at the center of an independent repository ecosystem. It references — but does not contain — these external projects:
@@ -76,7 +113,7 @@ Plantasonic is the product app at the center of an independent repository ecosys
 | [plantasia-sound-engine](https://github.com/nate-thousand/plantasia-sound-engine) | Audio engine library                | npm dependency via `src/audio/soundAdapter.ts`               |
 | `ascii-visual-engine`                                                             | ASCII engine library                | npm dependency via `src/visuals/plantasiaAsciiAdapter.ts`      |
 | [plantasia-engine-test](https://github.com/nate-thousand/plantasia-engine-test)   | Visual/integration reference        | Documentation and pattern reference until ASCII engine ships |
-| `plantasonic-design-system`                                                       | Design tokens, CSS variables, Bootstrap theme, application shell | npm dependency — `css/variables.css`, `scss/*`, `shell` API via `src/shell/` |
+| `plantasonic-design-system`                                                       | Design tokens, CSS variables, Bootstrap theme, instrument chrome | npm dependency — `css/variables.css`, `scss/*`, theme init via `shell` API |
 | `ai-native-design-system`                                                         | Generic predecessor (archived reference)      | Superseded by plantasonic-design-system                           |
 | `ai-product-framework`                                                            | Engineering workflow and templates  | Docs and templates at project setup                          |
 
@@ -91,9 +128,7 @@ plantasonic/
 │   ├── runtime/       State, events, orchestration
 │   ├── audio/         Sound engine adapter
 │   ├── visuals/       ASCII engine adapter
-│   ├── shell/         Design-system Application Shell integration
-│   ├── shell/         Design-system application shell integration
-│   ├── ui/            Components, layouts, controls, experience layer
+│   ├── ui/            Minimal instrument layout (stage, bar, advanced panel)
 │   ├── presets/       Preset manifest and worlds
 │   ├── interaction/   Unified input routing (MIDI, keyboard, mouse, touch)
 │   ├── midi/          Web MIDI input module
@@ -104,7 +139,7 @@ plantasonic/
 │   ├── services/      Settings persistence (interaction + app)
 │   ├── utils/         Shared utilities
 │   ├── design-system/ Integration pointer (see plantasonic-design-system package)
-│   └── styles/        Bootstrap + shell styles (consumes design system package)
+│   └── styles/        Bootstrap + DS instrument styles (consumes design system package)
 ├── docs/
 │   ├── product-framework/  AI Product Framework integration
 │   └── design-system/      Integration docs (package is source of truth)
@@ -144,7 +179,7 @@ plantasonic/
 
 ### Install
 
-Requires [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.2.1+ via npm (GitHub dependency). Local development may use a `file:` symlink at `../plantasonic-design-system` instead.
+Requires [plantasonic-design-system](https://github.com/nate-thousand/plantasonic-design-system) v1.0 via npm workspace. Local development uses the bundled `plantasonic-design-system/` workspace package.
 
 ```bash
 npm install

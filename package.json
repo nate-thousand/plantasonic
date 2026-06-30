@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "ds:tokens": "npm run tokens:build-css --workspace=plantasonic-design-system && npm run generate:scss --workspace=plantasonic-design-system",
+    "postinstall": "npm run ds:tokens",
     "predev": "npm run ds:tokens",
     "dev": "vite",
     "prebuild": "npm run ds:tokens",

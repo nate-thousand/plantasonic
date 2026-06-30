@@ -3,9 +3,13 @@
  */
 
 import gsap from 'gsap';
-import { shouldAnimate } from '@/ui/motion/motionController.ts';
 import type { AnimationCurve, VisualTransition } from '../language/types.ts';
 import { curveToEase } from '../language/motionLanguage.ts';
+
+function shouldAnimate(): boolean {
+  if (document.documentElement.hasAttribute('data-ps-motion-off')) return false;
+  return !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 export interface VisualTransitionOptions {
   animate?: boolean;

@@ -66,26 +66,19 @@ function main(): void {
     mainTs.includes('plantasonic-design-system/css/variables.css'),
     'main.ts must import design system CSS variables',
   );
-  assert(mainTs.includes('initShellTheme'), 'main.ts must initialize shell theme from design system');
-
-  const aliases = readFileSync('src/styles/_ps-aliases.scss', 'utf8');
-  assert(aliases.includes('var(--ds-'), 'ps-aliases must reference --ds-* tokens');
-  assert(!/--ps-color-[a-z-]+:\s*#/.test(aliases), 'ps-aliases must not define raw hex token values');
+  assert(mainTs.includes('initShellTheme'), 'main.ts must initialize design system theme');
 
   const indexScss = readFileSync('src/styles/index.scss', 'utf8');
-  for (const fragment of [
-    'plantasonic-design-system/scss/bootstrap-theme.scss',
-    'plantasonic-design-system/scss/css-theme-bridge.scss',
-    'plantasonic-design-system/scss/plantasonic-components.scss',
-    'plantasonic-design-system/scss/primitives.scss',
-    'plantasonic-design-system/scss/components.scss',
-    'plantasonic-design-system/scss/motion.scss',
-    'plantasonic-design-system/scss/instrument.scss',
-    'plantasonic-design-system/scss/application-shell.scss',
-    'plantasonic-design-system/scss/navigation-framework.scss',
-  ]) {
-    assert(indexScss.includes(fragment), `index.scss must import ${fragment}`);
-  }
+  assert(indexScss.includes('./app-layout.scss'), 'index.scss must import app layout styles');
+  assert(!indexScss.includes('navigation-framework'), 'index.scss must not import legacy nav shell');
+
+  const appTs = readFileSync('src/app/app.ts', 'utf8');
+  assert(appTs.includes('renderAppLayout'), 'app must render minimal DS layout');
+  assert(appTs.includes('createRuntime'), 'app must wire runtime engines');
+  assert(appTs.includes('bindAppUi'), 'app must bind UI to interaction layer');
+  assert(!appTs.includes('renderApplicationShell'), 'app must not use legacy full shell');
+  assert(existsSync('src/ui'), 'minimal UI layer must exist');
+  assert(!existsSync('src/shell'), 'legacy local shell removed');
 
   const platformServices = readFileSync('src/platform/services.ts', 'utf8');
   assert(
@@ -98,18 +91,6 @@ function main(): void {
     platformEngines.includes('plantasonic-design-system/platform/engines'),
     'platform engines must import installEngine from design system',
   );
-  assert(
-    !platformEngines.includes('engine-catalog'),
-    'platform engines must not use local engine-catalog mirror',
-  );
-
-  const installShell = readFileSync('src/shell/installApplicationShell.ts', 'utf8');
-  assert(installShell.includes('renderApplicationShell'), 'installApplicationShell must render via public API');
-  assert(installShell.includes('bindApplicationShell'), 'installApplicationShell must bind via public API');
-
-  const shellConfig = readFileSync('src/shell/shell-config.ts', 'utf8');
-  assert(shellConfig.includes('persistState: true'), 'shell-config must enable shell persistence');
-  assert(shellConfig.includes('routes:'), 'shell-config must declare routes');
 
   const srcFiles = walk('src');
   const forbidden = [

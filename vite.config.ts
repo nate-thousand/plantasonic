@@ -10,6 +10,8 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       'plantasonic-design-system/shell': resolve(dsRoot, 'src/shell/index.ts'),
       'plantasonic-design-system/motion': resolve(dsRoot, 'src/motion/index.ts'),
+      'plantasonic-design-system/instrument': resolve(dsRoot, 'src/instrument/index.ts'),
+      'plantasonic-design-system/components': resolve(dsRoot, 'src/components/index.ts'),
       'plantasonic-design-system/platform/services': resolve(dsRoot, 'src/platform/services.ts'),
       'plantasonic-design-system/platform/engines': resolve(dsRoot, 'src/platform/engines.ts'),
       'plantasonic-design-system/platform/types': resolve(dsRoot, 'src/platform/types.ts'),

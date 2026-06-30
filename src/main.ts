@@ -4,6 +4,17 @@ import '@/styles/index.scss';
 import { bootstrapDocumentTheme } from '@/services/appSettingsStore.ts';
 import { createPlantasonicApp } from '@/app/index.ts';
 
+function renderBootError(container: HTMLElement, error: unknown): void {
+  const detail = error instanceof Error ? error.message : String(error);
+  container.innerHTML = `
+    <div class="ps-boot ps-boot--error" role="alert">
+      <strong>Plantasonic could not start</strong>
+      <p>${detail.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+      <button type="button" onclick="location.reload()">Reload</button>
+    </div>
+  `;
+}
+
 bootstrapDocumentTheme();
 initShellTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
 
@@ -13,4 +24,7 @@ if (!container) {
   throw new Error('Application root element #app not found');
 }
 
-void createPlantasonicApp(container);
+createPlantasonicApp(container).catch((error: unknown) => {
+  console.error('[Plantasonic] boot failed:', error);
+  renderBootError(container, error);
+});

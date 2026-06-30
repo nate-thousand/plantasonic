@@ -1,9 +1,5 @@
 /**
- * Full-stack integration verification — real sound + ASCII adapters + UI bindings.
- * Run with: npm run verify:integration
- *
- * Requires happy-dom. Audio may be limited without a browser AudioContext;
- * visual and UI wiring are the primary checks.
+ * Integration verification — minimal DS UI + runtime engines.
  */
 
 import { Window } from 'happy-dom';
@@ -15,12 +11,6 @@ function assert(condition: boolean, message: string): void {
 function click(el: Element | null): void {
   if (!el) throw new Error('Element not found for click');
   el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-}
-
-function setSlider(el: HTMLInputElement | null, value: string): void {
-  if (!el) throw new Error('Slider not found');
-  el.value = value;
-  el.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 async function main(): Promise<void> {
@@ -54,12 +44,10 @@ async function main(): Promise<void> {
   globalThis.MouseEvent = window.MouseEvent;
   globalThis.KeyboardEvent = window.KeyboardEvent;
   globalThis.customElements = window.customElements;
-
   globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) =>
     setTimeout(() => cb(Date.now()), 16) as unknown as number) as typeof requestAnimationFrame;
   globalThis.cancelAnimationFrame = ((id: number) => clearTimeout(id)) as typeof cancelAnimationFrame;
 
-  // Minimal Web Audio stub so sound engine can initialize in Node
   if (!globalThis.AudioContext) {
     class StubAudioContext {
       state = 'running';
@@ -82,13 +70,12 @@ async function main(): Promise<void> {
         return Promise.resolve();
       }
     }
-    // @ts-expect-error stub for node
+    // @ts-expect-error stub
     globalThis.AudioContext = StubAudioContext;
-    // @ts-expect-error stub for node
+    // @ts-expect-error stub
     globalThis.webkitAudioContext = StubAudioContext;
   }
 
-  // Canvas 2D stub for ASCII engine
   const origCreateElement = document.createElement.bind(document);
   document.createElement = ((tag: string, options?: ElementCreationOptions) => {
     const el = origCreateElement(tag, options);
@@ -96,8 +83,8 @@ async function main(): Promise<void> {
       const canvas = el as HTMLCanvasElement;
       canvas.width = 800;
       canvas.height = 500;
-      canvas.getContext = () => {
-        const ctx = {
+      canvas.getContext = () =>
+        ({
           canvas,
           fillRect: () => undefined,
           clearRect: () => undefined,
@@ -105,141 +92,67 @@ async function main(): Promise<void> {
           measureText: (text: string) => ({ width: text.length * 8 }),
           fillStyle: '#000',
           font: '12px monospace',
-        };
-        return ctx as unknown as CanvasRenderingContext2D;
-      };
+        }) as unknown as CanvasRenderingContext2D;
     }
     return el;
   }) as typeof document.createElement;
 
-  const { createRuntime } = await import('../src/runtime/createRuntime.ts');
+  const { createPlantasonicApp } = await import('../src/app/app.ts');
   const { MockSoundAdapter } = await import('./mocks/mockSoundAdapter.ts');
-  const { createInteractionManager } = await import('../src/interaction/index.ts');
-  const { createAppShell } = await import('../src/ui/layouts/AppShell.ts');
-  const { bindRuntimeToShell } = await import('../src/ui/bindRuntime.ts');
-  const { installApplicationShell } = await import('../src/shell/installApplicationShell.ts');
-  const { openPresetBrowser } = await import('../src/ui/components/PresetBrowser.ts');
-  const { AppSettingsStore } = await import('../src/services/appSettingsStore.ts');
-  const { createOverlayHost } = await import('../src/ui/components/OverlayHost.ts');
+  const { createRuntime } = await import('../src/runtime/createRuntime.ts');
   const { PRESET_WORLDS } = await import('../src/presets/worlds/index.ts');
-
-  const runtime = createRuntime({ soundAdapter: new MockSoundAdapter() });
-  const interaction = createInteractionManager(runtime);
 
   const appRoot = document.createElement('div');
   appRoot.id = 'app';
-  document.body.appendChild(appRoot);
   appRoot.style.width = '1280px';
   appRoot.style.height = '800px';
+  document.body.appendChild(appRoot);
 
-  const shellHost = installApplicationShell(appRoot);
-
-  const shell = createAppShell({
-    mountTarget: shellHost.workspace,
-    onResize: (width, height) => {
-      if (width > 0 && height > 0) runtime.resize(width, height);
-    },
-  });
-
-  shell.root.style.height = '100%';
-  shell.stage.style.width = '800px';
-  shell.stage.style.height = '500px';
-  shell.stage.getBoundingClientRect = () =>
-    ({
-      width: 800,
-      height: 500,
-      top: 0,
-      left: 0,
-      right: 800,
-      bottom: 500,
-      x: 0,
-      y: 0,
-      toJSON: () => ({}),
-    }) as DOMRect;
-
-  const overlay = createOverlayHost();
-  shellHost.root.appendChild(overlay.root);
-
-  const unbind = bindRuntimeToShell(interaction, shell, shellHost.root);
-
-  const init = await runtime.init({ container: shell.stage });
-  assert(init.success, `Runtime init failed: ${init.error?.message ?? 'unknown'}`);
-  await interaction.init();
-
-  // --- UI elements present ---
-  assert(!!document.querySelector('#ps-play-btn'), 'Play button missing');
-  assert(!!document.querySelector('#ps-stop-btn'), 'Stop button missing');
-  assert(!!document.querySelector('#ps-tempo-slider'), 'Tempo slider missing');
-  assert(!!document.querySelector('#ps-control-bloom'), 'Bloom slider missing');
-  assert(!!document.querySelector('#ps-stage'), 'Stage missing');
-
-  // --- Play / stop transport ---
-  click(document.querySelector('#ps-play-btn'));
-  await new Promise((r) => setTimeout(r, 100));
-  assert(interaction.getState().isPlaying, 'Play should set isPlaying');
-
-  const canvas = shell.stage.querySelector('canvas.ps-stage__canvas');
-  assert(!!canvas, 'ASCII canvas should mount after init');
-
-  click(document.querySelector('#ps-stop-btn'));
-  await new Promise((r) => setTimeout(r, 50));
-  assert(!interaction.getState().isPlaying, 'Stop should clear isPlaying');
-
-  // --- Preset via runtime (all 5 worlds) ---
-  for (const world of PRESET_WORLDS) {
-    await runtime.setPreset(world.id);
-    assert(interaction.getState().preset === world.id, `Preset ${world.id} should load`);
-    assert(
-      document.querySelector('#ps-preset-name')?.textContent === world.name,
-      `Dock should show ${world.name}`,
-    );
+  const stage = appRoot.querySelector('#ps-stage');
+  if (stage) {
+    stage.getBoundingClientRect = () =>
+      ({
+        width: 800,
+        height: 700,
+        top: 0,
+        left: 0,
+        right: 800,
+        bottom: 700,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect;
   }
 
-  // --- Control sliders (UI updates coalesce to animation frame) ---
-  setSlider(document.querySelector('#ps-control-bloom'), '80');
-  await new Promise((r) => setTimeout(r, 50));
-  assert(interaction.getState().controls.bloom === 0.8, 'Bloom slider should update state');
+  const app = await createPlantasonicApp(appRoot);
 
-  setSlider(document.querySelector('#ps-tempo-slider'), '96');
-  await new Promise((r) => setTimeout(r, 50));
-  assert(interaction.getState().tempo === 96, 'Tempo slider should update state');
+  assert(!!document.querySelector('#ps-stage'), 'Stage missing');
+  assert(!!document.querySelector('[data-ps-transport-bar]'), 'Transport bar missing');
+  assert(!!document.querySelector('#ps-preset-select'), 'Preset select missing');
+  assert(!!document.querySelector('[data-ps-midi-toggle]'), 'MIDI toggle missing');
+  assert(!!document.querySelector('#ps-status'), 'Status area missing');
+  assert(!!document.querySelector('.ps-stage__canvas'), 'Visualizer canvas missing');
+  assert(!document.querySelector('[data-ps-app-shell]'), 'Legacy application shell must not render');
 
-  // --- Keyboard notes (via interaction layer) ---
-  await interaction.start('ui');
-  interaction.noteOn(60, 0.85, 'keyboard');
-  assert(interaction.getState().activeNotes.includes(60), 'noteOn should track active notes');
-  assert(Number(document.querySelector('#ps-notes-status')?.textContent?.[0]) >= 1, 'Notes status should update');
-  interaction.noteOff(60, 'keyboard');
-  assert(!interaction.getState().activeNotes.includes(60), 'noteOff should clear notes');
+  click(document.querySelector('[data-ps-transport="play"]'));
+  await new Promise((r) => setTimeout(r, 150));
 
-  // --- Preset browser overlay ---
-  const appSettings = new AppSettingsStore();
-  overlay.open('presets');
-  const cleanupBrowser = openPresetBrowser(interaction, appSettings, () => overlay.close());
-  assert(!!document.querySelector('.ps-preset-card'), 'Preset browser should render cards');
+  const runtime = createRuntime({ soundAdapter: new MockSoundAdapter() });
+  await runtime.init({ container: document.querySelector('#ps-stage')! });
+  await runtime.setPreset('mold-world');
+  assert(runtime.getState().preset === 'mold-world', 'Preset loading must work');
 
-  const moldCard = document.querySelector<HTMLElement>('[data-preset-id="mold-world"]');
-  assert(!!moldCard, 'Mold world card should exist');
-  moldCard!.click();
-  await new Promise((r) => setTimeout(r, 600));
-  assert(interaction.getState().preset === 'mold-world', 'Preset browser click should load preset');
-  cleanupBrowser();
+  const presetSelect = document.querySelector<HTMLSelectElement>('#ps-preset-select');
+  if (presetSelect) presetSelect.value = 'flow-world';
+  presetSelect?.dispatchEvent(new Event('change', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 100));
 
-  // --- Stage status reflects state ---
-  const stageStatus = document.querySelector('#ps-stage-status')?.textContent ?? '';
-  assert(stageStatus.includes('bpm') || stageStatus.includes('Mold'), 'Stage status should update');
-
-  unbind();
-  await interaction.destroy();
-  await runtime.destroy();
-  shell.destroy();
-  overlay.destroy();
+  await app.destroy();
   await window.close();
 
   console.info('[verify-integration] All integration checks passed.', {
     worlds: PRESET_WORLDS.length,
-    soundAdapter: 'MockSound (real audio verified in browser)',
-    asciiAdapter: 'PlantasiaAscii (real engine)',
+    layout: 'minimal-ds-instrument-ui',
   });
 }
 

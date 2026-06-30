@@ -170,21 +170,27 @@ Includes:
 
 ### 3.9 Application Consumer Integration — 100%
 
-**Date:** 2026-06-28
+**Date:** 2026-06-28 (updated 2026-06-29 — minimal instrument UI)
 
 Plantasonic is the **first official consumer** of the centralized `plantasonic-design-system` package.
 
-- [x] npm dependency on `plantasonic-design-system` (`file:../plantasonic-design-system`)
+- [x] npm dependency on `plantasonic-design-system` (workspace v1.0.0)
 - [x] Import generated CSS variables and Bootstrap theme from package
-- [x] `renderApplicationShell()` + `bindApplicationShell()` via public API only
-- [x] `src/shell/` — routes, navigation, commands, theme, `persistState`
-- [x] Command palette wired to real app commands via `registerAppCommands()`
-- [x] Removed local `CommandPalette`, `InstrumentChrome`, duplicate token entry points
-- [x] `npm run verify:design-system` — package exports, shell API, no showcase imports
+- [x] DS instrument SCSS (`instrument.scss`, `components.scss`, tokens) — no duplicated token files
+- [x] Removed local `CommandPalette`, full application shell, duplicate token entry points
+- [x] `npm run verify:design-system` — package exports, no showcase imports
 
-**App-owned (by design):** instrument workspace (stage, inspector, transport), control factories, app-specific SCSS (`globals.scss`, `instrument-shell.scss`, `_bootstrap-components.scss` polish).
+**2026-06-29 UI rebuild:**
 
-**Remaining migration gaps:** transport dock and inspector panels still render inside the workspace rather than DS dock/panel regions; legacy `.ps-chrome` / `.ps-top-nav` SCSS retained for focus-mode responsive rules until fully consolidated.
+- [x] Removed full application shell (`src/shell/`) and legacy UI (`AppShell`, `ControlDock`, `InspectorPanel`, `PresetBrowser`, settings overlays, 30+ components)
+- [x] Removed app-specific theme duplicates (`globals.scss`, `instrument-shell.scss`)
+- [x] Added minimal DS-themed instrument UI — fullscreen `#ps-stage`, bottom control bar, collapsible advanced panel
+- [x] Preserved runtime, sound engine, ASCII engine, presets, MIDI, and interaction layer wiring
+- [x] Updated `verify:integration` for minimal layout structure
+
+**App-owned (by design):** layout markup in `src/ui/`, layout-only SCSS in `app-layout.scss` (uses DS tokens only).
+
+**Remaining polish:** settings overlay, preset browser cards, performance mode, light-theme bar validation, dedicated pause transport.
 
 ---
 
@@ -508,20 +514,21 @@ Complete:
 
 **Objective:** Prepare Plantasonic for public release.
 
-### Delivered (v0.2.2)
+### Delivered (v0.2.4)
 
-- [x] Design-system Application Shell integration (first consumer of `plantasonic-design-system` v1.2.x)
+- [x] Minimal DS-themed instrument UI (2026-06-29) — fullscreen visualizer, bottom bar, collapsible advanced controls
+- [x] Removed legacy application shell and developer control panel UI
+- [x] Design-system Application Shell integration (first consumer of `plantasonic-design-system` v1.0)
 - [x] Vercel deployment configuration and production URL
-- [x] Version tagging and CHANGELOG release notes (v0.2.0, v0.2.1, v0.2.2)
-- [x] GitHub release dependency on plantasonic-design-system v1.2.1
-- [x] Removed duplicate local UI shell (`CommandPalette`, `InstrumentChrome`, `TopNav`)
+- [x] Version tagging and CHANGELOG release notes (v0.2.0–v0.2.4)
 - [x] `npm run verify:design-system` and `npm run verify:integration` passing
 
-### Known issues (v0.2.2)
+### Known issues (v0.2.4)
 
 - Production bundle > 500 kB (sound + visual engines); code-splitting deferred
 - Audio requires user gesture before playback (browser policy)
 - Light theme less validated than dark in instrument UI
+- Settings overlay and preset browser removed with legacy shell — to be re-added minimally if needed
 - Pause transport, save/randomize preset UI not implemented
 
 ### Next milestone
