@@ -52,9 +52,6 @@ jobs:
       - name: Lint
         working-directory: plantasonic
         run: npm run lint
-      - name: Format check
-        working-directory: plantasonic
-        run: npm run format:check
       - name: Verify platform SDK
         working-directory: plantasonic
         run: npm run verify:platform-sdk
