@@ -6,81 +6,67 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: plantasonic
-
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: nate-thousand/plantasonic-platform
           path: plantasonic-platform
-
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: nate-thousand/ascii-visual-engine
           ref: v0.1.0
           path: ascii-visual-engine
-
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: nate-thousand/plantasonic-design-system
           path: plantasonic-design-system
-
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 20
+          version: 9.15.4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
           cache: npm
           cache-dependency-path: plantasonic/package-lock.json
-
       - name: Build platform packages
-        working-directory: plantasonic-platform/packages/shared-types
-        run: npm ci && npm run build
-
-      - name: Build platform SDK
-        working-directory: plantasonic-platform/packages/sdk
-        run: npm ci && npm run build
-
+        working-directory: plantasonic-platform
+        run: pnpm install --frozen-lockfile && pnpm build
       - name: Build ASCII Visual Engine
         working-directory: ascii-visual-engine
         run: npm ci && npm run build
-
       - name: Install Plantasonic dependencies
         working-directory: plantasonic
         run: npm ci
-
       - name: Validate thin app architecture
         working-directory: plantasonic
         run: npm run validate:app
-
       - name: Lint
         working-directory: plantasonic
         run: npm run lint
-
       - name: Format check
         working-directory: plantasonic
         run: npm run format:check
-
       - name: Verify platform SDK
         working-directory: plantasonic
         run: npm run verify:platform-sdk
-
       - name: Verify design system
         working-directory: plantasonic
         run: npm run verify:design-system
-
       - name: Verify presets
         working-directory: plantasonic
         run: npm run verify:presets
-
       - name: Verify integration
         working-directory: plantasonic
         run: npm run verify:integration
-
       - name: Build
         working-directory: plantasonic
         run: npm run build
