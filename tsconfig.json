@@ -20,6 +20,50 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "noEmit": true,
+
+    /* Strict type checking */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Path aliases */
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "plantasonic-design-system/shell": ["plantasonic-design-system/src/shell/index.ts"],
+      "plantasonic-design-system/motion": ["plantasonic-design-system/src/motion/index.ts"],
+      "plantasonic-design-system/instrument": ["plantasonic-design-system/src/instrument/index.ts"],
+      "plantasonic-design-system/components": ["plantasonic-design-system/src/components/index.ts"],
+      "plantasonic-design-system/platform/services": ["plantasonic-design-system/src/platform/services.ts"],
+      "plantasonic-design-system/platform/engines": ["plantasonic-design-system/src/platform/engines.ts"],
+      "plantasonic-design-system/platform/types": ["plantasonic-design-system/src/platform/types.ts"]
+    }
+  },
+  "include": ["src", "platform.json"],
+  "exclude": ["plantasonic-design-system", "node_modules"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
