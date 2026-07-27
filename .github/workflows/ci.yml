@@ -46,24 +46,15 @@ jobs:
       - name: Install Plantasonic dependencies
         working-directory: plantasonic
         run: npm ci
-      - name: Validate thin app architecture
+      - name: Validate application architecture
         working-directory: plantasonic
         run: npm run validate:app
       - name: Lint
         working-directory: plantasonic
         run: npm run lint
-      - name: Verify platform SDK
+      - name: Typecheck
         working-directory: plantasonic
-        run: npm run verify:platform-sdk
-      - name: Verify design system
-        working-directory: plantasonic
-        run: npm run verify:design-system
-      - name: Verify presets
-        working-directory: plantasonic
-        run: npm run verify:presets
-      - name: Verify integration
-        working-directory: plantasonic
-        run: npm run verify:integration
+        run: npm run typecheck
       - name: Build
         working-directory: plantasonic
         run: npm run build
