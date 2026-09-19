@@ -27,7 +27,7 @@
     "dependencies": {
       "plantasonic-design-system": "file:../plantasonic-design-system",
       "plantasia-sound-engine": "file:../plantasia-sound-engine",
-      "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0"
+      "ascii-visual-engine": "file:../ascii-visual-engine"
     },
     "documentation": [
       "README.md",
@@ -235,7 +235,7 @@
     "components": {
       "plantasonic-design-system": "file:../plantasonic-design-system",
       "plantasia-sound-engine": "file:../plantasia-sound-engine",
-      "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0"
+      "ascii-visual-engine": "file:../ascii-visual-engine"
     },
     "documentation": [
       "README.md",

@@ -36,7 +36,7 @@
     "@plantasonic/platform": "file:../plantasonic-platform/packages/sdk",
     "@plantasonic/platform-demo": "file:../plantasonic-platform/apps/demo",
     "@plantasonic/platform-types": "file:../plantasonic-platform/packages/shared-types",
-    "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0",
+    "ascii-visual-engine": "file:../ascii-visual-engine",
     "bootstrap": "^5.0.2",
     "plantasia-sound-engine": "file:../plantasia-sound-engine",
     "plantasonic-design-system": "file:../plantasonic-design-system",
