@@ -20,7 +20,7 @@
   "themes": ["default", "signal-9", "plantasia", "future"],
   "services": ["logging", "settings", "autosave", "notifications"],
   "dependencies": {
-    "plantasonic-design-system": "1.0.0",
+    "plantasonic-design-system": "1.2.2",
     "@plantasonic/platform": "file:../plantasonic-platform/packages/sdk",
     "@plantasonic/platform-types": "file:../plantasonic-platform/packages/shared-types",
     "@plantasonic/platform-demo": "file:../plantasonic-platform/apps/demo",

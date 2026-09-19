@@ -4,15 +4,8 @@
   "version": "0.4.0",
   "description": "Official reference application for the Plantasonic AI First Application Platform.",
   "type": "module",
-  "workspaces": [
-    "plantasonic-design-system"
-  ],
   "scripts": {
-    "ds:tokens": "npm run tokens:build-css --workspace=plantasonic-design-system && npm run generate:scss --workspace=plantasonic-design-system",
-    "postinstall": "npm run ds:tokens",
-    "predev": "npm run ds:tokens",
     "dev": "vite",
-    "prebuild": "npm run ds:tokens",
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "preview": "vite preview",
@@ -46,7 +39,7 @@
     "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0",
     "bootstrap": "^5.0.2",
     "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
-    "plantasonic-design-system": "*",
+    "plantasonic-design-system": "file:../plantasonic-design-system",
     "sass": "^1.101.0"
   }
 }
