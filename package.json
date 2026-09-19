@@ -38,7 +38,7 @@
     "@plantasonic/platform-types": "file:../plantasonic-platform/packages/shared-types",
     "ascii-visual-engine": "github:nate-thousand/ascii-visual-engine#v0.1.0",
     "bootstrap": "^5.0.2",
-    "plantasia-sound-engine": "github:nate-thousand/plantasia-sound-engine#1.0.0-beta.1",
+    "plantasia-sound-engine": "file:../plantasia-sound-engine",
     "plantasonic-design-system": "file:../plantasonic-design-system",
     "sass": "^1.101.0"
   }
