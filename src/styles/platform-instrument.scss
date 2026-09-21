@@ -23,3 +23,11 @@
 .demo-region-hidden {
   display: none !important;
 }
+
+/* Creative Workspace anchors are zero-size absolute wrappers; instrument.scss makes
+   .ps-floating-panel absolute for drag/snap, which lets panels hang off the anchor
+   and overflow the stage. Keep the panel in flow inside its anchor. */
+.ps-cw-surface > .ps-floating-panel {
+  position: relative;
+  inset: auto;
+}
