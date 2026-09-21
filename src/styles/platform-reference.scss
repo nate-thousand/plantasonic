@@ -133,9 +133,18 @@
   }
 }
 
+// The mount takes whatever height is left under the chrome bar; the instrument shell's own
+// min-block-size: 100dvh must not push the transport below the fold.
+.ps-instrument-mount .ps-app-shell,
+.ps-instrument-mount .ps-instrument {
+  min-block-size: 0;
+  block-size: 100%;
+}
+
 .ps-instrument-mount {
   flex: 1;
   min-height: 0;
+  position: relative;
   overflow: hidden;
 }
 
