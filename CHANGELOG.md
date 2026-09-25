@@ -5,7 +5,12 @@ All notable changes to Plantasonic will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.1] - 2026-09-25
+
+### Changed
+
+- Depend on `plantasonic-design-system` (1.3.1), `plantasia-sound-engine` and `ascii-visual-engine` directly as sibling repositories (`file:`) instead of a vendored copy and pinned tags. The design system now defaults to the light theme; this app keeps `data-theme="dark"`.
+- Restored the Creative Workspace instrument layout; the instrument route fills the space under the chrome bar instead of the full viewport, so the transport is no longer cut off.
 
 ### Fixed
 

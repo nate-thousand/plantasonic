@@ -1,7 +1,7 @@
 {
   "name": "plantasonic",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Official reference application for the Plantasonic AI First Application Platform.",
   "type": "module",
   "scripts": {
