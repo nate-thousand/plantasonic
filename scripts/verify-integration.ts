@@ -122,8 +122,18 @@ async function main(): Promise<void> {
   const app = await createPlantasonicPlatformApp(appRoot);
 
   assert(!!document.querySelector('[data-ps-region="stage"]'), 'Stage region missing');
-  assert(!!document.querySelector('[data-ps-region="transport"]'), 'Transport region missing');
-  assert(!!document.querySelector('[data-ps-region="browser"]'), 'Preset browser region missing');
+  assert(
+    !!document.querySelector('[data-ps-cw-surface="transport"]'),
+    'Floating transport surface missing',
+  );
+  assert(
+    !!document.querySelector('[data-ps-cw-surface="browser"]'),
+    'Preset browser surface missing',
+  );
+  assert(
+    !!document.querySelector('.ps-creative-workspace'),
+    'Creative Workspace root missing',
+  );
   assert(!!document.querySelector('[data-ps-transport-bar]'), 'Design System transport bar missing');
   assert(!!document.querySelector('[data-demo-event-log]'), 'Platform event log missing');
   assert(!!document.querySelector('[data-demo-project-save]'), 'Project save control missing');
@@ -148,7 +158,7 @@ async function main(): Promise<void> {
 
   console.info('[verify-integration] Platform integration checks passed.', {
     worlds: PRESET_WORLDS.length,
-    layout: 'platform-instrument-shell',
+    layout: 'creative-workspace-instrument',
   });
 }
 
